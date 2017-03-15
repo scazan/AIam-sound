@@ -18,9 +18,6 @@ s.waitForBoot({
 		};
 
 		~energyX = 0;
-		~voiceFreqBus = Bus.control(s,1);
-		~voiceAmpBus = Bus.control(s,1);
-		~voiceAmpBus.set(1);
 
 		Tdef(\gravity, {
 			{
@@ -46,6 +43,8 @@ s.waitForBoot({
 			var diffX = 0,
 				diffY = 0,
 				diffZ = 0;
+
+			msg.postln;
 
 			diffX = (lastX - x).abs;
 			diffY = (lastY - y).abs;
@@ -96,6 +95,10 @@ s.waitForBoot({
 
 		{ while { window.isClosed.not } { window.refresh; 0.04.wait; } }.fork(AppClock);
 	};
+
+		~voiceFreqBus = Bus.control(s,1);
+		~voiceAmpBus = Bus.control(s,1);
+		~voiceAmpBus.set(1);
 
 	SynthDef(\voice, { arg
 		freq = 620,
