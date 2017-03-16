@@ -53,7 +53,7 @@ Ndef(\voice, { arg
 	//snd = FreeVerb2.ar(Mix.ar(snd), Mix.ar(snd), room: 0.2, mix: mix, damp: 0.9);
 
 
-	snd.tanh;
+	snd.tanh * amp;
 });
 
 )
@@ -61,7 +61,7 @@ Ndef(\voice, { arg
 
 Ndef(\voice).stop;
 Ndef(\voice).play;
-Ndef(\voice).set(\amp, 8.0);
+Ndef(\voice).set(\amp, 1.0);
 Ndef(\voice).set(\grainFreq, 14, \pulseWidth, 0.01);
 Ndef(\voice).set(\vowel, 1);
 Ndef(\voice).set(\freq, 600, \pulseWidth, 1);
@@ -70,10 +70,10 @@ Ndef(\voice).set(\freq, 600, \pulseWidth, 1);
 		{
 			Ndef(\voice).set(\trig, -1);
 			0.01.wait;
-			Ndef(\voice).set(\mix, [0,0.4,0.6].choose, \amp, [0,0,0,1].choose, \vowel, [0,2,5].choose, \freq, [6000, 9000,  200, 3000].choose/2, \trig, 1, \grainFreq, [14, 10, 20, 18].choose, \pulseWidth, [0.01, 0.03, 0.02, 0.01].choose*[4,2].choose);
+			Ndef(\voice).set(\mix, [0,0.4,0.6].choose, \amp, [0,0,0,1].choose*1, \vowel, [0,2,5].choose, \freq, [6000, 9000,  200, 3000].choose/2, \trig, 1, \grainFreq, [14, 10, 20, 18].choose, \pulseWidth, [0.01, 0.03, 0.02, 0.01].choose*[8,2].choose);
 			//Ndef(\voice).set(\mix, [0,0.4,0.6].choose, \vowel, [0,2,5].choose, \freq, [6000, 9000, 60, 2000, 3000].choose/5, \trig, 1, \grainFreq, [14, 10, 20, 8].choose, \pulseWidth, 1);
 			//Ndef(\voice).set(\mix, [0,0.4,0.6].choose, \vowel, [0,2,5].choose, \freq, [6000, 9000, 60, 2000, 3000].choose/15,\gate, 1, \trig, 1, \grainFreq, 1, \pulseWidth, 1);
-			([1, 0.2, 0.1, 0.1, 0.3].choose*1).wait;
+			([1, 0.2, 0.1, 0.1, 0.3].choose/2).wait;
 		}.loop;
 	});
 )
@@ -93,3 +93,59 @@ FormantTable.keys.asArray
 	}.fork;
 )
 s.meter
+
+
+
+Saw.help
+
+(
+	Ndef(\hum, { | amp=0, freq=2000 |
+		MoogSaw.ar(freq);
+	});
+
+)
+
+Ndef(\hum).play();
+Ndef(\hum).stop(0);
+Ndef(\hum).xset();
+
+
+
+(
+x.free;
+x = { MoogLadder.ar(Mix(
+	LFSaw.ar([120, 180], 0, 0.33) * Lag.ar(LFPulse.ar(MouseX.kr(1, 34), width: MouseX.kr(0.001, 0.6) ), 0.07)
+
+), LinExp.kr(MouseY.kr(0.1, 0.5 * pi), -1, 1, 180, 8500), 0.75).dup }.play
+)
+
+
+(
+	y.free;
+	y = {
+		Lag.ar(LFPulse.ar(2), 1.2) * 0.25;
+	}.scope;
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

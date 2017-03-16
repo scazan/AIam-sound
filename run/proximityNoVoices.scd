@@ -52,7 +52,7 @@ s.waitForBoot({
 					if(energies[i][\x] > 0.01, {
 						energies[i][\x] = energies[i][\x] - 0.00027;
 						synths[i][\freqBus].set(energies[i][\x]**1.15);
-						synths[i][\ampBus].set(energies[i][\x]**2);
+						//synths[i][\ampBus].set(energies[i][\x]**2);
 					}, {
 						synths[i][\freqBus].set(0);
 						synths[i][\ampBus].set(0);
