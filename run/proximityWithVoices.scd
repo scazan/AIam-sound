@@ -52,7 +52,7 @@ s.waitForBoot({
 					if(energies[i][\x] > 0.01, {
 						energies[i][\x] = energies[i][\x] - 0.00027;
 						synths[i][\freqBus].set(energies[i][\x]**1.15);
-						//synths[i][\ampBus].set(energies[i][\x]**2);
+						synths[i][\ampBus].set(energies[i][\x]**2);
 					}, {
 						synths[i][\freqBus].set(0);
 						synths[i][\ampBus].set(0);
@@ -84,6 +84,7 @@ s.waitForBoot({
 					proximityY = (y - positions[1][\y]).abs;
 
 				//[id, proximityX, x, positions[1][\x], (x - positions[1][\x]).abs].postln;
+				[id, proximityX].postln;
 
 				if(proximityX < 0.25, {
 					Ndef(\pad).set(\dist, ((proximityX * -1 + 0.25) * 4)**2);
@@ -198,7 +199,6 @@ s.waitForBoot({
 
 		([ out, DelayL.ar( out) ] * 1).tanh * Lag.kr(amp, 0.5);
 	});
-
 
 	Ndef(\pad).play;
 
