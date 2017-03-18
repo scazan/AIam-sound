@@ -313,17 +313,35 @@ s.waitForBoot({
 		Out.ar(0, (source * (amp.tanh * 6)).tanh );
 	}).add;
 
-	Ndef(\pad, { | amp=0.05, freq = 500, mod = 0.3, dist=0 |
-		var out = LFPulse.ar(freq) + (LFPulse.ar(freq * 1.5) * LFPulse.ar(20.2, mul: SinOsc.kr(0.1, mul:0.5), add: 0.4)) ;
+	Ndef(\pad, { | amp=0.25, freq = 500, mod = 0.3, dist=0 |
+		var out = LFPulse.ar(freq) + (LFPulse.ar(freq / 0.75) * LFPulse.ar(20.2, mul: SinOsc.kr(0.1, mul:0.5), add: 0.4)) ;
+		out = LFNoise1.ar(0.5, mul: 0.4, add: 0.6) * out;
 		out = LPF.ar(out, 300).tanh;
 
 		out = out + ((SinOsc.ar(freq *2) * Lag.kr( dist, 0.7 )/2) * LFPulse.ar(4).unipolar);
 		out = out + ((SinOsc.ar(freq *3) * Lag.kr( dist, 0.7 )/2) * LFPulse.ar(2.5).unipolar);
 
+		out = out + (LPF.ar(SinOsc.ar(freq / 8) * LFPulse.ar(2.0/8, width: 0.25).unipolar, 70) * 0.25);
+
 		([ out, DelayL.ar( out) ] * 1).tanh * Lag.kr(amp, 0.5);
 	});
 
 	Ndef(\pad).play;
+
+	b = Buffer.read(s, Platform.userHomeDir+/+"samples/concreteDigital2.wav", action: { |buffer| 
+		"Loaded: ".postln;
+
+		Ndef(\buffer, { | rate=0.7, amp=0.2 |
+			var buffer=b;
+
+			var out = PlayBuf.ar(buffer.numChannels, bufnum: buffer, rate: rate, trigger: 1, startPos: 0, loop: 1) * amp;
+
+			[out, DelayL.ar(out, delaytime: 0.008)];
+		});
+
+		Ndef(\buffer).play();
+
+	});
 
 	AppClock.sched(3, startReceiver);
 });

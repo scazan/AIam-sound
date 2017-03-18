@@ -278,3 +278,17 @@ s.meter
 
 
 
+(
+
+)
+
+(
+
+)
+"".help
+
+Ndef(\buffer).play();
+Ndef(\buffer).stop(0);
+Ndef(\buffer).xset();
+
+
