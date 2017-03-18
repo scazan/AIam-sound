@@ -71,7 +71,6 @@ s.waitForBoot({
 				synths.do({ |synth, i|
 					var vowel = 5.rand;
 					synth[\node].set(\vowel, vowel);
-					vowel.postln;
 				});
 
 				(2 + 3.0.rand).wait;
@@ -98,7 +97,7 @@ s.waitForBoot({
 					proximityY = (y - positions[1][\y]).abs;
 
 				//[id, proximityX, x, positions[1][\x], (x - positions[1][\x]).abs].postln;
-				[id, proximityX].postln;
+				//[id, proximityX].postln;
 
 				if(proximityX < 0.25, {
 					Ndef(\pad).set(\dist, ((proximityX * -1 + 0.25) * 4)**2);
@@ -328,71 +327,5 @@ s.waitForBoot({
 
 	AppClock.sched(3, startReceiver);
 });
-
-	Ndef(\pad).stop;
-(
-	Ndef(\pulseTrain0, {arg freq = 200, ramp=2.2, dist=1, amp=0, octave=1, density=1, vowel=0;
-		var out, formants, createVowel, snd;
-
-		freq = freq/octave;
-		out = (CombN.ar(
-			LFTri.ar(
-				[freq * 1.0,freq * 1.1]
-			),
-			0.35, 0.051 
-		)*dist).tanh
-		*
-		0.8 *
-		EnvGen.ar(
-			Env.perc(0, 0.10, 1),gate: Impulse.kr(ramp * (density.pow(4)*10+1))
-		) * amp;
-
-		formants = Dictionary[
-			\A -> [ [ 660, 1120, 2750, 3000, 3350 ], [ 1, 0.50118723362727, 0.070794578438414, 0.063095734448019, 0.012589254117942 ], [ 0.12121212121212, 0.080357142857143, 0.043636363636364, 0.043333333333333, 0.041791044776119 ] ],
-			\E -> [ [ 440, 1800, 2700, 3000, 3300 ], [ 1, 0.19952623149689, 0.12589254117942, 0.1, 0.1 ], [ 0.15909090909091, 0.044444444444444, 0.037037037037037, 0.04, 0.036363636363636 ] ],
-			\O -> [ [ 430, 820, 2700, 3000, 3300 ], [ 1, 0.31622776601684, 0.050118723362727, 0.079432823472428, 0.019952623149689 ], [ 0.093023255813953, 0.097560975609756, 0.037037037037037, 0.04, 0.036363636363636 ] ],
-			\I -> [ [ 270, 1850, 2900, 3350, 3590 ], [ 1, 0.063095734448019, 0.063095734448019, 0.015848931924611, 0.015848931924611 ], [ 0.14814814814815, 0.048648648648649, 0.03448275862069, 0.035820895522388, 0.033426183844011 ] ],
-			\U -> [ [ 370, 630, 2750, 3000, 3400 ], [ 1, 0.1, 0.070794578438414, 0.031622776601684, 0.019952623149689 ], [ 0.10810810810811, 0.095238095238095, 0.036363636363636, 0.04, 0.035294117647059 ] ]
-		];
-
-		createVowel = { | input, vowel, voiceType = "counterTenor" |
-			//var formant = FormantTable.get((voiceType++vowel).asSymbol);
-			var formant = formants[vowel.asSymbol];
-
-			var out = BBandPass.ar(
-				in: input.at(0),
-				freq: formant[0],
-				bw: formant[1],
-				mul: formant[2]
-			);
-			var out2 = BBandPass.ar(
-				in: input.at(1),
-				freq: formant[0],
-				bw: formant[1],
-				mul: formant[2]
-			);
-
-			[out.flatten(6), out2.flatten(6)];
-		};
-		snd = SelectX.ar(Lag.kr(vowel, 0.5), [createVowel.value(out, "A"), createVowel.value(out, "E"), createVowel.value(out, "I"), createVowel.value(out, "O"), createVowel.value(out, "U")]);
-		snd;
-	});
-
-Ndef(\pulseTrain0).play();
-
-
-)
-
-
-Ndef(\pulseTrain0).set(\amp, 2.0);
-Ndef(\pulseTrain0).set(\density, 1.03);
-
-Ndef(\pulseTrain0).set(\vowel, 0);
-Ndef(\pulseTrain0).stop;
-
-s.meter
-
-
-
 
 
