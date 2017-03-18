@@ -205,3 +205,28 @@ s.waitForBoot({
 	AppClock.sched(3, startReceiver);
 });
 
+//s.meter
+//(
+	//Ndef(\pad, { | amp=0.10, freq = 500, mod = 0.3, dist=0, bassDivider=4 |
+		//var out = LFPulse.ar(freq) + (LFPulse.ar(freq * 0.5) * LFPulse.ar(20.2, mul: SinOsc.kr(0.1, mul:0.8), add: 0.4)) ;
+		//out = LPF.ar(out, 200).tanh;
+
+		//out = out + ((SinOsc.ar(freq *2) * Lag.kr( dist, 0.7 )/2) * LFPulse.ar(4).unipolar);
+		//out = out + ((SinOsc.ar(freq *3) * Lag.kr( dist, 0.7 )/2) * LFPulse.ar(2.5).unipolar);
+		//out = out + 
+			//(LPF.ar((LFPulse.ar(freq/bassDivider.lag(0.5)) * 0.5), 300) * (18 + PinkNoise.ar(mul: 9).unipolar)).tanh;
+
+		//([ out, DelayL.ar( out) ] * 1).tanh * Lag.kr(amp, 0.5);
+	//});
+//)
+
+//Lag.help
+//(
+//Tdef(\bassMelody, {
+	//var seq = Pseq([4,5,6], inf).asStream;
+	//{
+		//Ndef(\pad).set(\bassDivider, seq.next);
+		//4.0.wait;
+	//}.loop;
+//}).play;
+//)
