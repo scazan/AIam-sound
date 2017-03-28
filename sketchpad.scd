@@ -215,11 +215,12 @@ s.meter
 (
 	Ndef(\pulseTrain0, {arg freq = 200, ramp=2.2, dist=1, amp=0, octave=1, density=1, vowel=0;
 		var out, formants, createVowel, snd;
+		var noise = LFNoise1.kr(2).unipolar;
 
 		freq = freq/octave;
 		out = (CombN.ar(
-			LFTri.ar(
-				[freq * 1.0,freq * 1.1]
+			LFPulse.ar(
+				[freq * 1.0,freq * 1.01]
 			),
 			0.35, 0.051 
 		)*dist).tanh
@@ -257,7 +258,9 @@ s.meter
 			[out.flatten(6), out2.flatten(6)];
 		};
 		snd = SelectX.ar(Lag.kr(vowel, 0.5), [createVowel.value(out, "A"), createVowel.value(out, "E"), createVowel.value(out, "I"), createVowel.value(out, "O"), createVowel.value(out, "U")]);
-		snd;
+		snd = RLPFD.ar(snd, noise * 600 + 100, (noise * 0.4 + 0.2).clip(0,1) );
+		snd = MidEQ.ar(snd, 642, 0.1, 6);
+		snd ;
 	});
 
 Ndef(\pulseTrain0).play();
@@ -265,20 +268,41 @@ Ndef(\pulseTrain0).play();
 
 )
 
+	Ndef(\pad).stop;
+	Ndef(\buffer).stop;
 
-Ndef(\pulseTrain0).set(\amp, 2.0);
+Ndef(\pulseTrain0).set(\amp, 3.7);
 Ndef(\pulseTrain0).set(\density, 1.03);
 
 Ndef(\pulseTrain0).set(\vowel, 0);
+Ndef(\pulseTrain0).set(\freq, 200);
 Ndef(\pulseTrain0).stop;
 
 s.meter
 
 
-
+(
+	Tdef(\vocal, {
+		{
+			Ndef(\pulseTrain0).set(\density, [1,0.7,0.8,0.9, 0.7].choose);
+			( 1.0.rand + 0.7 ).wait;
+		}.loop;
+	});
+)
+Tdef(\vocal).play;
+Tdef(\vocal).stop;
 
 
 (
+	Tdef(\vocal2, {
+		{
+			Ndef(\pulseTrain0).set(\vowel, [0,4,2].choose);
+			( 3.0.rand + 0.7 ).wait;
+		}.loop;
+	});
+
+Tdef(\vocal2).play;
+
 
 )
 
@@ -291,4 +315,32 @@ Ndef(\buffer).play();
 Ndef(\buffer).stop(0);
 Ndef(\buffer).xset();
 
+s.queryAllNodes
+s.sendMsg(\n_free, 1076);
 
+
+/// 
+
+
+s.boot;
+(
+	Ndef(\bass, { | amp=0, freq=2000 |
+		var reverb = FreeVerb.ar(_, mix: 0.5, room: 0.8);
+		var lpf = LPF.ar(_, 180);
+		var bpf = BPF.ar(_, 40, 0.5);
+		var rumble = bpf.value(GrayNoise.ar());
+
+		var hum = LFTri.ar([50, 54]) * (0.7 + Pulse.ar(0.2, width: 0.01).unipolar.lag(0.2) * 0.1);
+
+		var out = reverb.value( lpf.value(rumble + hum) );
+
+		HPF.ar(out, 30).tanh * 0.8;
+	});
+
+)
+
+Ndef(\bass).clear();
+Ndef(\bass).play();
+Ndef(\bass).stop(0);
+Ndef(\bass).xset();
+s.meter
