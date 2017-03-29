@@ -135,7 +135,7 @@ s.boot;
 
 (
 	Ndef(\wah, { | amp=0, freq=30, vowel=0 |
-		var ampModFreq = LFNoise1.kr(MouseY.kr(0.05, 2)).unipolar.lag(0.2);
+		var ampModFreq = LFNoise1.kr(0.05).unipolar.lag(0.2);
 		var ampMod = Saw.ar(ampModFreq * 10 + 1).unipolar;
 		var source, source2;
 
@@ -259,7 +259,7 @@ s.meter
 		};
 		snd = SelectX.ar(Lag.kr(vowel, 0.5), [createVowel.value(out, "A"), createVowel.value(out, "E"), createVowel.value(out, "I"), createVowel.value(out, "O"), createVowel.value(out, "U")]);
 		snd = RLPFD.ar(snd, noise * 600 + 100, (noise * 0.4 + 0.2).clip(0,1) );
-		snd = MidEQ.ar(snd, 642, 0.1, 6);
+		snd = MidEQ.ar(snd, 642, 0.1, 15);
 		snd ;
 	});
 
@@ -271,7 +271,7 @@ Ndef(\pulseTrain0).play();
 	Ndef(\pad).stop;
 	Ndef(\buffer).stop;
 
-Ndef(\pulseTrain0).set(\amp, 3.7);
+Ndef(\pulseTrain0).set(\amp, 6.7);
 Ndef(\pulseTrain0).set(\density, 1.03);
 
 Ndef(\pulseTrain0).set(\vowel, 0);
@@ -330,11 +330,11 @@ s.boot;
 		var bpf = BPF.ar(_, 40, 0.5);
 		var rumble = bpf.value(GrayNoise.ar());
 
-		var hum = LFTri.ar([50, 54]) * (0.7 + Pulse.ar(0.2, width: 0.01).unipolar.lag(0.2) * 0.1);
+		var hum = LFTri.ar([50, 54]) * (0.7 + Pulse.ar(0.2, width: 0.01).unipolar.lag(0.5) * 0.1);
 
 		var out = reverb.value( lpf.value(rumble + hum) );
 
-		HPF.ar(out, 30).tanh * 0.8;
+		HPF.ar(out, 30).tanh * 0.9;
 	});
 
 )
