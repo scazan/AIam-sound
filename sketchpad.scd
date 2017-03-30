@@ -288,12 +288,8 @@ s.meter
 			( 1.0.rand + 0.7 ).wait;
 		}.loop;
 	});
-)
-Tdef(\vocal).play;
-Tdef(\vocal).stop;
+	Tdef(\vocal).play;
 
-
-(
 	Tdef(\vocal2, {
 		{
 			Ndef(\pulseTrain0).set(\vowel, [0,4,2].choose);
@@ -301,7 +297,7 @@ Tdef(\vocal).stop;
 		}.loop;
 	});
 
-Tdef(\vocal2).play;
+	Tdef(\vocal2).play;
 
 
 )

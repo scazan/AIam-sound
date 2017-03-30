@@ -1,3 +1,4 @@
+s.options.memSize = 1024 * 100;
 s.waitForBoot({
 	var startReceiver = {
 		var maxY = 0,
@@ -98,16 +99,7 @@ s.waitForBoot({
 				//[id, proximityX, x, positions[1][\x], (x - positions[1][\x]).abs].postln;
 				//[id, proximityX].postln;
 
-				//if(proximityX < 0.25, {
-					//Ndef(\pad).set(\dist, ((proximityX * -1 + 0.25) * 4)**2);
-
-
-					~computeDensity.value(proximityX);
-					//Ndef(\pulseTrain0).set(\density, ~computeDensity.value(proximityX) );
-				//}, {
-					//Ndef(\pad).set(\dist, 0);
-					//Ndef(\pulseTrain0).set(\density, 1.03);
-				//});
+				~computeDensity.value(proximityX);
 			}, {
 
 				if(id == 1, {
@@ -150,6 +142,10 @@ s.waitForBoot({
 			synths.do({ | synth, i |
 				synth[\node].free;
 				synth[\controller].stop;
+				Tdef(\vocal).stop;
+				Tdef(\vocal2).stop;
+				Ndef(\bass).stop;
+				Ndef(\pulseTrain0).stop;
 			});
 		};
 
@@ -157,112 +153,7 @@ s.waitForBoot({
 	};
 
 	SynthDef(\voice, { 
-		//arg
-		//freq = 620,
-		//grainFreq = 3,
-		//amp = 0.5,
-		//vowel = 0,
-		//att = 0.01,
-		//rel = 0.1,
-		//lag = 1,
-		//gate = 1,
-		//hasFreq = 0,
-		//transpose = 0.5,
-		//pitchLag=0.00001,
-		//freqRange = 300,
-		//voiceFreqBus,
-		//voiceAmpBus;
-
-		//var in, env, va, ve, vi, vo, vu, snd;
-		//var formants = Dictionary[
-			//\A -> [ [ 660, 1120, 2750, 3000, 3350 ], [ 1, 0.50118723362727, 0.070794578438414, 0.063095734448019, 0.012589254117942 ], [ 0.12121212121212, 0.080357142857143, 0.043636363636364, 0.043333333333333, 0.041791044776119 ] ],
-			//\E -> [ [ 440, 1800, 2700, 3000, 3300 ], [ 1, 0.19952623149689, 0.12589254117942, 0.1, 0.1 ], [ 0.15909090909091, 0.044444444444444, 0.037037037037037, 0.04, 0.036363636363636 ] ],
-			//\O -> [ [ 430, 820, 2700, 3000, 3300 ], [ 1, 0.31622776601684, 0.050118723362727, 0.079432823472428, 0.019952623149689 ], [ 0.093023255813953, 0.097560975609756, 0.037037037037037, 0.04, 0.036363636363636 ] ],
-			//\I -> [ [ 270, 1850, 2900, 3350, 3590 ], [ 1, 0.063095734448019, 0.063095734448019, 0.015848931924611, 0.015848931924611 ], [ 0.14814814814815, 0.048648648648649, 0.03448275862069, 0.035820895522388, 0.033426183844011 ] ],
-			//\U -> [ [ 370, 630, 2750, 3000, 3400 ], [ 1, 0.1, 0.070794578438414, 0.031622776601684, 0.019952623149689 ], [ 0.10810810810811, 0.095238095238095, 0.036363636363636, 0.04, 0.035294117647059 ] ]
-		//];
-
-		//var createVowel = { | input, vowel, voiceType = "counterTenor" |
-			////var formant = FormantTable.get((voiceType++vowel).asSymbol);
-			//var formant = formants[vowel.asSymbol];
-
-			//BBandPass.ar(
-				//in: input,
-				//freq: formant[0],
-				//bw: formant[1],
-				//mul: formant[2]);
-		//};
-
-		//freq = In.kr(voiceFreqBus).squared * freqRange + 60;
-		//freq = Lag.kr(freq*transpose,pitchLag);
-
-		//in = Saw.ar(Lag.kr(freq, lag)) * LFPulse.ar(grainFreq, width: 0.35);
-
-		//va = createVowel.value(in, "A");
-		//ve = createVowel.value(in, "E");
-		//vi = createVowel.value(in, "I");
-		//vo = createVowel.value(in, "O");
-		//vu = createVowel.value(in, "U");
-
-		//snd = SelectX.ar(Lag.kr(vowel, lag), [va, ve, vi, vo, vu]);
-		//snd = snd.flatten(2);
-		//snd = snd * (Lag.kr(In.kr(voiceAmpBus), 0.001) * 0.25);
-
-		//snd = FreeVerb.ar(snd);
-		//Out.ar(0, ([ snd, snd] * (amp.tanh * 6)).tanh );
-
-//arg freq = 200, ramp=2.2, dist=1, amp=1.0, octave=1.07, density=1, vowel=0, voiceFreqBus, transpose=0.5, voiceAmpBus;
-		//var out, formants, createVowel, snd;
-
-		//freq = In.kr(voiceFreqBus).squared * 500 + 60;
-		//freq = freq/octave;
-		//out = (CombN.ar(
-			//LFTri.ar(
-				//[freq * 1.0,freq * 1.1]
-			//),
-			//0.35, 0.051 
-		//)*dist).tanh
-		//*
-		//0.8 *
-		//EnvGen.ar(
-			//Env.perc(0, 0.10, 1),gate: Impulse.kr(ramp * (density.pow(4)*10+1))
-		//) * amp;
-
-		//formants = Dictionary[
-			//\A -> [ [ 660, 1120, 2750, 3000, 3350 ], [ 1, 0.50118723362727, 0.070794578438414, 0.063095734448019, 0.012589254117942 ], [ 0.12121212121212, 0.080357142857143, 0.043636363636364, 0.043333333333333, 0.041791044776119 ] ],
-			//\E -> [ [ 440, 1800, 2700, 3000, 3300 ], [ 1, 0.19952623149689, 0.12589254117942, 0.1, 0.1 ], [ 0.15909090909091, 0.044444444444444, 0.037037037037037, 0.04, 0.036363636363636 ] ],
-			//\O -> [ [ 430, 820, 2700, 3000, 3300 ], [ 1, 0.31622776601684, 0.050118723362727, 0.079432823472428, 0.019952623149689 ], [ 0.093023255813953, 0.097560975609756, 0.037037037037037, 0.04, 0.036363636363636 ] ],
-			//\I -> [ [ 270, 1850, 2900, 3350, 3590 ], [ 1, 0.063095734448019, 0.063095734448019, 0.015848931924611, 0.015848931924611 ], [ 0.14814814814815, 0.048648648648649, 0.03448275862069, 0.035820895522388, 0.033426183844011 ] ],
-			//\U -> [ [ 370, 630, 2750, 3000, 3400 ], [ 1, 0.1, 0.070794578438414, 0.031622776601684, 0.019952623149689 ], [ 0.10810810810811, 0.095238095238095, 0.036363636363636, 0.04, 0.035294117647059 ] ]
-		//];
-
-		//createVowel = { | input, vowel, voiceType = "counterTenor" |
-			////var formant = FormantTable.get((voiceType++vowel).asSymbol);
-			//var formant = formants[vowel.asSymbol];
-
-			//var out = BBandPass.ar(
-				//in: input.at(0),
-				//freq: formant[0],
-				//bw: formant[1],
-				//mul: formant[2]
-			//);
-			//var out2 = BBandPass.ar(
-				//in: input.at(1),
-				//freq: formant[0],
-				//bw: formant[1],
-				//mul: formant[2]
-			//);
-
-			//[out.flatten(6), out2.flatten(6)];
-		//};
-		//snd = SelectX.ar(Lag.kr(vowel, 0.5), [createVowel.value(out, "A"), createVowel.value(out, "E"), createVowel.value(out, "I"), createVowel.value(out, "O"), createVowel.value(out, "U")]);
-
-		//snd = snd * (Lag.kr(In.kr(voiceAmpBus), 0.001) * 0.25);
-		//Out.ar(0, (snd * (amp.tanh * 6)).tanh );
-
-		///////
-
-	| amp=2, freq=30, vowel=0, voiceAmpBus, voiceFreqBus |
+		| amp=2, freq=30, vowel=0, voiceAmpBus, voiceFreqBus |
 		var ampModFreq = LFNoise1.kr(MouseY.kr(0.05, 2)).unipolar.lag(0.2);
 		var ampMod = Saw.ar(ampModFreq * 10 + 1).unipolar;
 		var source, source2;
@@ -330,38 +221,104 @@ s.waitForBoot({
 		([ out, DelayL.ar( out) ] * 1).tanh * Lag.kr(amp, 0.5);
 	});
 
-	//Ndef(\pad).play;
+	Ndef(\bass, { | amp=0, freq=2000 |
+		var reverb = FreeVerb.ar(_, mix: 0.5, room: 0.8);
+		var lpf = LPF.ar(_, 180);
+		var bpf = BPF.ar(_, 40, 0.5);
+		var rumble = bpf.value(GrayNoise.ar());
 
-	b = Buffer.read(s, Platform.userHomeDir+/+"samples/concreteDigital2.wav", action: { |buffer| 
-		"Loaded: ".postln;
+		var hum = LFTri.ar([50, 54]) * (0.7 + Pulse.ar(0.2, width: 0.01).unipolar.lag(0.5) * 0.2);
 
-		Ndef(\buffer, { | rate=0.7, amp=0.2 |
-			var buffer=b;
+		var out = reverb.value( lpf.value(rumble + hum) );
 
-			var out = PlayBuf.ar(buffer.numChannels, bufnum: buffer, rate: rate, trigger: 1, startPos: 0, loop: 1) * amp;
-
-			[out, DelayL.ar(out, delaytime: 0.008)];
-		});
-
-		//Ndef(\buffer).play();
-
+		HPF.ar(out, 30).tanh * 0.9;
 	});
+
+	Ndef(\bass).play();
+
+	Ndef(\pulseTrain0, {arg freq = 200, ramp=2.2, dist=1, amp=7.7, octave=1, density=1, vowel=0, lag=5;
+		var out, formants, createVowel, snd;
+		var noise = LFNoise1.kr(2).unipolar;
+
+		freq = freq/octave;
+		out = (CombN.ar(
+			LFPulse.ar(
+				[freq * 1.0,freq * 1.01]
+			),
+			0.35, 0.051 
+		)*dist).tanh
+		*
+		0.8 *
+		EnvGen.ar(
+			Env.perc(0, 0.10, 1),gate: Impulse.kr(ramp * (density.lag(lag).pow(4)*10+1))
+		) * amp;
+
+		formants = Dictionary[
+			\A -> [ [ 660, 1120, 2750, 3000, 3350 ], [ 1, 0.50118723362727, 0.070794578438414, 0.063095734448019, 0.012589254117942 ], [ 0.12121212121212, 0.080357142857143, 0.043636363636364, 0.043333333333333, 0.041791044776119 ] ],
+			\E -> [ [ 440, 1800, 2700, 3000, 3300 ], [ 1, 0.19952623149689, 0.12589254117942, 0.1, 0.1 ], [ 0.15909090909091, 0.044444444444444, 0.037037037037037, 0.04, 0.036363636363636 ] ],
+			\O -> [ [ 430, 820, 2700, 3000, 3300 ], [ 1, 0.31622776601684, 0.050118723362727, 0.079432823472428, 0.019952623149689 ], [ 0.093023255813953, 0.097560975609756, 0.037037037037037, 0.04, 0.036363636363636 ] ],
+			\I -> [ [ 270, 1850, 2900, 3350, 3590 ], [ 1, 0.063095734448019, 0.063095734448019, 0.015848931924611, 0.015848931924611 ], [ 0.14814814814815, 0.048648648648649, 0.03448275862069, 0.035820895522388, 0.033426183844011 ] ],
+			\U -> [ [ 370, 630, 2750, 3000, 3400 ], [ 1, 0.1, 0.070794578438414, 0.031622776601684, 0.019952623149689 ], [ 0.10810810810811, 0.095238095238095, 0.036363636363636, 0.04, 0.035294117647059 ] ]
+		];
+
+		createVowel = { | input, vowel, voiceType = "counterTenor" |
+			//var formant = FormantTable.get((voiceType++vowel).asSymbol);
+			var formant = formants[vowel.asSymbol];
+
+			var out = BBandPass.ar(
+				in: input.at(0),
+				freq: formant[0],
+				bw: formant[1],
+				mul: formant[2]
+			);
+			var out2 = BBandPass.ar(
+				in: input.at(1),
+				freq: formant[0],
+				bw: formant[1],
+				mul: formant[2]
+			);
+
+			[out.flatten(6), out2.flatten(6)];
+		};
+		snd = SelectX.ar(Lag.kr(vowel, 0.5), [createVowel.value(out, "A"), createVowel.value(out, "E"), createVowel.value(out, "I"), createVowel.value(out, "O"), createVowel.value(out, "U")]);
+		snd = RLPFD.ar(snd, noise * 600 + 100, (noise * 0.4 + 0.2).clip(0,1) );
+		snd = MidEQ.ar(snd, 642, 0.1, 15);
+		snd ;
+	});
+
+	Ndef(\pulseTrain0).play();
+
+	Tdef(\vocal, {
+		{
+			Ndef(\pulseTrain0).set(\density, [1,0.7,0.8,0.9, 0.7].choose);
+			( 1.0.rand + 0.7 ).wait;
+		}.loop;
+	});
+	Tdef(\vocal).play;
+
+	Tdef(\vocal2, {
+		{
+			Ndef(\pulseTrain0).set(\vowel, [0,4,2].choose);
+			( 3.0.rand + 0.7 ).wait;
+		}.loop;
+	});
+
+	Tdef(\vocal2).play;
+
+	~computeDensity = { |val|
+		val = ((1 - val)**1 * 2).abs;
+
+		if(val > 1.0, {
+			Tdef(\vocal).stop;
+			Ndef(\pulseTrain0).set(\lag, 5 );
+			Ndef(\pulseTrain0).set(\density, val+0.5 );
+		}, {
+			Tdef(\vocal).play;
+		});
+	};
+	Ndef(\pulseTrain0).fadeTime = 1;
 
 	AppClock.sched(3, startReceiver);
 });
 
-		Ndef(\buffer).stop();
-
-		(
-		~computeDensity = { |val|
-			val = ((1 - val)**1 * 2).abs;
-			["===", val ].postln;
-
-			if(val > 1.0, {
-				Tdef(\vocal).stop;
-				Ndef(\pulseTrain0).set(\density, val+0.7 );
-			}, {
-				Tdef(\vocal).play;
-			});
-		};
-	)
+Ndef(\pulseTrain0).edit;
