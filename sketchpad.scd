@@ -320,7 +320,7 @@ s.sendMsg(\n_free, 1076);
 
 s.boot;
 (
-	Ndef(\bass, { | amp=0, freq=2000 |
+	Ndef(\bass2, { | amp=0, freq=2000 |
 		var reverb = FreeVerb.ar(_, mix: 0.5, room: 0.8);
 		var lpf = LPF.ar(_, 180);
 		var bpf = BPF.ar(_, 40, 0.5);
@@ -336,7 +336,189 @@ s.boot;
 )
 
 Ndef(\bass).clear();
-Ndef(\bass).play();
+Ndef(\bass2).play();
 Ndef(\bass).stop(0);
 Ndef(\bass).xset();
 s.meter
+
+
+
+
+
+
+
+//// New Stuff!
+s.options.memSize = 1024 * 100;
+s.boot;
+(
+	Ndef(\pulseTrain0, {arg freq = 200, noiseFreq=2, ramp=2.2, dist=1, amp=8.7, octave=1, density=1, vowel=0, lag=5;
+		var out, formants, createVowel, snd;
+		var noise = LFNoise1.kr(noiseFreq).unipolar;
+
+		freq = freq/octave;
+		out = (CombN.ar(
+			LFPulse.ar(
+				[freq * 1.0,freq * 1.01]
+			),
+			0.35, 0.051 
+		)*dist).tanh
+		*
+		0.8 *
+		EnvGen.ar(
+			Env.perc(0, 0.10, 1),gate: Impulse.kr(ramp * (density.lag(lag).pow(4)*10+1))
+		) * amp;
+
+		formants = Dictionary[
+			\A -> [ [ 660, 1120, 2750, 3000, 3350 ], [ 1, 0.50118723362727, 0.070794578438414, 0.063095734448019, 0.012589254117942 ], [ 0.12121212121212, 0.080357142857143, 0.043636363636364, 0.043333333333333, 0.041791044776119 ] ],
+			\E -> [ [ 440, 1800, 2700, 3000, 3300 ], [ 1, 0.19952623149689, 0.12589254117942, 0.1, 0.1 ], [ 0.15909090909091, 0.044444444444444, 0.037037037037037, 0.04, 0.036363636363636 ] ],
+			\O -> [ [ 430, 820, 2700, 3000, 3300 ], [ 1, 0.31622776601684, 0.050118723362727, 0.079432823472428, 0.019952623149689 ], [ 0.093023255813953, 0.097560975609756, 0.037037037037037, 0.04, 0.036363636363636 ] ],
+			\I -> [ [ 270, 1850, 2900, 3350, 3590 ], [ 1, 0.063095734448019, 0.063095734448019, 0.015848931924611, 0.015848931924611 ], [ 0.14814814814815, 0.048648648648649, 0.03448275862069, 0.035820895522388, 0.033426183844011 ] ],
+			\U -> [ [ 370, 630, 2750, 3000, 3400 ], [ 1, 0.1, 0.070794578438414, 0.031622776601684, 0.019952623149689 ], [ 0.10810810810811, 0.095238095238095, 0.036363636363636, 0.04, 0.035294117647059 ] ]
+		];
+
+		createVowel = { | input, vowel, voiceType = "counterTenor" |
+			//var formant = FormantTable.get((voiceType++vowel).asSymbol);
+			var formant = formants[vowel.asSymbol];
+
+			var out = BBandPass.ar(
+				in: input.at(0),
+				freq: formant[0],
+				bw: formant[1],
+				mul: formant[2]
+			);
+			var out2 = BBandPass.ar(
+				in: input.at(1),
+				freq: formant[0],
+				bw: formant[1],
+				mul: formant[2]
+			);
+
+			[out.flatten(6), out2.flatten(6)];
+		};
+		snd = SelectX.ar(Lag.kr(vowel, 0.5), [createVowel.value(out, "A"), createVowel.value(out, "E"), createVowel.value(out, "I"), createVowel.value(out, "O"), createVowel.value(out, "U")]);
+		snd = RLPFD.ar(snd, noise * 600 + 100, (noise * 0.4 + 0.2).clip(0,1) );
+		snd = MidEQ.ar(snd, 642, 0.1, 15);
+		snd ;
+	});
+Ndef(\pulseTrain0).fadeTime = 1;
+
+	Ndef(\bass, { | amp=0, freq=2000 |
+		var reverb = FreeVerb.ar(_, mix: 0.5, room: 0.8);
+		var lpf = LPF.ar(_, 180);
+		var bpf = BPF.ar(_, 40, 0.5);
+		var rumble = bpf.value(GrayNoise.ar());
+
+		var hum = LFTri.ar([50, 54]) * (0.7 + Pulse.ar(0.2, width: 0.01).unipolar.lag(0.5) * 0.2);
+
+		var out = reverb.value( lpf.value(rumble + hum) );
+
+		HPF.ar(out, 30).tanh * 0.9;
+	});
+
+	Ndef(\bass).play();
+
+	Ndef(\reverb, { | amp=0, inAmp=0 |
+		//var reverb = FreeVerb.ar(_, mix: 0.99, room: 0.8, damp: 0.9);
+		var reverb = GVerb.ar(_, roomsize: 30, damping: 0.2);
+		var source = Ndef(\pulseTrain0).ar * inAmp;
+
+		reverb.value(source) * amp.lag(0.5);
+	});
+
+	
+	Ndef(\reverb).play();
+)
+
+	Ndef(\pulseTrain0).play();
+
+	(
+	~speed1 = 1.0;
+	Tdef(\vocal, {
+		{
+			Ndef(\pulseTrain0).set(\density, [1,0.7,0.8,0.9, 0.7].choose);
+			( (~speed1 * 3).rand + 0.7 ).wait;
+		}.loop;
+	});
+	Tdef(\vocal).play;
+
+	~speed2 = 3.0;
+	Tdef(\vocal2, {
+		{
+			Ndef(\pulseTrain0).set(\vowel, [0,4,2].choose);
+			( (~speed2 * 10).rand + 0.7 ).wait;
+		}.loop;
+	});
+
+	Tdef(\vocal2).play;
+)
+Tdef(\vocal2).gui
+
+
+MIDIIn.connectAll
+(
+	MIDIdef.cc(\lightpads, { | val, control, block |
+		var controlNum = control + (block * 14);
+		val = val/127;
+		controlNum.postln;
+
+		switch(controlNum,
+			112, { ~speed1 = val; },
+			105, { Ndef(\reverb).set(\inAmp, val); },
+			115, { Ndef(\reverb).set(\amp, val); },
+			113, { Ndef(\pulseTrain0).set(\noiseFreq, val * 20); },
+
+			119, {
+				if(val == 1, {
+				Tdef(\vocal).stop;
+				Ndef(\pulseTrain0).set(\lag, 5 );
+			}, {
+				Tdef(\vocal).play;
+			});
+			},
+			129, {
+				Ndef(\pulseTrain0).set(\density, (val*1)+0.5 );
+			},
+			126, { ~speed2 = val; },
+		);
+		val.postln;
+	});
+)
+
+
+
+(
+	var vectors = [ [1,2], [1,3], [1,2] ];
+	//var vectors = ~actors.collect({ | item | [item[\position][\x],item[\position][\z] ] ; });
+
+	var computeProximity2XZ = { | vectors |
+		var x=0, y=1, euclideanDistance;
+
+		euclideanDistance = ((vectors[0][x] - vectors[1][x]).pow(2) + (vectors[0][y] - vectors[1][y]).pow(2)).sqrt;
+		euclideanDistance;
+	};
+
+	var computeProximity2D = { | vectors |
+		var distances = Array.newClear(vectors.size),
+			index = 0,
+			averageDistance = 0;
+
+		vectors.do({ | subject, i |
+			var others = (vectors++[]);
+			others = others.copyToEnd(i+1);
+
+			others.do({ | other, k |
+				var distance = computeProximity2XZ.value([subject, other]);
+
+				distances[index] = distance;
+				index = index + 1;
+			});
+
+		});
+
+		averageDistance = distances.sum()/distances.size;
+
+	};
+
+	computeProximity2D.value(vectors);
+)
+
