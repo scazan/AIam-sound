@@ -1,7 +1,7 @@
 s.options.memSize = 1024 * 100;
 
 s.waitForBoot({
-	var numActors = 2;
+	var numActors = 3;
 	var actor = {
 		var position = Dictionary[\x -> 0, \y -> 0, \z -> 0 ];
 
@@ -13,7 +13,7 @@ s.waitForBoot({
 		];
 	};
 
-	var actors = Array.fill(numActors, ~actor.value() );
+	var actors = Array.fill(numActors, actor.value() );
 	var actorProximity = 999;
 
 	var computeProximity2XZ = { | vectors |
@@ -50,68 +50,6 @@ s.waitForBoot({
 			maxNumTracked = numActors,
 			window;
 
-		// Creating a struct/Dictionary for each synth
-		var synths = Array.fill(maxNumTracked, {
-			var freqBus = Bus.control(s,1),
-				ampBus = Bus.control(s,1),
-				trackerID = nil,
-				active = false;
-				//node = Synth(\voice, [\voiceFreqBus, freqBus, \voiceAmpBus, ampBus ]),
-				//controller = Pbind(
-					//\type, \set,
-					//\id, node.nodeID,
-					//\args, #[\vowel, \transpose],
-					//\transpose, 0.75 + 0.25.rand,
-					//\dur, 4.5,
-					//\vowel, Prand([0,1,2,3,4], inf),
-				//).play;
-
-			Dictionary[
-				\ampBus -> ampBus,
-				\freqBus -> freqBus,
-				//\node -> node,
-				//\controller -> controller
-			];
-		});
-
-
-		// Create 3D vectors for each possible tracked person
-		var energies = Array.fill(maxNumTracked, {Dictionary[\x -> 0, \y -> 0, \z -> 0 ]});
-		var previousEnergies = Array.fill(maxNumTracked, {Dictionary[\x -> 0, \y -> 0, \z -> 0 ]});
-		var positions = Array.fill(maxNumTracked, {Dictionary[\x -> 0, \y -> 0, \z -> 0 ]});
-
-		var addEnergy = { | mag, id |
-			var newEnergy = (energies[id][\x] + mag);
-
-			if(newEnergy >= 1, {
-				energies[id][\x] = 1;
-			}, {
-				energies[id][\x] = newEnergy;
-			});
-		};
-
-		~prev = previousEnergies;
-		~energies = energies;
-
-		//Tdef(\gravity, {
-			//{
-				//energies.do({ | item, i |
-					//if(energies[i][\x] > 0.01, {
-						////energies[i][\x] = energies[i][\x] - 0.00027;
-						////synths[i][\freqBus].set(energies[i][\x]**1.15);
-						////synths[i][\node].set(\ramp, energies[i][\x] * 5);
-						////synths[i][\ampBus].set(energies[i][\x]**2);
-					//}, {
-						//synths[i][\freqBus].set(0);
-						//synths[i][\ampBus].set(0);
-					//});
-				//});
-
-				//0.001.wait;
-			//}.loop;
-		//}).play;
-
-
 		~computeDensity = { |val|
 			val = ((1 - val)**1 * 2).abs;
 
@@ -124,18 +62,25 @@ s.waitForBoot({
 			});
 		};
 
-		OSCdef(\stateListener, { | msg |
+
+
+
+
+		// Listeners
+		OSCdef(\actorStateListener, { | msg |
 			var state = msg[2],
 				id = msg[1].asInteger();
 
 			switch(state,
 				"new", {
-					var inactiveSynths = synths.select({ | synth |
+					var inactiveSynths = actors.select({ | synth |
 						synth[\active] == false;
 					});
 
 					if(inactiveSynths.size > 0, {
+						// grab the first inactive synth available
 						var inactiveSynth = inactiveSynths[0];
+						// Set it to be active with this id
 						inactiveSynth[\trackingID] = id;
 						inactiveSynth[\active] = true;
 					});
@@ -143,11 +88,11 @@ s.waitForBoot({
 				"tracking", {},
 				"lost", {
 					// find where this was being tracked previously
-					var lostSynth = synths.select({ | synth |
+					var lostSynth = actors.select({ | synth |
 						synth[\trackingID] == id;
 					});
 
-					// Deactivat the slot
+					// Deactivate the slot
 					lostSynth.do({ | synth |
 						synth[\active] = false;
 					});
@@ -156,7 +101,8 @@ s.waitForBoot({
 		}, path: \state, recvPort: 15002);
 
 		OSCdef(\tracker, { | msg |
-			var id = msg[1].asFloat - 1,
+			//var id = msg[1].asFloat - 1,
+			var id = msg[1].asFloat,
 				x = msg[2].asFloat / 1800,
 				y = msg[3].asFloat / 500,
 				z = msg[4].asFloat / 7000;
@@ -167,60 +113,56 @@ s.waitForBoot({
 
 
 			var activeActor;
-			var activeActors = ~actors.select({ | actor |
+			var activeActors;
+			id = id - 1;
+			activeActors = actors.select({ | actor |
 				actor[\id] == id;
 			});
 
+			[id, activeActors].postln;
 			if(activeActors.size == 0, {
-				var inactiveSynths = synths.select({ | synth |
+				// get all the inactive synths
+				var inactiveSynths = actors.select({ | synth |
 					synth[\active] == false;
 				});
 
-				var inactiveSynth = inactiveSynths[0];
-				inactiveSynth[\id] = id;
-				inactiveSynth[\active] = true;
 
-				activeActor = inactiveSynth;
+			["FALSE", inactiveSynths].postln;
+				// if we have inactive synths available
+				if(inactiveSynths.size > 0, {
+					// use the first inactive synth
+					var inactiveSynth = inactiveSynths[0];
+					inactiveSynth[\id] = id;
+					inactiveSynth[\active] = true;
+
+					activeActor = inactiveSynth;
+				});
+
+				// TODO: what to do when there are no synths available? currently ignore that actor
+
 			}, {
 				activeActor = activeActors[0];
 			});
 
 
-			activeActor[\positions][\x] = x;
-			activeActor[\positions][\y] = y;
+			// If we have an actor, then set its position
+			if(activeActor.notNil, {
+				activeActor[\position][\x] = x;
+				activeActor[\position][\y] = y;
+				activeActor[\position][\z] = z;
 
-			// TODO: Do this separately on the whole collection of actors
-			// Proximity
-			if(id == 0, {
-				var proximityX = (x - activeActor[\positions][\x]).abs,
-					proximityY = (y - activeActor[\positions][\y]).abs;
+				//z = (z-0.5).abs / (1-0.5);
 
-				//~computeDensity.value(proximityX);
-			}, {
 
-				//if(id == 1, {
-					//var proximityX = (x - positions[0][\x]).abs,
-						//proximityY = (y - positions[0][\y]).abs;
+				// update the proximities
+				// TODO: only computer based on active == true
+				actors.postln;
+				actorProximity = computeProximityN2D.value(actors.collect({ | item | [item[\position][\x],item[\position][\z] ] ; }));
+				actorProximity.postln;
 
-					////[id, proximityX, x, positions[0][\x]].postln;
-				//});
+				// Update any synths with new info
+				~computeDensity.value(actorProximity);
 			});
-
-			diffX = (previousEnergies[id][\x] - x).abs;
-			diffY = (previousEnergies[id][\y] - y).abs;
-			diffZ = (previousEnergies[id][\z] - z).abs;
-
-			addEnergy.value(diffX, id);
-			z = (z-0.5).abs / (1-0.5);
-
-			if(diffX > 0.045, {
-				//synths[id][\node].set(\vowel, [1,2,3,4,5].choose);
-			});
-
-			previousEnergies[id] = Dictionary[\x -> x, \y -> y, \z -> z];
-
-			actorProximity = computeProximityN2D.value(actors.collect({ | item | [item[\position][\x],item[\position][\z] ] ; }));
-			actorProximity.postln;
 
 		}, path: \center, recvPort: 15002);
 
@@ -229,26 +171,26 @@ s.waitForBoot({
 		window = Window.new("AIam Sound", Rect(100, 100, 100, 100)).front;
 		window.view.background_(Color.new255(153, 255, 102));
 
-		window.drawFunc = Routine({
-			{
-				window.view.background_(Color.new255(energies[0][\x] * 255, 0, 102));
-				0.yield;
-			}.loop;
-		});
+		//window.drawFunc = Routine({
+			//{
+				//window.view.background_(Color.new255(energies[0][\x] * 255, 0, 102));
+				//0.yield;
+			//}.loop;
+		//});
 
 		window.onClose = {
-			synths.do({ | synth, i |
-				//synth[\node].free;
-				//synth[\controller].stop;
+			//synths.do({ | synth, i |
 				Tdef(\vocal).stop;
 				Tdef(\vocal2).stop;
 				Ndef(\bass).stop;
 				Ndef(\pulseTrain0).stop;
-			});
+			//});
 		};
 
 		{ while { window.isClosed.not } { window.refresh; 0.04.wait; } }.fork(AppClock);
 	};
+
+	// Synths
 
 	Ndef(\pad, { | amp=0.25, freq = 500, mod = 0.3, dist=0 |
 		var out = LFPulse.ar(freq) + (LFPulse.ar(freq / 0.75) * LFPulse.ar(20.2, mul: SinOsc.kr(0.1, mul:0.5), add: 0.4)) ;
@@ -276,7 +218,6 @@ s.waitForBoot({
 		HPF.ar(out, 30).tanh * 0.9;
 	});
 
-	Ndef(\bass).play();
 
 	Ndef(\pulseTrain0, {arg freq = 200, ramp=2.2, dist=1, amp=7.7, octave=1, density=1, vowel=0, lag=5;
 		var out, formants, createVowel, snd;
@@ -328,8 +269,6 @@ s.waitForBoot({
 		snd ;
 	});
 
-	Ndef(\pulseTrain0).play();
-	Ndef(\pulseTrain0).fadeTime = 1;
 
 	// ROUTINES
 	Tdef(\vocal, {
@@ -338,7 +277,6 @@ s.waitForBoot({
 			( 1.0.rand + 0.7 ).wait;
 		}.loop;
 	});
-	Tdef(\vocal).play;
 
 	Tdef(\vocal2, {
 		{
@@ -347,6 +285,11 @@ s.waitForBoot({
 		}.loop;
 	});
 
+	Ndef(\pulseTrain0).play();
+	Ndef(\pulseTrain0).fadeTime = 1;
+	Ndef(\bass).play();
+
+	Tdef(\vocal).play;
 	Tdef(\vocal2).play;
 
 
