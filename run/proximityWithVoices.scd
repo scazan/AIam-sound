@@ -13,7 +13,7 @@ s.waitForBoot({
 		];
 	};
 
-	var actors = Array.fill(numActors, actor.value() );
+	var actors = Array.fill(numActors, actor);
 	var actorProximity = 999;
 
 	var computeProximity2XZ = { | vectors |
@@ -73,8 +73,18 @@ s.waitForBoot({
 
 			switch(state,
 				"new", {
-					var inactiveSynths = actors.select({ | synth |
-						synth[\active] == false;
+					var inactiveSynths;
+					var existingSynths = actors.select({ | synth |
+						(synth[\trackingID] == id) && (synth[\active] == true);
+					});
+
+					if(existingSynths.size == 0, {
+						inactiveSynths = actors.select({ | synth |
+							synth[\active] == false;
+						});
+
+					}, {
+						inactiveSynths = existingSynths;
 					});
 
 					if(inactiveSynths.size > 0, {
@@ -119,7 +129,6 @@ s.waitForBoot({
 				actor[\id] == id;
 			});
 
-			[id, activeActors].postln;
 			if(activeActors.size == 0, {
 				// get all the inactive synths
 				var inactiveSynths = actors.select({ | synth |
@@ -127,7 +136,6 @@ s.waitForBoot({
 				});
 
 
-			["FALSE", inactiveSynths].postln;
 				// if we have inactive synths available
 				if(inactiveSynths.size > 0, {
 					// use the first inactive synth
@@ -156,8 +164,7 @@ s.waitForBoot({
 
 				// update the proximities
 				// TODO: only computer based on active == true
-				actors.postln;
-				actorProximity = computeProximityN2D.value(actors.collect({ | item | [item[\position][\x],item[\position][\z] ] ; }));
+				actorProximity = computeProximityN2D.value(actors.collect({ | item | [item[\position][\x], item[\position][\z] ] ; }));
 				actorProximity.postln;
 
 				// Update any synths with new info
@@ -295,4 +302,5 @@ s.waitForBoot({
 
 	AppClock.sched(3, startReceiver);
 });
+
 
