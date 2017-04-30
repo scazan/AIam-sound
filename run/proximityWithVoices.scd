@@ -24,7 +24,7 @@ s.waitForBoot({
 	};
 
 	var computeProximityN2D = { | vectors |
-		var distances = Array.newClear(vectors.size),
+		var distances = Array.fill(vectors.size, 0),
 			index = 0,
 			averageDistance = 0;
 
@@ -155,6 +155,8 @@ s.waitForBoot({
 
 			// If we have an actor, then set its position
 			if(activeActor.notNil, {
+				var allActiveActors = actors.select({|item| item[\active] == true});
+
 				activeActor[\position][\x] = x;
 				activeActor[\position][\y] = y;
 				activeActor[\position][\z] = z;
@@ -163,9 +165,11 @@ s.waitForBoot({
 
 
 				// update the proximities
-				// TODO: only computer based on active == true
-				actorProximity = computeProximityN2D.value(actors.collect({ | item | [item[\position][\x], item[\position][\z] ] ; }));
-				actorProximity.postln;
+				// We need at least two actors to judge a distance
+				if(allActiveActors.size >= 2, {
+					actorProximity = computeProximityN2D.value(allActiveActors.collect({ | item | [item[\position][\x], item[\position][\z] ] ; }));
+					actorProximity.postln;
+				});
 
 				// Update any synths with new info
 				~computeDensity.value(actorProximity);
@@ -302,5 +306,4 @@ s.waitForBoot({
 
 	AppClock.sched(3, startReceiver);
 });
-
 
