@@ -54,8 +54,9 @@ s.waitForBoot({
 			val = ((1 - val)**1 * 2).abs;
 
 			if(val > 1.0, {
+				[">>", val ].postln;
 				Tdef(\vocal).stop;
-				Ndef(\pulseTrain0).set(\lag, 5 );
+				Ndef(\pulseTrain0).set(\lag, 1 );
 				Ndef(\pulseTrain0).set(\density, val+0.5 );
 			}, {
 				Tdef(\vocal).play;
@@ -71,8 +72,9 @@ s.waitForBoot({
 			var state = msg[2],
 				id = msg[1].asInteger();
 
-			switch(state,
-				"new", {
+			case(
+				{state == "new"
+				|| state == "visible"}, {
 					var inactiveSynths;
 					var existingSynths = actors.select({ | synth |
 						(synth[\trackingID] == id) && (synth[\active] == true);
@@ -95,8 +97,9 @@ s.waitForBoot({
 						inactiveSynth[\active] = true;
 					});
 				},
-				"tracking", {},
-				"lost", {
+				{state == "tracking"}, {},
+				{state == "lost"
+				|| state == "stopped_tracking"}, {
 					// find where this was being tracked previously
 					var lostSynth = actors.select({ | synth |
 						synth[\trackingID] == id;
@@ -216,6 +219,7 @@ s.waitForBoot({
 		([ out, DelayL.ar( out) ] * 1).tanh * Lag.kr(amp, 0.5);
 	});
 
+
 	Ndef(\bass, { | amp=0, freq=2000 |
 		var reverb = FreeVerb.ar(_, mix: 0.5, room: 0.8);
 		var lpf = LPF.ar(_, 180);
@@ -244,7 +248,7 @@ s.waitForBoot({
 		*
 		0.8 *
 		EnvGen.ar(
-			Env.perc(0, 0.10, 1),gate: Impulse.kr(ramp * (density.lag(lag).pow(4)*10+1))
+			Env.perc(0, 0.10, 1),gate: Impulse.kr(ramp * (density.lag(lag).pow(4)*8+1))
 		) * amp;
 
 		formants = Dictionary[
@@ -277,7 +281,7 @@ s.waitForBoot({
 		snd = SelectX.ar(Lag.kr(vowel, 0.5), [createVowel.value(out, "A"), createVowel.value(out, "E"), createVowel.value(out, "I"), createVowel.value(out, "O"), createVowel.value(out, "U")]);
 		snd = RLPFD.ar(snd, noise * 600 + 100, (noise * 0.4 + 0.2).clip(0,1) );
 		snd = MidEQ.ar(snd, 642, 0.1, 15);
-		snd ;
+		snd * 1 ;
 	});
 
 
