@@ -225,7 +225,8 @@ s.waitForBoot({
 	};
 
 	// Load Synths
-	"synths.scd".loadRelative;
+	"synths.scd".loadRelative; // returns ~synths
+	~synths.value();
 
 
 

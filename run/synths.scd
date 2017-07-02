@@ -1,3 +1,4 @@
+~synths = {
 	// Synths
 
 	Ndef(\pad, { | amp=0.25, freq = 500, mod = 0.3, dist=0 |
@@ -128,3 +129,4 @@
 	Ndef(\pulseTrain0).fadeTime = 1;
 	Ndef(\bass).play();
 	Ndef(\reverb).play();
+};
