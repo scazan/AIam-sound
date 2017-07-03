@@ -1,5 +1,5 @@
 ~cSynths = {
-	var dict;
+	var dict, sceneSynths;
 
 	// Synths
 
@@ -81,7 +81,7 @@
 		snd * 1 ;
 	});
 
-	Ndef(\saw2, { | section=1, freq=600, x=0.5, y=0.5 |
+	Ndef(\saw2, { | section=1, freq=600, x=0.5, y=0.5, z=0.5 |
 		var out;
 		//var freq = (0 + (3*12)).midicps;
 		var pulses = Array.newClear(4);
@@ -96,13 +96,13 @@
 		out = FreeVerb.ar(out);
 
 		//out = RLPFD.ar(out, MouseY.kr(200, 1000), 0.9) * 0.5;
-		out = LPF.ar(out, (y*800) + 200) * 0.5;
+		out = LPF.ar(out, (z*800) + 200) * 0.5;
 		//out = LPF.ar(out, MouseY.kr(200, 1000)) * 0.5;
 
 		SelectX.ar(section, [out, out * LFPulse.ar(8, width: 0.7).unipolar.lag(0.1)])*0.15;
 	});
 
-	Ndef(\saw, { | section=0, freq=300, x=0.5, y=0.5 |
+	Ndef(\saw, { | section=0, freq=300, x=0.5, y=0.5, z=0.5 |
 		var out;
 		//var freq = (0 + (3*12)).midicps;
 		var pulses = Array.newClear(4);
@@ -117,15 +117,20 @@
 		out = out + (SinOsc.ar(freq /4) * (x*0.8));
 		out = FreeVerb.ar(out);
 
-		out = RLPFD.ar(out, (y * 800) + 200, 0.9) * 0.5;
-		//out = LPF.ar(out, MouseY.kr(200, 1000)) * 0.5;
+		out = RLPFD.ar(out, (z * 800) + 200, 0.9) * 0.5;
+		// out = LPF.ar(out, MouseY.kr(200, 1000)) * 0.5;
 
 		(SelectX.ar(section, [out, out * LFPulse.ar(8, width: 0.7).unipolar.lag(0.1)]) * 5).tanh * 0.15;
 	});
 
+
+
 	Ndef(\reverb, { | amp=0, freq=2000 |
 		FreeVerb.ar( Ndef(\saw).ar + Ndef(\saw2).ar );
 	});
+
+
+
 
 	dict = Dictionary[
 		\play -> {

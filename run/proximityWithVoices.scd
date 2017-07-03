@@ -1,6 +1,5 @@
 s.options.memSize = 1024 * 100;
 
-
 s.waitForBoot({
 	var tasks, synthDefs, main;
 

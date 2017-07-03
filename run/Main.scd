@@ -1,48 +1,53 @@
-	// Synths need an interface of these arguments: x, y, proximity
-	var synths = [
-		[ Ndef(\saw) ],
-		[ Ndef(\saw2) ],
-		[ Ndef(\saw2) ]
-	];
-	var numActors = 3;
+// Synths need an interface of these arguments: x, y, z, proximity
+var synths, sceneController;
+var numActors = 3;
 
 
 // Actor class
-	var actor = { | index, synths |
-		var position = Dictionary[\x -> 0, \y -> 0, \z -> 0 ];
+var actor = { | index, synths |
+	var position = Dictionary[\x -> 0, \y -> 0, \z -> 0 ];
 
 
-		var dict = Dictionary[
-			\id -> 0,
-			\active -> false,
-			\position -> position,
-			\synths -> List[],
-		];
+	var dict = Dictionary[
+		\id -> 0,
+		\active -> false,
+		\position -> position,
+		\synths -> List[],
+	];
 
-		// Add all assigned synths
-		synths[index].do({ |item, i|
-			dict[\synths].add(item);
-		});
+	// Add all assigned synths
+	synths[index].do({ |item, i|
+		dict[\synths].add(item);
+	});
 
-		dict;
-	};
+	dict;
+};
 
-	var actors = Array.fill(numActors, {|i| actor.value(i, synths)});
-	var actorProximity = 999;
-
-
+var actors;
+var actorProximity = 999;
 
 
-	// Distance Calculations
-	var utils, computeProximity2XZ, computeProximityN2D;
-
-    "Utils.scd".loadRelative; // returns ~cUtils
-	utils = ~cUtils.value();
-
-    computeProximity2XZ = utils[\computeProximity2XZ];
-    computeProximityN2D = utils[\computeProximityN2D];
 
 
+// Distance Calculations
+var utils, computeProximity2XZ, computeProximityN2D;
+
+"Utils.scd".loadRelative; // returns ~cUtils
+utils = ~cUtils.value();
+
+computeProximity2XZ = utils[\computeProximity2XZ];
+computeProximityN2D = utils[\computeProximityN2D];
+
+
+
+"SceneController.scd".loadRelative; // returns ~cSceneController
+sceneController = ~cSceneController.value();
+
+//Set the synths for the initial scene
+synths = sceneController[\getSynths].value(0);
+
+// Create Actors
+actors = Array.fill(numActors, {|i| actor.value(i, synths)});
 
 	// Main Function
 	~cMain = { | init, onClose |
@@ -179,7 +184,7 @@
 				~computeDensity.value(actorProximity);
 
 				activeActor[\synths].do({| synth, i |
-					synth.set(\x,activeActor[\position][\z], \y, activeActor[\position][\x]);
+					synth.set(\x,activeActor[\position][\z], \z, activeActor[\position][\x]);
 				});
 
 			});
