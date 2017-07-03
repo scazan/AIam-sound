@@ -1,4 +1,6 @@
-~synths = {
+~cSynths = {
+	var dict;
+
 	// Synths
 
 	Ndef(\pad, { | amp=0.25, freq = 500, mod = 0.3, dist=0 |
@@ -125,8 +127,19 @@
 		FreeVerb.ar( Ndef(\saw).ar + Ndef(\saw2).ar );
 	});
 
-    Ndef(\pulseTrain0).play();
-	Ndef(\pulseTrain0).fadeTime = 1;
-	Ndef(\bass).play();
-	Ndef(\reverb).play();
+	dict = Dictionary[
+		\play -> {
+			Ndef(\pulseTrain0).play();
+			Ndef(\pulseTrain0).fadeTime = 1;
+			Ndef(\bass).play();
+			Ndef(\reverb).play();
+		},
+		\stop -> {
+			Ndef(\bass).stop;
+			Ndef(\pulseTrain0).stop;
+			Ndef(\reverb).stop;
+		}
+	];
+
+	dict;
 };
