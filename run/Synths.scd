@@ -81,25 +81,25 @@
 		snd * 1 ;
 	});
 
-	Ndef(\saw2, { | section=1, freq=600, x=0.5, y=0.5, z=0.5 |
+	Ndef(\saw2, { | section=1, freq=200, x=0.5, y=0.5, z=0.5 |
 		var out;
 		//var freq = (0 + (3*12)).midicps;
 		var pulses = Array.newClear(4);
 		freq = freq.lag(0.3);
 		4.do({ | i |
 			//pulses[i] = LFPulse.ar([ freq, freq * MouseX.kr(1, 1.01) ] * (i+1), mul: 0.25);
-			pulses[i] = Saw.ar([ freq, freq * (x + 1.01) ] * (i+1), mul: 0.25);
+			pulses[i] = Saw.ar([ freq, freq * (x.abs + 1.01) ] * (i+1), mul: 0.25);
 		});
 
 		out = (Mix.new(pulses) * ( 600 * LFPulse.ar(8).lag(0.1) )).tanh * 0.5 ;
-		out = out + (SinOsc.ar(freq /4) + SinOsc.ar(freq/5) * (x*0.8));
+		out = out + (SinOsc.ar(freq /4) + SinOsc.ar(freq/6) * (x.abs*0.8) * 10).tanh;
 		out = FreeVerb.ar(out);
 
 		//out = RLPFD.ar(out, MouseY.kr(200, 1000), 0.9) * 0.5;
-		out = LPF.ar(out, (z*800) + 200) * 0.5;
+		out = LPF.ar(out, (z.lag(0.1).abs*800) + 200) * 0.5;
 		//out = LPF.ar(out, MouseY.kr(200, 1000)) * 0.5;
 
-		SelectX.ar(section, [out, out * LFPulse.ar(8, width: 0.7).unipolar.lag(0.1)])*0.15;
+		SelectX.ar(section, [out, out * LFPulse.ar(8, width: 0.7).unipolar.lag(0.1)])*0.5;
 	});
 
 	Ndef(\saw, { | section=0, freq=300, x=0.5, y=0.5, z=0.5 |
@@ -109,15 +109,18 @@
 		freq = freq.lag(0.3);
 		4.do({ | i |
 			//pulses[i] = LFPulse.ar([ freq, freq * MouseX.kr(1, 1.01) ] * (i+1), mul: 0.25);
-			//pulses[i] = Saw.ar([ freq, freq * MouseX.kr(1, 1.01) ] * (i+1), mul: 0.25);
-			pulses[i] = Saw.ar([ freq, freq * (x+1)] * (i+1), mul: 0.25);
+			// pulses[i] = Saw.ar([ freq, freq * MouseX.kr(1, 1.01) ] * (i+1), mul: 0.25);
+			pulses[i] = Saw.ar([ freq, freq * (x.abs+1.01)] * (i+1), mul: 0.25);
 		});
 
 		out = (Mix.new(pulses) * ( freq/6 * LFPulse.ar(8).lag(0.1) )).tanh * 0.5 ;
-		out = out + (SinOsc.ar(freq /4) * (x*0.8));
-		out = FreeVerb.ar(out);
 
-		out = RLPFD.ar(out, (z * 800) + 200, 0.9) * 0.5;
+
+		// out = out + (SinOsc.ar(freq /4) * (x.abs*0.8));
+		out = FreeVerb2.ar(out[0], out[1]);
+
+		// out = RLPFD.ar(out, MouseY.kr(200, 1000),0.9) * 0.5;
+		out = RLPFD.ar(out, (z.lag(0.1).abs * 800) + 200, 0.9) * 0.5;
 		// out = LPF.ar(out, MouseY.kr(200, 1000)) * 0.5;
 
 		(SelectX.ar(section, [out, out * LFPulse.ar(8, width: 0.7).unipolar.lag(0.1)]) * 5).tanh * 0.15;
@@ -126,9 +129,33 @@
 
 
 	Ndef(\reverb, { | amp=0, freq=2000 |
-		FreeVerb.ar( Ndef(\saw).ar + Ndef(\saw2).ar );
+		FreeVerb.ar( Ndef(\saw).ar + Ndef(\saw2).ar, room:0.8, mix: 0.6 );
 	});
 
+
+	Ndef(\sawPad, { arg freq=75, amp=0, resonantFreq=1760;
+		var waveTable = Wavetable.chebyFill(513, [0, 0, 1]);
+		var buf = LocalBuf.newFrom(waveTable);
+		var out;
+		var numSaws = 9;
+		// var spread = MouseY.kr(3, 50);
+		var spread = 5;
+		var saws = Array.newClear(numSaws);
+		var saws2 = Array.newClear(numSaws);
+
+		// A bit of portamento...
+		freq = freq.lag(0.25);
+
+		numSaws.do({ arg index; // Which one are we doing... which iteration we are on
+			saws.put(index, Saw.ar(freq + (spread * 1.0.rand) ) );
+			saws2.put(index, Saw.ar(freq + (spread * 1.0.rand) ) );
+		});
+
+		out = LPF.ar([ Mix.new(saws), Mix.new(saws2) ], 2000) * 0.6;
+		out = Shaper.ar(buf, out) + LPF.ar((BMoog.ar(out,freq: resonantFreq, q: 0.1, mode: 2.5, mul: 1) *0.9).wrap * 0.95, 9000);
+		out = FreeVerb2.ar(out[0], out[1]);
+		out * amp;
+	});
 
 
 
@@ -138,11 +165,16 @@
 			Ndef(\pulseTrain0).fadeTime = 1;
 			Ndef(\bass).play();
 			Ndef(\reverb).play();
+			Ndef(\sawPad).play();
+			Ndef(\sawPad).fadeTime = 60*4;
+			Ndef(\sawPad).xset(\amp, 0.15);
 		},
 		\stop -> {
 			Ndef(\bass).stop;
-			Ndef(\pulseTrain0).stop;
+			// Ndef(\pulseTrain0).stop;
 			Ndef(\reverb).stop;
+			Ndef(\sawPad).stop();
+
 		}
 	];
 

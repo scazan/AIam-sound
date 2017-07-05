@@ -9,6 +9,13 @@
 		]
 	];
 
+	var tasks = [
+		[
+			[ Tdef(\vocal) ],
+			[ Tdef(\vocal2) ]
+		]
+	];
+
 	Dictionary[
 		\getSynths -> { | sceneIndex |
 			synths[sceneIndex];

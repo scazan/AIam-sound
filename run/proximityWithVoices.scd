@@ -14,6 +14,7 @@ s.waitForBoot({
 	tasks = ~cTasks.value();
 	tasks[\play].value();
 
+	// Main Program
 	"Main.scd".loadRelative; // returns ~cMain
 	main = ~cMain.value({}, {
 		tasks[\stop].value();

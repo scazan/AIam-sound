@@ -113,10 +113,17 @@ Ndef(\hum).xset();
 
 (
 x.free;
-x = { MoogLadder.ar(Mix(
+x = {
+
+	var out = MoogLadder.ar(Mix(
 	LFSaw.ar([120, 180], 0, 0.33) * Lag.ar(LFPulse.ar(MouseX.kr(1, 34), width: MouseX.kr(0.001, 0.6) ), 0.07)
 
-), LinExp.kr(MouseY.kr(0.1, 0.5 * pi), -1, 1, 180, 8500), 0.75).dup }.play
+	), LinExp.kr(MouseY.kr(0.1, 0.5 * pi), -1, 1, 180, 8500), 0.75).dup;
+
+	out = GVerb.ar(out, roomsize: 10, revtime: 5, damping: 0.7);
+	out;
+
+}.play
 )
 
 
@@ -222,7 +229,7 @@ s.meter
 			LFPulse.ar(
 				[freq * 1.0,freq * 1.01]
 			),
-			0.35, 0.051 
+			0.35, 0.051
 		)*dist).tanh
 		*
 		0.8 *
@@ -315,7 +322,7 @@ s.queryAllNodes
 s.sendMsg(\n_free, 1076);
 
 
-/// 
+///
 
 
 s.boot;
@@ -360,7 +367,7 @@ s.boot;
 			LFPulse.ar(
 				[freq * 1.0,freq * 1.01]
 			),
-			0.35, 0.051 
+			0.35, 0.051
 		)*dist).tanh
 		*
 		0.8 *
@@ -425,7 +432,7 @@ Ndef(\pulseTrain0).fadeTime = 1;
 		reverb.value(source) * amp.lag(0.5);
 	});
 
-	
+
 	Ndef(\reverb).play();
 )
 
@@ -522,3 +529,143 @@ MIDIIn.connectAll
 	computeProximity2D.value(vectors);
 )
 
+////// 6/19
+
+(
+	Ndef(\ladder, { | amp=0, freq=2000 |
+
+		var out = MoogLadder.ar(Mix(
+		LFSaw.ar([120, 180], 0, 0.33) * Lag.ar(LFPulse.ar(MouseX.kr(1, 34), width: MouseX.kr(0.001, 0.6) ), 0.07)
+
+		), LinExp.kr(MouseY.kr(0.1, 0.5 * pi), -1, 1, 180, 8500), 0.75).dup;
+
+		out = GVerb.ar(out, roomsize: 10, revtime: 5, damping: 0.7);
+		out * amp;
+
+	});
+
+)
+
+Ndef(\ladder).play();
+Ndef(\ladder).stop(0);
+Ndef(\ladder).xset();
+(
+	Ndef(\graySine, { | amp=0, freq=2100, q=0.4, modFreq=12 |
+		var verb;
+		var noise = WhiteNoise.ar();
+		var lag = (modFreq/20).pow(4).clip(0,1);
+
+		var filtered = BPF.ar(noise,
+			//freq: [freq, freq * 1.1] + LFPulse.ar(modFreq, mul: 240).unipolar.lag(0.1),
+			freq: [freq, freq * 1.1, freq*0.5, freq*0.55] + LFPulse.ar(modFreq.clip(1,20), mul: [freq/4, freq/2, freq/3]).unipolar.lag(lag.abs),
+			rq: q * 0.001
+		);
+
+		filtered = (filtered*2).tanh;
+		filtered = LPF.ar(filtered, freq: 7500);
+
+		verb = FreeVerb.ar( filtered * amp,
+			mix: 0.6,
+			room: 0.5,
+			damp: 0.1
+		) ;
+
+		verb;
+	});
+
+)
+
+Ndef(\graySine).play();
+Ndef(\graySine).stop(0);
+Ndef(\graySine).clear();
+Ndef(\graySine).xset();
+
+m = NdefMixer.new(s);
+
+(
+	Ndef(\sine, { | amp=0, freq=300, q=0.1 |
+		var verb;
+		var noise = WhiteNoise.ar();
+
+		var filtered = BPF.ar(noise,
+			freq: [freq, freq * 1.01],
+			rq: q * 0.001
+		);
+
+		filtered = ((filtered*amp)*300).max.tanh;
+
+		verb = FreeVerb.ar( filtered,
+			mix: 0.8,
+			room: 0.7,
+			damp: 0.8
+		) ;
+
+		verb * 8;
+	});
+
+)
+//G# 414.5 415
+// 196
+
+Ndef(\sine).playN([2,3]);
+Ndef(\sine).stop(0);
+Ndef(\sine).xset();
+
+
+0+(3*12).midicps
+
+
+// REPRO
+m = NdefMixer.new(s)
+(
+	Ndef(\drone, { | amp=0, note=0, octave=8, lpfFreq=600 |
+		var dist, osc1, osc2, mix, out;
+		var freq = (note + (octave * 12)).midicps;
+
+		osc1 = {|x| LFPulse.ar([ x, x * 1.5, x/4 ], width: 0.1)};
+		osc2 = {|x| LFSaw.ar([x, x * 1.5]/2) * 0.8};
+		//osc2 = LPF.ar(osc2, 9000);
+
+		//mix = (osc1 + osc2);
+		//mix = {|freq| osc1.value(freq).sum + (osc2.value(freq*1.1).sum * LFPulse.kr(1).unipolar)};
+		mix = {|freq| osc1.value(freq).sum};
+		dist = ([mix.value(freq), mix.value(freq*1.01)] * 60.dbamp).wrap;
+
+		out = dist;
+		LPF.ar(out * amp, lpfFreq);
+	});
+
+)
+
+Ndef(\drone).play();
+Ndef(\drone).stop(0);
+Ndef(\drone).clear();
+
+m = NdefMixer.new(s)
+
+(
+
+Ndef(\sawPad, { arg freq=75;
+	var waveTable = Wavetable.chebyFill(513, [0, 0, 1]);
+	var buf = LocalBuf.newFrom(waveTable);
+	var out;
+	var numSaws = 9;
+	// var spread = MouseY.kr(3, 50);
+	var spread = 5;
+	var saws = Array.newClear(numSaws);
+	var saws2 = Array.newClear(numSaws);
+
+	// A bit of portamento...
+	freq = freq.lag(0.25);
+
+	numSaws.do({ arg index; // Which one are we doing... which iteration we are on
+		saws.put(index, Saw.ar(freq + (spread * 1.0.rand) ) );
+		saws2.put(index, Saw.ar(freq + (spread * 1.0.rand) ) );
+	});
+
+	out = LPF.ar([ Mix.new(saws), Mix.new(saws2) ], 2000) * 0.6;
+	out = Shaper.ar(buf, out);
+	out = FreeVerb2.ar(out[0], out[1]);
+	out * 0.15;
+});
+)

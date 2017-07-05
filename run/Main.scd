@@ -60,7 +60,7 @@ actors = Array.fill(numActors, {|i| actor.value(i, synths)});
 			val = ((1 - val)**1 * 2).abs;
 
 			if(val > 1.0, {
-				[">>", val ].postln;
+			// [">>", val ].postln;
 				Tdef(\vocal).stop;
 				Ndef(\pulseTrain0).set(\lag, 1 );
 				Ndef(\pulseTrain0).set(\density, val+0.5 );
@@ -177,7 +177,7 @@ actors = Array.fill(numActors, {|i| actor.value(i, synths)});
 				// We need at least two actors to judge a distance
 				if(allActiveActors.size >= 2, {
 					actorProximity = computeProximityN2D.value(allActiveActors.collect({ | item | [item[\position][\x], item[\position][\z] ] ; }));
-					actorProximity.postln;
+				// actorProximity.postln;
 				});
 
 				// Update any synths with new info
