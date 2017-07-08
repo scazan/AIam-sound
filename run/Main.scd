@@ -187,6 +187,9 @@ actors = Array.fill(numActors, {|i| actor.value(i, synths)});
 					synth.set(\x,activeActor[\position][\z], \z, activeActor[\position][\x]);
 				});
 
+				// testing onsets
+			~onsetBusses[activeActor[\id]].set(activeActor[\position][\x], activeActor[\position][\y], activeActor[\position][\z]);
+
 			});
 
 		}, path: \center, recvPort: 15002);

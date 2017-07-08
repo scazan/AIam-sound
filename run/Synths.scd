@@ -1,8 +1,36 @@
 ~cSynths = {
 	var dict, sceneSynths;
 
+	// Busses
+	~onsetBusses = [Bus.control(s,3), Bus.control(s,3), Bus.control(s,3)];
+
 	// Synths
 
+	// Scene 1
+	Ndef(\graySine, { | amp=0, freq=2100, q=0.4, modFreq=12 |
+		var verb;
+		var noise = WhiteNoise.ar();
+		var lag = (modFreq/20).pow(4).clip(0,1);
+
+		var filtered = BPF.ar(noise,
+			//freq: [freq, freq * 1.1] + LFPulse.ar(modFreq, mul: 240).unipolar.lag(0.1),
+			freq: [freq, freq * 1.1, freq*0.5, freq*0.55] + LFPulse.ar(modFreq.clip(1,20), mul: [freq/4, freq/2, freq/3]).unipolar.lag(lag.abs),
+			rq: q * 0.001
+		);
+
+		filtered = (filtered*2).tanh;
+		filtered = LPF.ar(filtered, freq: 7500);
+
+		verb = FreeVerb.ar( filtered * amp,
+			mix: 0.6,
+			room: 0.5,
+			damp: 0.1
+		) ;
+
+		verb;
+	});
+
+	//Scene 2
 	Ndef(\pad, { | amp=0.25, freq = 500, mod = 0.3, dist=0 |
 		var out = LFPulse.ar(freq) + (LFPulse.ar(freq / 0.75) * LFPulse.ar(20.2, mul: SinOsc.kr(0.1, mul:0.5), add: 0.4)) ;
 		out = LFNoise1.ar(0.5, mul: 0.4, add: 0.6) * out;
@@ -156,6 +184,22 @@
 		out = FreeVerb2.ar(out[0], out[1]);
 		out * amp;
 	});
+
+	// Onset timing
+	3.do({ |i|
+		Ndef(("onsets"++i).asSymbol, { | amp=0 |
+			var trackb,trackh,trackq,tempo;
+			var input = ~onsetBusses[i];
+
+			var chain = FFT({ LocalBuf(512) } ! input.numChannels, input);
+			var onsets = Onsets.kr(chain, 0, \rcomplex);
+			var timer = Timer.kr(onsets);
+
+			SendReply.kr(onsets, '/reply', timer, i);
+		});
+
+	});
+
 
 
 

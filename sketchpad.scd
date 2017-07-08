@@ -669,3 +669,33 @@ Ndef(\sawPad, { arg freq=75;
 	out * 0.15;
 });
 )
+
+
+
+
+~onsetBus = Bus.control(s, 3);
+(
+// Onset timin
+Ndef(\onsets, { | amp=0 |
+	var trackb,trackh,trackq,tempo;
+	var buf = LocalBuf(512);
+	var input = ~onsetBus;
+
+	var chain = FFT(buf, input.kr);
+	var onsets = Onsets.kr(chain, 0, \rcomplex);
+	var timer = Timer.kr(onsets);
+
+	SendReply.kr(onsets, '/reply', timer);
+});
+
+)
+
+Ndef(\onsets).play();
+Ndef(\onsets).stop(0);
+Ndef(\onsets).xset();
+
+OSCdef(\timing, {arg msg; msg.asInteger.postln;}, '/reply');
+
+~onsetBusses[0].set(1,9,3)
+
+~onsetBusses[0].get({|val| val.postln;});

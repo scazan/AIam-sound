@@ -3,6 +3,9 @@
 
 	var synths = [
 		[
+			[Ndef(\graySine)]
+		],
+		[
 			[ Ndef(\saw) ],
 			[ Ndef(\saw2) ],
 			[ Ndef(\saw2) ]
@@ -16,9 +19,12 @@
 		]
 	];
 
+	var state = Dictionary[
+		\scene -> 0
+	];
+
 	Dictionary[
-		\getSynths -> { | sceneIndex |
-			synths[sceneIndex];
-		}
+		\getState -> { state[\scene]; },
+		\getSynths -> { synths[ state[\scene] ]; }
 	];
 };
