@@ -4,7 +4,7 @@ var numActors = 3;
 
 
 // Actor class
-var actor = { | index, synths |
+var actor = { | index |
 	var position = Dictionary[\x -> 0, \y -> 0, \z -> 0 ];
 
 
@@ -12,13 +12,7 @@ var actor = { | index, synths |
 		\id -> 0,
 		\active -> false,
 		\position -> position,
-		\synths -> List[],
 	];
-
-	// Add all assigned synths
-	synths[index].do({ |item, i|
-		dict[\synths].add(item);
-	});
 
 	dict;
 };
@@ -44,10 +38,10 @@ computeProximityN2D = utils[\computeProximityN2D];
 sceneController = ~cSceneController.value();
 
 //Set the synths for the initial scene
-synths = sceneController[\getSynths].value(0);
+//synths = sceneController[\getSynths].value(0); // You need to not set this but to constantly query the scene controller
 
 // Create Actors
-actors = Array.fill(numActors, {|i| actor.value(i, synths)});
+actors = Array.fill(numActors, {|i| actor.value(i)});
 
 	// Main Function
 	~cMain = { | init, onClose |
@@ -56,18 +50,18 @@ actors = Array.fill(numActors, {|i| actor.value(i, synths)});
 			maxNumTracked = numActors,
 			window;
 
-		~computeDensity = { |val|
-			val = ((1 - val)**1 * 2).abs;
+		//~processProximity = { |val|
+			//val = ((1 - val)**1 * 2).abs;
 
-			if(val > 1.0, {
-			// [">>", val ].postln;
-				Tdef(\vocal).stop;
-				Ndef(\pulseTrain0).set(\lag, 1 );
-				Ndef(\pulseTrain0).set(\density, val+0.5 );
-			}, {
-				Tdef(\vocal).play;
-			});
-		};
+			//if(val > 1.0, {
+			//// [">>", val ].postln;
+				//Tdef(\vocal).stop;
+				//Ndef(\pulseTrain0).set(\lag, 1 );
+				//Ndef(\pulseTrain0).set(\density, val+0.5 );
+			//}, {
+				//Tdef(\vocal).play;
+			//});
+		//};
 
 
 
@@ -181,9 +175,11 @@ actors = Array.fill(numActors, {|i| actor.value(i, synths)});
 				});
 
 				// Update any synths with new info
-				~computeDensity.value(actorProximity);
+				//~processProximity.value(actorProximity);
+				sceneController[\getProcessors].value()[\proximity].value(actorProximity);
 
-				activeActor[\synths].do({| synth, i |
+				//activeActor[\synths].do({| synth, i |
+				sceneController[\getSynths].value()[activeActor[\id]].do({| synth, i |
 					synth.set(\x,activeActor[\position][\z], \z, activeActor[\position][\x]);
 				});
 
