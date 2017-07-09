@@ -7,9 +7,10 @@
 	// Synths
 
 	// Scene 1
-	Ndef(\graySine, { | amp=0, freq=2100, q=0.4, modFreq=12 |
+	Ndef(\graySine, { | amp=0, freq=2100, q=0.4, x=0.5, y=0.5, z=0.5 |
 		var verb;
 		var noise = WhiteNoise.ar();
+		var modFreq = (x * 20).abs + 0.2;
 		var lag = (modFreq/20).pow(4).clip(0,1);
 
 		var filtered = BPF.ar(noise,
@@ -27,7 +28,7 @@
 			damp: 0.1
 		) ;
 
-		verb;
+		verb * z.abs;
 	});
 
 	//Scene 2
@@ -55,11 +56,11 @@
 
 		var out = reverb.value( lpf.value(rumble + hum) );
 
-		HPF.ar(out, 30).tanh * 0.9;
+		HPF.ar(out, 30).tanh * 0.9 * amp;
 	});
 
 
-	Ndef(\pulseTrain0, {arg freq = 200, ramp=2.2, dist=1, amp=7.7, octave=1, density=1, vowel=0, lag=5;
+	Ndef(\pulseTrain0, {arg freq = 200, ramp=2.2, dist=1, amp=0, octave=1, density=1, vowel=0, lag=5;
 		var out, formants, createVowel, snd;
 		var noise = LFNoise1.kr(2).unipolar;
 
@@ -106,7 +107,7 @@
 		snd = SelectX.ar(Lag.kr(vowel, 0.5), [createVowel.value(out, "A"), createVowel.value(out, "E"), createVowel.value(out, "I"), createVowel.value(out, "O"), createVowel.value(out, "U")]);
 		snd = RLPFD.ar(snd, noise * 600 + 100, (noise * 0.4 + 0.2).clip(0,1) );
 		snd = MidEQ.ar(snd, 642, 0.1, 15);
-		snd * 1 ;
+		snd * amp * 7.7 ;
 	});
 
 	Ndef(\saw2, { | section=1, freq=200, x=0.5, y=0.5, z=0.5 |
@@ -157,7 +158,7 @@
 
 
 	Ndef(\reverb, { | amp=0, freq=2000 |
-		FreeVerb.ar( Ndef(\saw).ar + Ndef(\saw2).ar, room:0.8, mix: 0.6 );
+		FreeVerb.ar( Ndef(\saw).ar + Ndef(\saw2).ar, room:0.8, mix: 0.6 ) * 1.0 * amp;
 	});
 
 
@@ -205,13 +206,13 @@
 
 	dict = Dictionary[
 		\play -> {
-			Ndef(\pulseTrain0).play();
-			Ndef(\pulseTrain0).fadeTime = 1;
-			Ndef(\bass).play();
+			// Ndef(\pulseTrain0).play();
+			//Ndef(\pulseTrain0).fadeTime = 1;
+			/*Ndef(\bass).play();
 			Ndef(\reverb).play();
-			Ndef(\sawPad).play();
-			Ndef(\sawPad).fadeTime = 60*4;
-			Ndef(\sawPad).xset(\amp, 0.15);
+			Ndef(\sawPad).play();*/
+			//Ndef(\sawPad).fadeTime = 60*4;
+			// Ndef(\sawPad).xset(\amp, 0.15);
 		},
 		\stop -> {
 			Ndef(\bass).stop;

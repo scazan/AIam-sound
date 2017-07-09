@@ -195,9 +195,13 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 		window = Window.new("AIam Sound", Rect(100, 100, 100, 100)).front;
 		window.view.background_(Color.new255(153, 255, 102));
 
+		Button.new(window).action_(sceneController[\next]);
+
 		window.onClose = {
 			onClose.value();
 		};
 
 		{ while { window.isClosed.not } { window.refresh; 0.04.wait; } }.fork(AppClock);
+
+		sceneController[\next].value();
 	};
