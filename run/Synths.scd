@@ -74,7 +74,7 @@
 		*
 		0.8 *
 		EnvGen.ar(
-			Env.perc(0, 0.10, 1),gate: Impulse.kr(ramp * (density.lag(lag).pow(4)*8+1))
+			Env.perc(0, 0.10, 1),gate: Impulse.kr(ramp * (density.lag(lag).pow(4)*8+1).clip(0,30))
 		) * amp;
 
 		formants = Dictionary[

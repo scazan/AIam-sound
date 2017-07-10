@@ -127,7 +127,7 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 
 			var activeActor;
 			var activeActors;
-			id = id - 1;
+		// id = id - 1;
 			activeActors = actors.select({ | actor |
 				actor[\id] == id;
 			});
@@ -171,7 +171,6 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 				// We need at least two actors to judge a distance
 				if(allActiveActors.size >= 2, {
 					actorProximity = computeProximityN2D.value(allActiveActors.collect({ | item | [item[\position][\x], item[\position][\z] ] ; }));
-				// actorProximity.postln;
 				});
 
 				// Update any synths with new info
