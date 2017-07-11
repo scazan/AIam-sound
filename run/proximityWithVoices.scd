@@ -9,17 +9,17 @@ s.waitForBoot({
 	// synthDefs[\play].value();
 
 
-	// ROUTINES
-	"Tasks.scd".loadRelative; // returns ~cTasks
-	tasks = ~cTasks.value();
-	// tasks[\play].value();
+		// ROUTINES
+		"Tasks.scd".loadRelative; // returns ~cTasks
+		tasks = ~cTasks.value();
+		// tasks[\play].value();
 
-	// Main Program
-	"Main.scd".loadRelative; // returns ~cMain
-	main = ~cMain.value({}, {
-		// tasks[\stop].value();
-		synthDefs[\stop].value();
-	});
+		// Main Program
+		"Main.scd".loadRelative; // returns ~cMain
+		main = ~cMain.value({}, {
+			// tasks[\stop].value();
+			synthDefs[\stop].value();
+		});
 
 	// Start main function
 	AppClock.sched(3, main);
@@ -27,3 +27,9 @@ s.waitForBoot({
 	NdefMixer.new(s);
 });
 
+
+// make tracking work better for when ids have changed (violent takeover)
+
+//Second section of part 1 lotsa contact?
+
+// pulseTrain0 solo for proximity in section 2

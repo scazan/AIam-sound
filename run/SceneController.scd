@@ -4,6 +4,8 @@
 	//Synths are what are controlled per Actor
 	var synths = [
 		[
+			[Ndef(\graySine)],
+			[Ndef(\graySine)],
 			[Ndef(\graySine)]
 		],
 		[
@@ -18,9 +20,9 @@
 		[{
 			synths[scene].do(_.do(_.play));
 
-			Ndef(\graySine).fadeTime = 5;
+			Ndef(\graySine).fadeTime = 2;
 			Ndef(\graySine).xset(\amp, 1);
-			
+
 			{
 				( 60 * 2 ).wait;
 				Ndef(\bass).fadeTime = 30;
@@ -63,10 +65,10 @@
 			\proximity -> { |val|
 				val = ((1 - val)**1 * 2).abs;
 
-				if(val > 1.0, {
-				// [">>", val ].postln;
+				if(val > 1.2, {
+					// [">>", val ].postln;
 					Tdef(\vocal).stop;
-					Ndef(\pulseTrain0).set(\lag, 1 );
+					Ndef(\pulseTrain0).set(\lag, 2 );
 					Ndef(\pulseTrain0).set(\density, val+0.5 );
 				}, {
 					Tdef(\vocal).play;
@@ -77,10 +79,10 @@
 			\proximity -> { |val|
 				val = ((1 - val)**1 * 2).abs;
 
-				if(val > 1.0, {
+				if(val > 1.2, {
 				// [">>", val ].postln;
 					Tdef(\vocal).stop;
-					Ndef(\pulseTrain0).set(\lag, 1 );
+					Ndef(\pulseTrain0).set(\lag, 2 );
 					Ndef(\pulseTrain0).set(\density, val+0.5 );
 				}, {
 					Tdef(\vocal).play;

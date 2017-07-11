@@ -50,27 +50,17 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 			maxNumTracked = numActors,
 			window;
 
-		//~processProximity = { |val|
-			//val = ((1 - val)**1 * 2).abs;
-
-			//if(val > 1.0, {
-			//// [">>", val ].postln;
-				//Tdef(\vocal).stop;
-				//Ndef(\pulseTrain0).set(\lag, 1 );
-				//Ndef(\pulseTrain0).set(\density, val+0.5 );
-			//}, {
-				//Tdef(\vocal).play;
-			//});
-		//};
-
-
-
-
 
 		// Listeners
 		OSCdef(\actorStateListener, { | msg |
-			var state = msg[2],
+		var state = msg[2].asString().trim(),
 				id = msg[1].asInteger();
+
+
+		if(state == "out_of_scene", {
+			Ndef(\graySine).set(\amp, 0);
+		});
+
 
 			case(
 				{state == "new"
@@ -98,17 +88,23 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 					});
 				},
 				{state == "tracking"}, {},
-				{state == "lost"
+				{state == "out_of_scene"
 				|| state == "stopped_tracking"}, {
 					// find where this was being tracked previously
 					var lostSynth = actors.select({ | synth |
 						synth[\trackingID] == id;
 					});
 
+
 					// Deactivate the slot
 					lostSynth.do({ | synth |
 						synth[\active] = false;
 					});
+
+				//TODO
+				// if(sceneController[\getState] == 0, {
+
+		// });
 				},
 			);
 		}, path: \state, recvPort: 15002);
@@ -127,7 +123,10 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 
 			var activeActor;
 			var activeActors;
-		// id = id - 1;
+
+		id = id - 1;
+
+
 			activeActors = actors.select({ | actor |
 				actor[\id] == id;
 			});
@@ -173,14 +172,18 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 					actorProximity = computeProximityN2D.value(allActiveActors.collect({ | item | [item[\position][\x], item[\position][\z] ] ; }));
 				});
 
+
 				// Update any synths with new info
 				//~processProximity.value(actorProximity);
 				sceneController[\getProcessors].value()[\proximity].value(actorProximity);
 
 				//activeActor[\synths].do({| synth, i |
 				sceneController[\getSynths].value()[activeActor[\id]].do({| synth, i |
-					synth.set(\x,activeActor[\position][\z], \z, activeActor[\position][\x]);
+				synth.set(\x, activeActor[\position][\x], \z, activeActor[\position][\z], \y, activeActor[\position][\y]);
 				});
+			// TODO
+			Ndef(\graySine).set(\amp, 1);
+			// Ndef(\bass).set(\amp, 1);
 
 				// testing onsets
 			~onsetBusses[activeActor[\id]].set(activeActor[\position][\x], activeActor[\position][\y], activeActor[\position][\z]);

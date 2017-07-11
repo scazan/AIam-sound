@@ -7,28 +7,40 @@
 	// Synths
 
 	// Scene 1
+	// Fold space into sine
 	Ndef(\graySine, { | amp=0, freq=2100, q=0.4, x=0.5, y=0.5, z=0.5 |
 		var verb;
 		var noise = WhiteNoise.ar();
-		var modFreq = (x * 20).abs + 0.2;
+		var modFreq = ( x.linlin(-1,1, 0, 4).sin * 20).abs + 0.1;
 		var lag = (modFreq/20).pow(4).clip(0,1);
 
-		var filtered = BPF.ar(noise,
+		var filtered;
+		var freqs = [freq, freq * 1.2, freq * 0.6, freq * 0.75];
+
+		freq = SelectX.kr(z.linlin(-1,1,0,1 * freqs.size).abs.floor, freqs);
+
+		// freq = freq + (x.abs * 100);
+
+
+		filtered = BPF.ar(noise,
 			//freq: [freq, freq * 1.1] + LFPulse.ar(modFreq, mul: 240).unipolar.lag(0.1),
 			freq: [freq, freq * 1.1, freq*0.5, freq*0.55] + LFPulse.ar(modFreq.clip(1,20), mul: [freq/4, freq/2, freq/3]).unipolar.lag(lag.abs),
 			rq: q * 0.001
 		);
 
-		filtered = (filtered*2).tanh;
+		filtered = (filtered*2).tanh * 1;
 		filtered = LPF.ar(filtered, freq: 7500);
 
-		verb = FreeVerb.ar( filtered * amp,
+		verb = FreeVerb.ar( filtered * amp.lag(1),
 			mix: 0.6,
 			room: 0.5,
 			damp: 0.1
 		) ;
 
-		verb * z.abs;
+		verb = verb * 0.5;
+
+		verb;
+		//* z.abs;
 	});
 
 	//Scene 2
@@ -60,7 +72,7 @@
 	});
 
 
-	Ndef(\pulseTrain0, {arg freq = 200, ramp=2.2, dist=1, amp=0, octave=1, density=1, vowel=0, lag=5;
+	Ndef(\pulseTrain0, {arg freq = 200, ramp=2.2, dist=1, amp=0, octave=1, density=1, vowel=0, lag=1;
 		var out, formants, createVowel, snd;
 		var noise = LFNoise1.kr(2).unipolar;
 
@@ -152,7 +164,7 @@
 		out = RLPFD.ar(out, (z.lag(0.1).abs * 800) + 200, 0.9) * 0.5;
 		// out = LPF.ar(out, MouseY.kr(200, 1000)) * 0.5;
 
-		(SelectX.ar(section, [out, out * LFPulse.ar(8, width: 0.7).unipolar.lag(0.1)]) * 5).tanh * 0.15;
+		(SelectX.ar(section, [out, out * LFPulse.ar(8, width: 0.7).unipolar.lag(0.1)]) * 5).tanh * 0.35;
 	});
 
 
