@@ -68,7 +68,7 @@
 				if(val > 1.2, {
 					// [">>", val ].postln;
 					Tdef(\vocal).stop;
-					Ndef(\pulseTrain0).set(\lag, 2 );
+					Ndef(\pulseTrain0).set(\lag, 4 );
 					Ndef(\pulseTrain0).set(\density, val+0.5 );
 				}, {
 					Tdef(\vocal).play;
@@ -82,7 +82,7 @@
 				if(val > 1.2, {
 				// [">>", val ].postln;
 					Tdef(\vocal).stop;
-					Ndef(\pulseTrain0).set(\lag, 2 );
+					Ndef(\pulseTrain0).set(\lag, 4 );
 					Ndef(\pulseTrain0).set(\density, val+0.5 );
 				}, {
 					Tdef(\vocal).play;

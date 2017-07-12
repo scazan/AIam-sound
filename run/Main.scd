@@ -56,12 +56,6 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 		var state = msg[2].asString().trim(),
 				id = msg[1].asInteger();
 
-
-		if(state == "out_of_scene", {
-			Ndef(\graySine).set(\amp, 0);
-		});
-
-
 			case(
 				{state == "new"
 				|| state == "visible"}, {
@@ -89,7 +83,9 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 				},
 				{state == "tracking"}, {},
 				{state == "out_of_scene"
+				|| state == "lost"
 				|| state == "stopped_tracking"}, {
+
 					// find where this was being tracked previously
 					var lostSynth = actors.select({ | synth |
 						synth[\trackingID] == id;
@@ -101,13 +97,12 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 						synth[\active] = false;
 					});
 
-				//TODO
-				// if(sceneController[\getState] == 0, {
-
-		// });
+				// TODO: Do this non-globally
+				Ndef(\graySine).set(\amp, 0);
 				},
 			);
 		}, path: \state, recvPort: 15002);
+
 
 		OSCdef(\tracker, { | msg |
 			//var id = msg[1].asFloat - 1,
@@ -148,7 +143,7 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 					activeActor = inactiveSynth;
 				});
 
-				// TODO: what to do when there are no synths available? currently ignore that actor
+				// TODO: what to do when there are no synths available? currently ignore that actor. This should be a violent takeover. Which one to takeover though... you don't want to takeover the one that is actually there and leave the ghost in charge
 
 			}, {
 				activeActor = activeActors[0];
