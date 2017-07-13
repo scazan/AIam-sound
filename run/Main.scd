@@ -141,9 +141,15 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 					inactiveSynth[\active] = true;
 
 					activeActor = inactiveSynth;
-				});
+				}, {
+					// TODO: what to do when there are no synths available? currently ignore that actor. This should be a violent takeover. Which one to takeover though... you don't want to takeover the one that is actually there and leave the ghost in charge. Maybe a timeout?
+					activeActor = activeActors[0];
+					// VIOLENT TAKEOVER
+					activeActor[\id] = id;
+					activeActor[\active] = true;
+			});
 
-				// TODO: what to do when there are no synths available? currently ignore that actor. This should be a violent takeover. Which one to takeover though... you don't want to takeover the one that is actually there and leave the ghost in charge
+
 
 			}, {
 				activeActor = activeActors[0];
@@ -172,10 +178,10 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 				//~processProximity.value(actorProximity);
 				sceneController[\getProcessors].value()[\proximity].value(actorProximity);
 
-				//activeActor[\synths].do({| synth, i |
 				sceneController[\getSynths].value()[activeActor[\id]].do({| synth, i |
-				synth.set(\x, activeActor[\position][\x], \z, activeActor[\position][\z], \y, activeActor[\position][\y]);
+					synth.set(\x, activeActor[\position][\x], \z, activeActor[\position][\z], \y, activeActor[\position][\y]);
 				});
+
 			// TODO
 			Ndef(\graySine).set(\amp, 1);
 			// Ndef(\bass).set(\amp, 1);

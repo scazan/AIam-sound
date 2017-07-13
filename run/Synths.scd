@@ -129,7 +129,7 @@
 		freq = freq.lag(0.3);
 		4.do({ | i |
 			//pulses[i] = LFPulse.ar([ freq, freq * MouseX.kr(1, 1.01) ] * (i+1), mul: 0.25);
-			pulses[i] = Saw.ar([ freq, freq * (x.abs + 1.01) ] * (i+1), mul: 0.25);
+			pulses[i] = Saw.ar([ freq, freq * (x.linlin(-1,1, 0,1).abs + 1.01) ] * (i+1), mul: 0.25);
 		});
 
 		out = (Mix.new(pulses) * ( 600 * LFPulse.ar(8).lag(0.1) )).tanh * 0.5 ;
@@ -140,7 +140,7 @@
 		out = LPF.ar(out, (z.lag(0.1).abs*800) + 200) * 0.5;
 		//out = LPF.ar(out, MouseY.kr(200, 1000)) * 0.5;
 
-		SelectX.ar(section, [out, out * LFPulse.ar(8, width: 0.7).unipolar.lag(0.1)])*0.5;
+		SelectX.ar(section, [out, out * LFPulse.ar(8, width: 0.7).unipolar.lag(0.1)])*0.5 * y.linlin(-1.7,2, 0,1).clip(0,1).lag(0.5);
 	});
 
 	Ndef(\saw, { | section=0, freq=300, x=0.5, y=0.5, z=0.5 |
@@ -164,7 +164,7 @@
 		out = RLPFD.ar(out, (z.lag(0.1).abs * 800) + 200, 0.9) * 0.5;
 		// out = LPF.ar(out, MouseY.kr(200, 1000)) * 0.5;
 
-		(SelectX.ar(section, [out, out * LFPulse.ar(8, width: 0.7).unipolar.lag(0.1)]) * 5).tanh * 0.35;
+		(SelectX.ar(section, [out, out * LFPulse.ar(8, width: 0.7).unipolar.lag(0.1)]) * 5).tanh * 0.35  * y.linlin(-2,2, 0,1).lag(0.5);
 	});
 
 
