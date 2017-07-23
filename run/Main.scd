@@ -12,6 +12,9 @@ var actor = { | index |
 		\id -> 0,
 		\active -> false,
 		\position -> position,
+		\lastPosition ->  Dictionary[\x -> 0, \y -> 0, \z -> 0 ],
+		\energies -> Array.fill(32, 0),
+		\motion -> false,
 	];
 
 	dict;
@@ -52,16 +55,17 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 
 
 		// Listeners
-		OSCdef(\actorStateListener, { | msg |
+	OSCdef(\actorStateListener, { | msg |
 		var state = msg[2].asString().trim(),
-				id = msg[1].asInteger();
+			id = msg[1].asInteger();
 
 			case(
 				{state == "new"
 				|| state == "visible"}, {
 					var inactiveSynths;
 					var existingSynths = actors.select({ | synth |
-						(synth[\trackingID] == id) && (synth[\active] == true);
+					// (synth[\trackingID] == id) && (synth[\active] == true);
+					(synth[\id] == id) && (synth[\active] == true);
 					});
 
 					if(existingSynths.size == 0, {
@@ -70,6 +74,7 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 						});
 
 					}, {
+						// If there is an "active" synth
 						inactiveSynths = existingSynths;
 					});
 
@@ -77,8 +82,9 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 						// grab the first inactive synth available
 						var inactiveSynth = inactiveSynths[0];
 						// Set it to be active with this id
-						inactiveSynth[\trackingID] = id;
-						inactiveSynth[\active] = true;
+					inactiveSynth[\trackingID] = id;
+					inactiveSynth[\id] = id;
+					// inactiveSynth[\active] = true;
 					});
 				},
 				{state == "tracking"}, {},
@@ -88,7 +94,8 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 
 					// find where this was being tracked previously
 					var lostSynth = actors.select({ | synth |
-						synth[\trackingID] == id;
+					// synth[\trackingID] == id;
+					synth[\id] == id;
 					});
 
 
@@ -107,19 +114,21 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 		OSCdef(\tracker, { | msg |
 			//var id = msg[1].asFloat - 1,
 			var id = msg[1].asFloat,
-				x = msg[2].asFloat / 1800,
-				y = msg[3].asFloat / 500,
+				x = msg[2].asFloat / 1530,
+				y = msg[3].asFloat / 1530,
 				z = msg[4].asFloat / 7000;
 
-			var diffX = 0,
+		var diffX = 0,
 				diffY = 0,
 				diffZ = 0;
 
 
 			var activeActor;
 			var activeActors;
-
-		id = id - 1;
+		if(msg[1].asFloat == 0, {
+		["OSC", msg].postln;
+		});
+		id = (id - 1) - 100;
 
 
 			activeActors = actors.select({ | actor |
@@ -145,8 +154,8 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 					// TODO: what to do when there are no synths available? currently ignore that actor. This should be a violent takeover. Which one to takeover though... you don't want to takeover the one that is actually there and leave the ghost in charge. Maybe a timeout?
 					activeActor = activeActors[0];
 					// VIOLENT TAKEOVER
-					activeActor[\id] = id;
-					activeActor[\active] = true;
+					// activeActor[\id] = id;
+					// activeActor[\active] = true;
 			});
 
 
@@ -159,6 +168,15 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 			// If we have an actor, then set its position
 			if(activeActor.notNil, {
 				var allActiveActors = actors.select({|item| item[\active] == true});
+			var energiesMotion = [0,0];
+
+
+			activeActor[\lastPosition][\x] = activeActor[\position][\x].asFloat;
+				activeActor[\lastPosition][\y] = activeActor[\position][\y].asFloat;
+				activeActor[\lastPosition][\z] = activeActor[\position][\z].asFloat;
+
+
+			// [activeActor[\lastPosition][\x], x].postln;
 
 				activeActor[\position][\x] = x;
 				activeActor[\position][\y] = y;
@@ -166,17 +184,33 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 
 				//z = (z-0.5).abs / (1-0.5);
 
+			// [activeActor[\lastPosition][\x], activeActor[\position][\x]].postln;
 
+
+
+
+			// ["position", activeActor[\position]].postln;
 				// update the proximities
 				// We need at least two actors to judge a distance
-				if(allActiveActors.size >= 2, {
-					actorProximity = computeProximityN2D.value(allActiveActors.collect({ | item | [item[\position][\x], item[\position][\z] ] ; }));
+				if(allActiveActors.size >= 1, {
+					actorProximity = computeProximityN2D.value(allActiveActors.collect({ | item | [item[\position][\x], item[\position][\y] ] ; }));
 				});
 
 
 				// Update any synths with new info
 				//~processProximity.value(actorProximity);
 				sceneController[\getProcessors].value()[\proximity].value(actorProximity);
+
+			// ["actorIndex", actors.indexOf(activeActor)].postln;
+			energiesMotion = sceneController[\getProcessors].value()[\energy].value(actors.indexOf(activeActor),
+				[ activeActor[\position][\x], activeActor[\position][\z], activeActor[\position][\y] ],
+				[ activeActor[\lastPosition][\x], activeActor[\lastPosition][\z], activeActor[\lastPosition][\y] ],
+				activeActor[\energies],
+				activeActor[\motion]
+			);
+
+			activeActor[\energies] = energiesMotion[0];
+			activeActor[\motion] = energiesMotion[1];
 
 				sceneController[\getSynths].value()[activeActor[\id]].do({| synth, i |
 					synth.set(\x, activeActor[\position][\x], \z, activeActor[\position][\z], \y, activeActor[\position][\y]);

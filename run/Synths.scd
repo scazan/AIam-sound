@@ -8,7 +8,8 @@
 
 	// Scene 1
 	// Fold space into sine
-	Ndef(\graySine, { | amp=0, freq=2100, q=0.4, x=0.5, y=0.5, z=0.5 |
+	// Ndef(\graySine, { | amp=0, freq=2100, q=0.4, x=0.5, y=0.5, z=0.5 |
+	Ndef(\graySine, { | amp=0, freq=703, q=0.4, x=0.5, y=0.5, z=0.5 |
 		var verb;
 		var noise = WhiteNoise.ar();
 		var modFreq = ( x.linlin(-1,1, 0, 4).sin * 20).abs + 0.1;
@@ -17,19 +18,19 @@
 		var filtered;
 		var freqs = [freq, freq * 1.2, freq * 0.6, freq * 0.75];
 
-		freq = SelectX.kr(z.linlin(-1,1,0,1 * freqs.size).abs.floor, freqs);
+		freq = SelectX.kr(y.linlin(-1,1,0,1 * freqs.size).abs.floor, freqs);
 
 		// freq = freq + (x.abs * 100);
 
 
 		filtered = BPF.ar(noise,
 			//freq: [freq, freq * 1.1] + LFPulse.ar(modFreq, mul: 240).unipolar.lag(0.1),
-			freq: [freq, freq * 1.1, freq*0.5, freq*0.55] + LFPulse.ar(modFreq.clip(1,20), mul: [freq/4, freq/2, freq/3]).unipolar.lag(lag.abs),
+			freq: [freq * 0.7, freq * 0.61, freq*0.5, freq*0.55] + LFPulse.ar(modFreq.clip(1,20), mul: [freq/4, freq/2, freq/3]).unipolar.lag(lag.abs),
 			rq: q * 0.001
 		);
 
 		filtered = (filtered*2).tanh * 1;
-		filtered = LPF.ar(filtered, freq: 7500);
+		filtered = LPF.ar(filtered, freq: 9500);
 
 		verb = FreeVerb.ar( filtered * amp.lag(1),
 			mix: 0.6,
@@ -37,9 +38,9 @@
 			damp: 0.1
 		) ;
 
-		verb = verb * 0.5;
+		verb = verb * 0.995;
 
-		verb;
+		verb * 3;
 		//* z.abs;
 	});
 
@@ -119,10 +120,11 @@
 		snd = SelectX.ar(Lag.kr(vowel, 0.5), [createVowel.value(out, "A"), createVowel.value(out, "E"), createVowel.value(out, "I"), createVowel.value(out, "O"), createVowel.value(out, "U")]);
 		snd = RLPFD.ar(snd, noise * 600 + 100, (noise * 0.4 + 0.2).clip(0,1) );
 		snd = MidEQ.ar(snd, 642, 0.1, 15);
-		snd * amp * 7.7 ;
+		snd = HPF.ar(snd, 700);
+		snd * amp * 18.7 ;
 	});
 
-	Ndef(\saw2, { | section=1, freq=200, x=0.5, y=0.5, z=0.5 |
+	Ndef(\saw, { | section=1, freq=200, x=0.5, y=0.5, z=0.5, amp=1 |
 		var out;
 		//var freq = (0 + (3*12)).midicps;
 		var pulses = Array.newClear(4);
@@ -140,10 +142,10 @@
 		out = LPF.ar(out, (z.lag(0.1).abs*800) + 200) * 0.5;
 		//out = LPF.ar(out, MouseY.kr(200, 1000)) * 0.5;
 
-		SelectX.ar(section, [out, out * LFPulse.ar(8, width: 0.7).unipolar.lag(0.1)])*0.5 * y.linlin(-1.7,2, 0,1).clip(0,1).lag(0.5);
+		SelectX.ar(section, [out, out * LFPulse.ar(8, width: 0.7).unipolar.lag(0.1)])*0.5 * y.linlin(-1.7,2, 0,1).clip(0,1).lag(0.5) * amp;
 	});
 
-	Ndef(\saw, { | section=0, freq=300, x=0.5, y=0.5, z=0.5 |
+	Ndef(\saw2, { | section=0, freq=300, x=0.5, y=0.5, z=0.5, amp=1 |
 		var out;
 		//var freq = (0 + (3*12)).midicps;
 		var pulses = Array.newClear(4);
@@ -164,7 +166,7 @@
 		out = RLPFD.ar(out, (z.lag(0.1).abs * 800) + 200, 0.9) * 0.5;
 		// out = LPF.ar(out, MouseY.kr(200, 1000)) * 0.5;
 
-		(SelectX.ar(section, [out, out * LFPulse.ar(8, width: 0.7).unipolar.lag(0.1)]) * 5).tanh * 0.35  * y.linlin(-2,2, 0,1).lag(0.5);
+		(SelectX.ar(x-1, [out, out * LFPulse.ar(8, width: 0.7).unipolar.lag(0.1)]) * 5).tanh * 0.35  * y.linlin(-2,2, 0,1).lag(0.5) * amp;
 	});
 
 
@@ -197,6 +199,24 @@
 		out = FreeVerb2.ar(out[0], out[1]);
 		out * amp;
 	});
+
+
+	Ndef(\clink, { | amp=0, freq=2000 |
+	var noise = WhiteNoise.ar() * LFPulse.ar(2, width: 0.1);
+		var delay = AllpassC.ar(noise, decaytime: 2.2);
+
+		delay = HPF.ar(delay, [ 10000, 10100 ]);
+
+		delay = delay * amp;
+		delay = FreeVerb.ar(delay );
+
+		delay;
+	});
+
+
+
+
+
 
 	// Onset timing
 	3.do({ |i|

@@ -1,5 +1,5 @@
 s.options.memSize = 1024 * 100;
-
+~energyThreshold = 5;
 s.waitForBoot({
 	var tasks, synthDefs, main;
 
@@ -27,9 +27,15 @@ s.waitForBoot({
 	NdefMixer.new(s);
 });
 
-
-// make tracking work better for when ids have changed (violent takeover)
-
 //Second section of part 1 lotsa contact?
 
 // pulseTrain0 solo for proximity in section 2
+
+
+// Critical Mass
+// Rashad
+// You Got It
+
+// grainer is an advanced stage: Maybe make this better?
+
+s.volume = 0;

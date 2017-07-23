@@ -645,7 +645,7 @@ m = NdefMixer.new(s)
 
 (
 
-Ndef(\sawPad, { arg freq=75;
+Ndef(\sawPad, { arg freq=75, amp=1;
 	var waveTable = Wavetable.chebyFill(513, [0, 0, 1]);
 	var buf = LocalBuf.newFrom(waveTable);
 	var out;
@@ -666,7 +666,7 @@ Ndef(\sawPad, { arg freq=75;
 	out = LPF.ar([ Mix.new(saws), Mix.new(saws2) ], 2000) * 0.6;
 	out = Shaper.ar(buf, out);
 	out = FreeVerb2.ar(out[0], out[1]);
-	out * 0.15;
+	out * 0.15 * amp;
 });
 )
 
@@ -699,3 +699,554 @@ OSCdef(\timing, {arg msg; msg.asInteger.postln;}, '/reply');
 ~onsetBusses[0].set(1,9,3)
 
 ~onsetBusses[0].get({|val| val.postln;});
+
+
+s.volume = 12;
+
+s.boot;
+// More Tests
+
+Ndef(\rhythm).clear
+(
+	Ndef(\rhythm, { | amp=0, freq=200 |
+		var pulse = LFPulse.ar([ freq, freq * 1.01 ], width: 0.2);
+
+		var filter = LPF.ar(_, 300 + SinOsc.kr(1, mul: 600).unipolar );
+		var delays = AllpassC.ar(CombN.ar(filter.value(pulse!2), maxdelaytime: 0.9, delaytime: 0.7), decaytime: 3.0);
+
+		delays = RLPFD.ar(delays, 700 + SinOsc.kr(3, mul: 900).unipolar, res: 0.4, dist: 0.5) * 1;
+
+		delays = (delays * 16.9).tanh * amp * (LFPulse.ar(4, width: 0.1).unipolar).lag(0.1);
+
+		FreeVerb.ar(delays, damp: 0.1, room: 0.1, mix: 0.2);
+
+	});
+
+)
+
+Ndef(\rhythm).play();
+Ndef(\rhythm).stop(0);
+Ndef(\rhythm).set(\amp, 0.01);
+Ndef(\rhythm).set(\freq, 200);
+(
+
+	Tdef(\sequence, {
+		var index = 0;
+		var pitches = [0,3];
+		var octave = 5;
+
+		{
+			Ndef(\rhythm).set(\freq, (pitches[index%pitches.size] + (12*octave)).midicps );
+			index = index + 1;
+			0.2.wait;
+		}.loop;
+	});
+	Tdef(\sequence).play;
+)
+	Tdef(\sequence).stop;
+
+(
+	Ndef(\clink, { | amp=0, freq=2000 |
+	var noise = WhiteNoise.ar() * LFPulse.ar(2, width: 0.1);
+		var delay = AllpassC.ar(noise, decaytime: 2.2);
+
+		delay = HPF.ar(delay, [ 10000, 10100 ]);
+
+		delay = delay * amp;
+		delay = FreeVerb.ar(delay );
+
+		delay;
+	});
+
+)
+
+Ndef(\clink).play();
+Ndef(\clink).stop(0);
+Ndef(\clink).set(\amp, 0.1);
+Ndef(\clink).set(\amp, 0.0051);
+
+
+
+(
+	Ndef(\grainer, { | amp=0, freq=2000 |
+		WarpN.ar();
+	});
+
+)
+
+Ndef(\grainer).play();
+Ndef(\grainer).stop(0);
+Ndef(\grainer).xset();
+
+(
+Ndef(\reverb).stop;
+Ndef(\bass).stop;
+Ndef(\sawPad).stop;
+)
+
+
+FreqScope.new
+
+////// Sample
+
+~length= 1;        //segment lengths in seconds - should be the same for positions to scan correctly
+~b1= RedBuffer(s, "/home/scott/dev/AIam-sound/samples/shortOneNONOISE.wav", 0.1, ~length);
+~b2= RedBuffer(s, "/home/scott/dev/AIam-sound/samples/shortOneNONOISE.wav", 0.3, ~length);
+~b3= RedBuffer(s, "/home/scott/dev/AIam-sound/samples/shortOneNONOISE.wav", 0.5, ~length);
+
+//-- create and start the granulator object
+r= RedAGrain(s);
+r.start;
+
+//again note that all lfo synths must send audiorate
+//and be careful to free lfo synths before creating new ones - to not loose handle
+
+//-- init lfo synth
+(
+//create lfo synth for trigger - here 30 hz
+a= SynthDef("trig", {Out.ar(r.trigBus.index, Impulse.ar(30))}).play;
+//create lfo synth for bufnum - static at ~b1 bufnum
+b= SynthDef("buf", {Out.ar(r.bufBus.index, DC.ar(~b1.bufnum))}).play;
+//create lfo synth for rate - slowly rising
+c= SynthDef("rate", {Out.ar(r.rateBus.index, LFSaw.ar(0.1, 0, 0.1, 1))}).play;
+//create lfo synth for position - static at 0
+d= SynthDef("pos", {Out.ar(r.posBus.index, DC.ar(0))}).play;
+//create lfo synth for duration - slow drunk walk
+e= SynthDef("dur", {Out.ar(r.durBus.index, LFNoise2.ar(1, 0.1, 0.11))}).play;
+//create lfo synth for amplitude control - static at 0.4
+f= SynthDef("pan", {Out.ar(r.panBus.index, DC.ar(0.4))}).play;
+//create lfo synth for amplitude control - static at 0.4
+g= SynthDef("amp", {Out.ar(r.ampBus.index, DC.ar(0.4))}).play;
+)
+
+
+//-- trigBus
+//change trigger control lfo to another dusty one
+a.free;
+a= SynthDef("trig", {Out.ar(r.trigBus.index, Dust.ar(10))}).play;
+
+//change to static fast trigger
+a.free;
+a= SynthDef("trig", {Out.ar(r.trigBus.index, Impulse.ar(140))}).play;
+
+//let mouseX control trigger rate
+a.free;
+a= SynthDef("trig", {Out.ar(r.trigBus.index, Impulse.ar(MouseX.kr(2, 200)))}).play;
+
+
+//-- bufBus
+//change buffer to ~b2
+b.free;
+b= SynthDef("buf", {Out.ar(r.bufBus.index, DC.ar(~b2.bufnum))}).play;
+
+//play from the 3 buffers in cycle
+b.free;
+b= SynthDef("buf", {Out.ar(r.bufBus.index, Demand.ar(Impulse.ar(4), 0, Dseq([~b1.bufnum, ~b2.bufnum, ~b3.bufnum], inf)))}).play;
+
+//quick drunk walk change buffers (little bit dangerous if ~b1-3 not following each other here)
+b.free;
+b= SynthDef("buf", {Out.ar(r.bufBus.index, Demand.ar(Impulse.ar(100), 0, Dbrown(~b1.bufnum, ~b3.bufnum, 1, inf)))}).play;
+
+//slow back and forth change of buffers - 4 changes per segment length
+b.free;
+b= SynthDef("buf", {Out.ar(r.bufBus.index, Demand.ar(Impulse.ar(~length.reciprocal*4), 0, Dseq([~b1.bufnum, ~b2.bufnum, ~b3.bufnum, ~b2.bufnum], inf)))}).play;
+
+//faster back and forth change of buffers - 32 changes per segment length
+b.free;
+b= SynthDef("buf", {Out.ar(r.bufBus.index, Demand.ar(Impulse.ar(~length.reciprocal*32), 0, Dseq([~b1.bufnum, ~b2.bufnum, ~b3.bufnum, ~b2.bufnum], inf)))}).play;
+
+
+//-- rateBus
+//varying rate with drunk walk
+c.free;
+c= SynthDef("rate", {Out.ar(r.rateBus.index, LFNoise2.ar(1, 0.3, 1))}).play;
+
+//halfspeed backwards static rate
+c.free;
+c= SynthDef("rate", {Out.ar(r.rateBus.index, DC.ar(-0.5))}).play;
+
+//falling rate during segment length
+c.free;
+c= SynthDef("rate", {Out.ar(r.rateBus.index, LFSaw.ar(~length.reciprocal.neg, 0, 0.1, 1))}).play;
+
+
+//-- posBus
+//set position to normal speed scanning forwards
+d.free;
+d= SynthDef("pos", {Out.ar(r.posBus.index, LFSaw.ar(~length.reciprocal, 0, 0.5, 0.5))}).play;
+
+//position slow scanning forwards
+d.free;
+d= SynthDef("pos", {Out.ar(r.posBus.index, LFSaw.ar(0.4, 0, 0.5, 0.5))}).play;
+
+//position slow scanning backwards
+d.free;
+d= SynthDef("pos", {Out.ar(r.posBus.index, LFSaw.ar(-0.5, 0, 0.5, 0.5))}).play;
+
+//mouseX controls position
+d.free;
+d= SynthDef("pos", {Out.ar(r.posBus.index, K2A.ar(MouseX.kr(0, 1, lag:1)))}).play;
+
+//mouseXY control + a little random
+d.free;
+d= SynthDef("pos", {Out.ar(r.posBus.index, LFNoise2.ar(120, MouseY.kr(0, 0.1), MouseX.kr(0, 1, lag:1)))}).play;
+
+//back to static position
+d.free;
+d= SynthDef("pos", {Out.ar(r.posBus.index, DC.ar(0))}).play;
+
+
+//-- durBus
+//change to short static duration
+e.free;
+e= SynthDef("dur", {Out.ar(r.durBus.index, DC.ar(0.02))}).play;
+
+//random duration between 0.01 and 0.41
+e.free;
+e= SynthDef("dur", {Out.ar(r.durBus.index, LFNoise0.ar(4, 0.2, 0.21))}).play;
+
+//mouseY controls duration
+e.free;
+e= SynthDef("dur", {Out.ar(r.durBus.index, K2A.ar(MouseY.kr(0, 0.6)))}).play;
+
+//slow phasor control duration
+e.free;
+e= SynthDef("dur", {Out.ar(r.durBus.index, LFSaw.ar(0.4, 0, 0.04, 0.05))}).play;
+
+
+//-- panBus
+//sine panning
+f.free;
+f= SynthDef("pan", {Out.ar(r.panBus.index, SinOsc.ar(4))}).play;
+
+//slow random panning
+f.free;
+f= SynthDef("pan", {Out.ar(r.panBus.index, LFNoise2.ar(0.3))}).play;
+
+//random discrete panning at fast rate
+f.free;
+f= SynthDef("pan", {Out.ar(r.panBus.index, Demand.ar(Impulse.ar(100), 0, Dseq([-0.9, 0, 0.9], inf)))}).play;
+
+
+//-- ampBus
+//fast jumps in amplitude
+g.free;
+g= SynthDef("amp", {Out.ar(r.ampBus.index, LFNoise0.ar(40, 0.2, 0.2).max(0))}).play;
+
+//fade out during each segment
+g.free;
+g= SynthDef("amp", {Out.ar(r.ampBus.index, LFSaw.ar(~length.reciprocal.neg, 0, 0.5, 0.5))}).play;
+
+
+//-- more complex example
+[a, b, c, d, e, f, g].do(_.free);
+(
+//master trigger controlling the other lfos
+a= SynthDef("trig", {Out.ar(r.trigBus.index, Impulse.ar(LFNoise1.ar(0.5, 10, 80)))}).play;
+b= SynthDef("buf", {Out.ar(r.bufBus.index, DC.ar(~b1.bufnum))}).play;
+c= SynthDef("rate", {Out.ar(r.rateBus.index, Demand.ar(InFeedback.ar(r.trigBus.index), 0, Dseq([1, 2], inf)))}).play;
+d= SynthDef("pos", {Out.ar(r.posBus.index, Demand.ar(InFeedback.ar(r.trigBus.index), 0, Dseq([Dseries(0, 0.002, 900)], inf)))}).play;
+e= SynthDef("dur", {Out.ar(r.durBus.index, Demand.ar(InFeedback.ar(r.trigBus.index), 0, Dseq([Dseries(0.01, 0.001, 100)], inf)))}).play;
+f= SynthDef("pan", {Out.ar(r.panBus.index, Demand.ar(InFeedback.ar(r.trigBus.index), 0, Dseq([-0.9, 0, 0.9], inf)))}).play;
+g= SynthDef("amp", {Out.ar(r.ampBus.index, DC.ar(0.4))}).play;
+)
+
+
+//-- clean up and stop
+[a, b, c, d, e, f, g, ~b1, ~b2, ~b3].do(_.free);
+r.free
+
+
+s.boot
+(
+Dialog.openPanel({ arg path;
+	b = Buffer.read(s, path, action: { |buffer|
+		"".postln;
+		"Loaded: ".post;
+		path.postln;
+		"Channels: ".post;
+		buffer.numChannels.postln;
+	});
+});
+
+)
+
+(
+Dialog.openPanel({ arg path;
+	c = Buffer.read(s, path, action: { |buffer|
+		"".postln;
+		"Loaded: ".post;
+		path.postln;
+		"Channels: ".post;
+		buffer.numChannels.postln;
+	});
+});
+
+)
+
+
+(
+Dialog.openPanel({ arg path;
+	d = Buffer.read(s, path, action: { |buffer|
+		"".postln;
+		"Loaded: ".post;
+		path.postln;
+		"Channels: ".post;
+		buffer.numChannels.postln;
+	});
+});
+
+)
+
+	Ndef(\one).clear
+(
+	Ndef(\one, { | x=1,y=1, amp=0 |
+		var buffer=b;
+
+		PlayBuf.ar(buffer.numChannels, bufnum: buffer, rate: x.linlin(-1, 1, 0, 1), trigger: 1, startPos: 0, loop: 1) * amp * y!2;
+	});
+
+)
+
+Ndef(\one).play();
+Ndef(\one).stop(0);
+Ndef(\one).xset();
+
+(
+Ndef(\stutter1, { | x=1,y=1, rate=1.0, amp=0.5, switch=1 |
+	var buffer=b;
+
+	// PlayBuf.ar(buffer.numChannels, bufnum: buffer, rate: x.linlin(-1, 1, 0, 1), trigger: 1, startPos: 0, loop: 1) * amp * y!2;
+	var out = BufRd.ar(1, b, Phasor.ar(0, BufRateScale.kr(b) * rate, 48000 * SinOsc.kr(12, mul: 0.5, add: 0.1).unipolar, 500 ));
+
+	var out2 = BufRd.ar(1, b, Phasor.ar(0, BufRateScale.kr(b) * rate, 0, BufFrames.kr(b) ));
+
+	out = LPF.ar(SelectX.ar(switch, [out, out2]), SelectX.kr(switch, [900, 9000])) * amp;
+
+});
+
+
+Ndef(\stutter2, { | x=1,y=1, rate=1.0, amp=0.50, switch=1 |
+	var buffer=b;
+
+	// PlayBuf.ar(buffer.numChannels, bufnum: buffer, rate: x.linlin(-1, 1, 0, 1), trigger: 1, startPos: 0, loop: 1) * amp * y!2;
+	var out = BufRd.ar(1, b, Phasor.ar(0, BufRateScale.kr(b) * rate, 48000 * SinOsc.kr(12, mul: 0.5, add: 0.1).unipolar, 500 ));
+
+	var out2 = BufRd.ar(1, b, Phasor.ar(0, BufRateScale.kr(b) * rate, 0, BufFrames.kr(b) ));
+
+	out = LPF.ar(SelectX.ar(switch, [out, out2]), SelectX.kr(switch, [900, 9000])) * amp;
+
+});
+
+)
+
+Ndef(\reverbOut).clear
+(
+Ndef(\reverbOut, {
+	var out = [Ndef(\stutter1).ar, Ndef(\stutter2).ar];
+	FreeVerb.ar(out);
+});
+)
+
+Ndef(\reverbOut).play();
+Ndef(\stutter).stop(0);
+Ndef(\stutter1).set(\rate, 5, \switch, 0, \amp, 0.95);
+Ndef(\stutter1).set(\rate, 1, \switch, 1, \amp, 0.5);
+Ndef(\stutter2).set(\rate, 3.5, \switch, 0, \amp, 0.95);
+Ndef(\stutter2).set(\rate, 1, \switch, 1, \amp, 0.5);
+
+
+
+(
+	Ndef(\two, { | x=1, y=1, amp=0 |
+		var buffer=c;
+
+	/*PlayBuf.ar(buffer.numChannels, bufnum: buffer, rate: x.linlin(-1,1, 0,1), trigger: 1, startPos: 0, loop: 1) * amp * y;*/
+	PlayBuf.ar(buffer.numChannels, bufnum: buffer, rate: x.linlin(-1,1, 0.1, 6), trigger: 1, startPos: 0, loop: 1) * amp * y;
+	});
+
+)
+
+Ndef(\two).play();
+Ndef(\two).stop(0);
+Ndef(\two).xset();
+
+(
+	Ndef(\three, { | x=1, y=1, amp=0 |
+		var buffer=d;
+
+	PlayBuf.ar(buffer.numChannels, bufnum: buffer, rate: x.linlin(-1,1, 0, 1), trigger: 1, startPos: 0, loop: 1) * amp * y;
+	});
+
+)
+
+Ndef(\three).play();
+Ndef(\three).stop(0);
+Ndef(\three).xset();
+
+
+s.meter
+
+NdefMixer.new(s);
+
+Ndef(\one).play();
+Ndef(\one).stop(0);
+Ndef(\one).xset();
+
+s.boot;
+
+(
+Dialog.openPanel({ arg path;
+	b = Buffer.read(s, path, action: { |buffer|
+		"".postln;
+		"Loaded: ".post;
+		path.postln;
+		"Channels: ".post;
+		buffer.numChannels.postln;
+	});
+});
+
+)
+
+(
+Dialog.openPanel({ arg path;
+	b = Buffer.readChannel(s, path, channels: 0);
+});
+
+)
+
+
+s.boot;
+
+w.plot
+w = Env([0, 1,1, 0], [0.05, 1, 0.05], [8, -8]);
+f = Buffer.sendCollection(s, w.discretize, 1);
+
+	Ndef(\grainer).clear;
+(
+	Ndef(\grainer, { | amp=0, x=1, pos=0.5, z=0.1 |
+
+	var out = GrainBuf.ar(1, trigger: Impulse.kr(5 + SinOsc.kr(3, mul: 5) ), dur: z.linexp(0.24, 0.4, 0.7, 1), sndbuf: b, rate: x.linexp(-0.4, 0.8, 0.51, 1.2), pos: SinOsc.kr(LFNoise1.kr(9)).unipolar, pan: LFNoise1.kr(13), envbufnum: f ) * amp;
+
+		var in = out;
+	var chain = FFT(LocalBuf(2048), in);
+		chain = PV_RandComb(chain, 0.01, Impulse.kr(0));
+		out = IFFT(chain).tanh * amp;
+		out = Limiter.ar([out + DelayL.ar(out,0.3,0.1), DelayL.ar(out,0.5,0.1) + DelayL.ar(out,0.2,0.1)], 0.5, 0.1);
+
+	out = out + (CombN.ar(out, delaytime: 0.07) * 0.2 );
+
+		out!2;
+
+	});
+
+)
+
+
+
+Ndef(\grainer).play();
+Ndef(\grainer).stop(0);
+Ndef(\grainer).xset();
+
+
+Ndef(\grainPlayer).clear;
+(
+	Ndef(\grainer, { | x=1, amp=0, z=0.1 |
+		var buffer=b;
+
+	var input = PlayBuf.ar(buffer.numChannels, bufnum: buffer, rate: x.linlin(-1,1, 0.75, 1), trigger: 1, startPos: 0, loop: 1) * amp;
+
+	var out = GrainIn.ar(1, Impulse.kr(5), dur: z.linlin(0,1,0.1, 2), in: input, pan: 0, envbufnum: -1);
+
+		var chain = FFT(LocalBuf(2048), out);
+		chain = PV_RandComb(chain, 0.01, Impulse.kr(0));
+		out = IFFT(chain).tanh * amp;
+		out = Limiter.ar([out + DelayL.ar(out,0.3,0.1), DelayL.ar(out,0.5,0.1) + DelayL.ar(out,0.2,0.1)], 0.5, 0.1);
+
+	// out = CombN.ar(out, delaytime: 0.07);
+		//out = FreeVerb.ar(out);
+		out * amp;
+	});
+
+)
+
+Ndef(\grainPlayer).play();
+Ndef(\grainPlayer).stop(0);
+Ndef(\grainPlayer).xset();
+
+s.boot
+
+(
+	Ndef(\TB303, { | amp=0, freq=2000, waveform=0, cutoff=30, porta=0.2, resonance=0.1, distortion=1, slide=0, accent=0 |
+		var reverb = GVerb.ar(_, room: 0.2, mix: 0.1);
+		var saw = Saw.ar(freq.lag(slide * porta));
+		var waveforms = [saw, LFPulse.ar(freq.lag(slide * porta))];
+		var selectedWaveform = Select.ar(waveform, waveforms);
+
+		var filter = RLPFD.ar( selectedWaveform, cutoff.lag(slide * porta + accent), resonance.lag(slide * porta + accent), distortion ) * 3;
+
+		var out = filter * ( amp + accent );
+		//out = (reverb.value(out)*MouseY.kr(2,20)).tanh * 0.2;
+		var chain = FFT(LocalBuf(2048), out);
+		chain = PV_RandComb(chain, 0.01, Impulse.kr(0));
+		out = IFFT(chain).tanh * amp;
+		out = Limiter.ar([out + DelayL.ar(out,0.3,0.1), DelayL.ar(out,0.5,0.1) + DelayL.ar(out,0.2,0.1)], 0.5, 0.1);
+
+		LPF.ar(out, 9000);
+	});
+
+)
+
+Ndef(\TB303).play();
+Ndef(\TB303).stop(0);
+Ndef(\TB303).xset(\waveform, 0);
+
+Ndef(\TB303).set(\amp, 0.15);
+Ndef(\TB303).set(\cutoff, 900);
+
+(
+	var pitches = [ 0, 12, 0, 0, -12, 0, 0, 0, -12, 0, 12, 0, 3, -5, 2, 0 ],
+	//var pitches = [ 5, 6, 6, 6, 6*2, 1, 6*2, 5*2 ],
+	//var pitches = [ 5, 6, 6, 6, 6*2, 1, 6*2, 5*2 ],
+		cutoff = [613, 2000, 3600, 2000, 1000, 500, 500, 400],
+		resonance = [0.5, 0.8, 0.7, 0.7,  0.6, 0.8, 0.4],
+		slides = [ 1, 1, 1, 1, 0, 1, 0, 0],
+		accents = [0, 0, 0, 0, 0, 0, 0.8, 0.8],
+		i=0;
+
+	Tdef(\seq, {
+		{
+			Ndef(\TB303).set(\freq, (pitches[i%pitches.size] + (4*12)).midicps);
+			Ndef(\TB303).set(\cutoff, cutoff[i%cutoff.size]);
+			Ndef(\TB303).set(\resonance, resonance[i%resonance.size]);
+			Ndef(\TB303).set(\slide, slides[i%slides.size]);
+			Ndef(\TB303).set(\accent, accents[i%accents.size]);
+
+			//if(i%4 == 1, {
+				//{
+					//var out = SinOsc.ar(600) * EnvGen.ar(Env.perc(0.01, 0.1), doneAction: 2);
+					//Pan2.ar(out, -0.25);
+				//}.play;
+			//});
+			//if(i%8 == 1, {
+				//{
+					//var out = WhiteNoise.ar() * EnvGen.ar(Env.perc(0.01, 0.01));
+					//out = FreeVerb.ar(out) * EnvGen.ar(Env.perc(0.01, 1), doneAction: 2);
+
+					//Pan2.ar(out, 0.25);
+				//}.play;
+			//});
+			i = i+1;
+			0.19.wait;
+		}.loop;
+	});
+)
+Tdef(\seq).play;
+Tdef(\seq).stop;
+
+
+
+
+// One sample player with west coast soundings
+// One grainer with voices
+// \saw
