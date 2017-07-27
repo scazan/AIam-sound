@@ -1,7 +1,11 @@
 s.options.memSize = 1024 * 100;
-~energyThreshold = 5;
+
 s.waitForBoot({
 	var tasks, synthDefs, main;
+
+	// Globals
+	~energyThreshold = 0.45;
+	~energyThreshold = 0.7;
 
 	// Load Synths
 	"Synths.scd".loadRelative; // returns ~cSynths
@@ -9,22 +13,24 @@ s.waitForBoot({
 	// synthDefs[\play].value();
 
 
-		// ROUTINES
-		"Tasks.scd".loadRelative; // returns ~cTasks
-		tasks = ~cTasks.value();
-		// tasks[\play].value();
+	// ROUTINES
+	"Tasks.scd".loadRelative; // returns ~cTasks
+	tasks = ~cTasks.value();
+	// tasks[\play].value();
 
-		// Main Program
-		"Main.scd".loadRelative; // returns ~cMain
-		main = ~cMain.value({}, {
-			// tasks[\stop].value();
-			synthDefs[\stop].value();
-		});
+	// Main Program
+	"Main.scd".loadRelative; // returns ~cMain
+	main = ~cMain.value({}, {
+		// tasks[\stop].value();
+		synthDefs[\stop].value();
+	});
 
 	// Start main function
 	AppClock.sched(3, main);
 
+
 	NdefMixer.new(s);
+
 });
 
 //Second section of part 1 lotsa contact?
@@ -38,4 +44,20 @@ s.waitForBoot({
 
 // grainer is an advanced stage: Maybe make this better?
 
-s.volume = 0;
+s.volume = -46;
+
+
+/*
+
+Starts with prettier drone thing but needs to be more active, more responsive
+
+Low bass comes in
+pulseTrain starts, this is signal for the duo to start up
+During duo, the whiney voices come in.
+
+Trio starts while the saw drone comes in.
+Explosion in dance is cause for drone to cut out and the samples in motion comes in (stillness/motion)
+
+WTF IS NEXT?
+
+*/
