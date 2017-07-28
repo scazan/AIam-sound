@@ -122,7 +122,17 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 			},
 			{
 				// Ndef(\bass2).set(\amp, 1);
-				Ndef(\noiseImpulse).set(\amp, 0.5, \t_trigger, 1);
+				// Ndef(\noiseImpulse).set(\amp, 0.1, \t_trigger, 1);
+				var existingSynths = actors.select({ | synth |
+					// (synth[\trackingID] == id) && (synth[\active] == true);
+					(synth[\id] == id) && (synth[\active] == true);
+				});
+
+				// existingSynths.postln;
+				// existingSynths.size.postln;
+				// if((existingSynths.size > 0) && (existingSynths[0][\position][\x] >= 0) && (existingSynths[0][\position][\y] < 0), { // QuAD 2
+					Ndef(\noiseImpulse).set(\amp, 0.1, \t_trigger, 1);
+		// });
 			}
 		);
 	}, path: \state, recvPort: 15002);

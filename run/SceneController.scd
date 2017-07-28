@@ -36,36 +36,36 @@
 	var tasks = [
 		[{ // 0
 			"hello".postln;
-			synths[scene].do(_.do(_.play));
+			// synths[scene].do(_.do(_.play));
 			"goodbye".postln;
 
-			Ndef(\graySine).fadeTime = 20;
+			/*Ndef(\graySine).fadeTime = 20;
 			Ndef(\graySine).xset(\amp, 1);
 			Ndef(\graySine2).fadeTime = 2;
-			Ndef(\graySine2).xset(\amp, 1);
+			Ndef(\graySine2).xset(\amp, 1)*/
 
 		}, {
 		}],
 		[{ // 1
-			Ndef(\bass).fadeTime = 40;
+			/*Ndef(\bass).fadeTime = 40;
 			Ndef(\bass).play();
-			Ndef(\bass).xset(\amp, 0.3);
+			Ndef(\bass).xset(\amp, 0.3);*/
 		}, {
 		}],
 		[{ // 2 Nea start spiralling
 			//synths[scene].do(_.do(_.play));
 
-			Tdef(\vocal).play;
+			/*Tdef(\vocal).play;
 			Tdef(\vocal2).play;
 
 			Ndef(\pulseTrain0).rebuild();
 			Ndef(\pulseTrain0).play();
 			Ndef(\pulseTrain0).fadeTime = 5;
 			Ndef(\pulseTrain0).xset(\amp, 0.8);
-			Ndef(\bass).xset(\amp, 0.45);
+			Ndef(\bass).xset(\amp, 0.45);*/
 		},
 			{ // end
-				Ndef(\graySine).xset(\amp, 0);
+				// Ndef(\graySine).xset(\amp, 0);
 		}],
 		[{ // 3
 
@@ -123,7 +123,7 @@
 
 				energy = energies.sum / energies.size;
 
-				energy.postln;
+				// energy.postln;
 
 				if(energy > ~energyThreshold, {
 					moving = true;
@@ -132,19 +132,30 @@
 
 					// If we are moving and we are not already flagged as moving
 					if(motion == false, {
-						// Ndef(("stutter"++id).asSymbol).set(\rate, 5, \switch, 0, \amp, 0.95);
-						// Ndef(("stutter"++id).asSymbol).set(\rate, 0.26, \switch, 1, \amp, 0.85);
-						// Ndef(("stutter"++id).asSymbol).set(\rate, 0.75 * 2.5, \switch, 0, \amp, 0.95);
-						// Ndef(("stutter"++id).asSymbol).set(\rate, 0.26 * 2.5, \switch, 0, \amp, 0.45);
 
-						// Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 903, \x, 0.4, \y, 0.9, \length, 1.3, \t_trigger, 1);
+						var x = vector1[0],
+						y = vector1[2];
 
+						// Quadrants
+						if((x >= 0) && (y >= 0), {
 
-
-						if(id == 0, {
-							Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 903, \x, 0.1, \y, vector1[0], \length, 1.3, \t_trigger, 1);
-						}, {
-								Ndef(\stretch).set(\amp, 0.8, \t_trigger, 1);
+							Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
+							"QUAD 1".postln;
+						},{
+								if((x >= 0) && (y < 0), {
+									Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 903, \switch, 1, \length, 1.3, \t_trigger, 1);
+									"QUAD 2".postln;
+								}, {
+										if((x < 0) && (y < 0), {
+										Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
+											"QUAD 3".postln;
+									}, {
+												if((x < 0) && (y >= 0), {
+												Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 703, \switch, 2, \length, 1.3, \t_trigger, 1);
+												"QUAD 4".postln;
+											});
+									});
+								});
 						});
 
 
@@ -190,34 +201,48 @@
 				energies = energies.shift(1);
 				energies[0] = energy;
 
-				energy = energies.mean;
+				energy = energies.sum / energies.size;
+
+				energy.postln;
 
 				if(energy > ~energyThreshold, {
 					moving = true;
 
+					[id, "moving", vector1].postln;
+
 					// If we are moving and we are not already flagged as moving
 					if(motion == false, {
+						// Ndef(("stutter"++id).asSymbol).set(\rate, 5, \switch, 0, \amp, 0.95);
+						// Ndef(("stutter"++id).asSymbol).set(\rate, 0.26, \switch, 1, \amp, 0.85);
+						// Ndef(("stutter"++id).asSymbol).set(\rate, 0.75 * 2.5, \switch, 0, \amp, 0.95);
+						// Ndef(("stutter"++id).asSymbol).set(\rate, 0.26 * 2.5, \switch, 0, \amp, 0.45);
+
+						// Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 903, \x, 0.4, \y, 0.9, \length, 1.3, \t_trigger, 1);
+
+
+
+						if(id == 0, {
+							Ndef(\stretch).set(\amp, 0.8, \t_trigger, 1);
+						}, {
+
+								Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 903, \x, vector1[1], \y, vector1[0], \length, 1.3, \t_trigger, 1);
+						});
 
 						// [id, "moving"].postln;
 
-						{| amp=0.05, freq=4000 |
-						var out;
-						freq = freq + XLine.ar(0,200, 0.01);
-						out = SinOsc.ar([freq + 600.0.rand * 1.1, freq + 900.0.rand]) * amp * EnvGen.ar(Env.perc(0.01, 0.01), doneAction: 2);
-
-							// Out.ar(~reverbBus, out * 0.1);
-						out;
-					}.play;
 						motion = true;
 
 						});
 				}, {
+						// [id, "not moving"].postln;
 						if(motion == true, {
+
+							// Ndef(\stutter2).set(\rate, 0.95, \switch, 0, \amp, 0.95);
 							Ndef(("stutter"++id).asSymbol).set(\rate, 0.26, \switch, 1, \amp, 0.85);
-							// [id, "not moving"].postln;
+
 							motion = false;
 
-							});
+						});
 
 				});
 
