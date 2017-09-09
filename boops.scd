@@ -79,7 +79,7 @@ s.boot;
 	});
 
 
-Ndef(\noiseImpulse, {| amp=0.15, freq=30, t_trigger=1, length=2, rand=0 |
+/*Ndef(\noiseImpulse, {| amp=0.15, freq=30, t_trigger=1, length=2, rand=0 |
 	var out;
 
 	out = BPF.ar(GrayNoise.ar(),[ freq, freq*1.01 ],0.2);
@@ -95,7 +95,7 @@ Ndef(\noiseImpulse, {| amp=0.15, freq=30, t_trigger=1, length=2, rand=0 |
 	out = (out * 13).tanh * 0.5;
 
 	out * amp * 0.3;
-});
+});*/
 Ndef(\noiseImpulse).play;
 Ndef(\stretch).play;
 Ndef(\graySineTrig).play;

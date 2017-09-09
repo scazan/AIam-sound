@@ -4,8 +4,13 @@ s.waitForBoot({
 	var tasks, synthDefs, main;
 
 	// Globals
+
+	~dirgeVol = 0.05;
 	~energyThreshold = 0.45;
+	~quadrant2 = false;
+	~proximityDistance = 0.9;
 	~energyThreshold = 0.7;
+
 
 	// Load Synths
 	"Synths.scd".loadRelative; // returns ~cSynths
@@ -44,7 +49,7 @@ s.waitForBoot({
 
 // grainer is an advanced stage: Maybe make this better?
 
-s.volume = -46;
+s.volume = 2;
 
 
 /*

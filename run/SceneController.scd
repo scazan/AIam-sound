@@ -35,24 +35,36 @@
 	// Tasks are all the automated bits of a scene (don't see the need for the 2D array).
 	var tasks = [
 		[{ // 0
-			"hello".postln;
+			"In ONE!".postln;
 			// synths[scene].do(_.do(_.play));
-			"goodbye".postln;
+
+			~energyThreshold = 0.45;
 
 			/*Ndef(\graySine).fadeTime = 20;
 			Ndef(\graySine).xset(\amp, 1);
 			Ndef(\graySine2).fadeTime = 2;
 			Ndef(\graySine2).xset(\amp, 1)*/
+			Ndef(\noiseImpulse).play;
+			Ndef(\stretch).play;
+			Ndef(\graySineTrig).play;
 
 		}, {
 		}],
 		[{ // 1
+
+			// WHEN IN QUAD 2 and Nea is leaving we trigger the pre-recorded sound
+
 			/*Ndef(\bass).fadeTime = 40;
 			Ndef(\bass).play();
 			Ndef(\bass).xset(\amp, 0.3);*/
+			~energyThreshold = 0.7;
 		}, {
 		}],
 		[{ // 2 Nea start spiralling
+
+
+			// WHEN Pre-recorded sound ends, then we
+
 			//synths[scene].do(_.do(_.play));
 
 			/*Tdef(\vocal).play;
@@ -139,20 +151,24 @@
 						// Quadrants
 						if((x >= 0) && (y >= 0), {
 
-							Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
+							Ndef(\graySineTrig).set(\pan, 1, \amp, 3, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
 							"QUAD 1".postln;
+							// ~quadrant2 = false;
 						},{
 								if((x >= 0) && (y < 0), {
-									Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 903, \switch, 1, \length, 1.3, \t_trigger, 1);
+									Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 1903, \switch, 1, \length, 1.3, \t_trigger, 1);
 									"QUAD 2".postln;
+									// ~quadrant2 = true;
 								}, {
 										if((x < 0) && (y < 0), {
-										Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
+										Ndef(\graySineTrig).set(\pan, 1, \amp, 3, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
 											"QUAD 3".postln;
+											// ~quadrant2 = false;
 									}, {
 												if((x < 0) && (y >= 0), {
 												Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 703, \switch, 2, \length, 1.3, \t_trigger, 1);
 												"QUAD 4".postln;
+													// ~quadrant2 = false;
 											});
 									});
 								});
@@ -183,7 +199,7 @@
 				val = ((1 - val)**1 * 2).abs;
 
 
-				if(val > 1.2, {
+				if(val > ~proximityDistance, {
 					Tdef(\vocal).stop;
 					Ndef(\pulseTrain0).set(\lag, 4 );
 					Ndef(\pulseTrain0).set(\density, val+0.5 );
@@ -208,7 +224,7 @@
 				if(energy > ~energyThreshold, {
 					moving = true;
 
-					[id, "moving", vector1].postln;
+					// [id, "moving", vector1].postln;
 
 					// If we are moving and we are not already flagged as moving
 					if(motion == false, {
@@ -251,7 +267,7 @@
 			\proximity -> {|val|
 				val = ((1 - val)**1 * 2).abs;
 
-				if(val > 1.2, {
+				if(val > ~proximityDistance, {
 					Tdef(\vocal).stop;
 					Ndef(\pulseTrain0).set(\lag, 4 );
 					Ndef(\pulseTrain0).set(\density, val+0.5 );
@@ -269,7 +285,7 @@
 				val = ((1 - val)**1 * 2).abs;
 
 
-				if(val > 1.2, {
+				if(val > ~proximityDistance, {
 					Tdef(\vocal).stop;
 					Ndef(\pulseTrain0).set(\lag, 4 );
 					Ndef(\pulseTrain0).set(\density, val+0.5 );
@@ -285,7 +301,7 @@
 			\proximity -> { |val|
 				val = ((1 - val)**1 * 2).abs;
 
-				if(val > 1.2, {
+				if(val > ~proximityDistance, {
 				// [">>", val ].postln;
 					Tdef(\vocal).stop;
 					Ndef(\pulseTrain0).set(\lag, 4 );
@@ -343,7 +359,7 @@
 				val = ((1 - val)**1 * 2).abs;
 
 
-				if(val > 1.2, {
+				if(val > ~proximityDistance, {
 					Tdef(\vocal).stop;
 					Ndef(\pulseTrain0).set(\lag, 4 );
 					Ndef(\pulseTrain0).set(\density, val+0.5 );

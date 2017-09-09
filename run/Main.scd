@@ -13,7 +13,7 @@ var actor = { | index |
 		\active -> false,
 		\position -> position,
 		\lastPosition ->  Dictionary[\x -> 0, \y -> 0, \z -> 0 ],
-		\energies -> Array.fill(32, 0),
+		\energies -> Array.fill(12, 0),
 		\motion -> false,
 	];
 
@@ -66,10 +66,9 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 		id = msg[1].asInteger();
 
 
-		msg.postln;
+		[msg, state, state == "lost"].postln;
 		case(
-			{state == "new"
-				|| state == "visible"}, {
+			{state == "new"}, {
 				var inactiveSynths;
 				var existingSynths = actors.select({ | synth |
 					// (synth[\trackingID] == id) && (synth[\active] == true);
@@ -100,11 +99,14 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 					inactiveSynth[\id] = id;
 					inactiveSynth[\active] = true;
 				});
+
+				if(~outerWall, {
+					Ndef(\noiseImpulse).set(\amp, 0.6, \t_trigger, 1);
+				});
+
 			},
 			{state == "tracking"}, {},
-			{state == "out_of_scene"
-				|| state == "lost"
-				|| state == "stopped_tracking"}, {
+			{state == "lost"}, {
 
 				// find where this was being tracked previously
 				var lostSynth = actors.select({ | synth |
@@ -119,19 +121,49 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 					synth[\active] = false;
 				});
 
+				if(~outerWall == false, {
+					Ndef(\noiseImpulse).set(\amp, 0.6, \t_trigger, 1);
+				});
+				// Ndef(\noiseImpulse).set(\amp, 0.6, \t_trigger, 1);
+				///////////////////////
+				if(~quadrant2, {
+					{
+						var freq = 490, sin1, sin2, noise, out;
+
+	freq = [290, 490, 900].choose/2;
+						freq = Line.kr([ freq, freq*1.1 ], freq-30, 0.3);
+
+						noise = DelayN.ar(BPF.ar(GrayNoise.ar(), 6000 + 1000.0.rand, 0.01), 0.5);
+	noise = GrayNoise.ar() * EnvGen.ar(Env.perc(0.01, 0.01));
+	noise = SinOsc.ar(80, mul: 2).max * EnvGen.ar(Env.perc(0.01, 0.01));
+	noise = LPF.ar(noise, 690);
+						sin1 = SinOsc.ar(freq) * EnvGen.ar(Env.perc(0.1, 0.2));
+						sin2 = SinOsc.ar(freq * 2) * EnvGen.ar(Env.perc(0.1, 7), doneAction:2) * 0.5;
+						out = (((sin1) * 3) + ( noise * 3 )).max;
+	out = FreeVerb.ar(out, mix: 0.68);
+						Out.ar(0, out * ~dirgeVol);
+
+					}.play;
+				});
+				///////////////////////
+
 			},
 			{
 				// Ndef(\bass2).set(\amp, 1);
 				// Ndef(\noiseImpulse).set(\amp, 0.1, \t_trigger, 1);
 				var existingSynths = actors.select({ | synth |
 					// (synth[\trackingID] == id) && (synth[\active] == true);
-					(synth[\id] == id) && (synth[\active] == true);
+					(synth[\id] == id);
 				});
 
-				// existingSynths.postln;
-				// existingSynths.size.postln;
+				msg.postln;
+
+				existingSynths.postln;
+				existingSynths.size.postln;
 				// if((existingSynths.size > 0) && (existingSynths[0][\position][\x] >= 0) && (existingSynths[0][\position][\y] < 0), { // QuAD 2
-					Ndef(\noiseImpulse).set(\amp, 0.1, \t_trigger, 1);
+					Ndef(\noiseImpulse).set(\amp, 0.6, \t_trigger, 1);
+
+
 		// });
 			}
 		);
