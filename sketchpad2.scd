@@ -117,3 +117,9 @@ Ndef(\stutter1, { | x=1,y=1, rate=1.0, amp=0.5, switch=1 |
 
 
 // Density vs spread
+
+
+
+// Processing functions can now be camera functions
+// Tasks are mostly unused but could be in the future
+// How do we make the interactions and synths more modular and real-time flexible?

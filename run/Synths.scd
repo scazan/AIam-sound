@@ -189,10 +189,10 @@ Ndef(\saw, { | section=1, freq=300, x=0.5, y=0.5, z=0.5, amp=1 |
 		//out = LPF.ar(out, MouseY.kr(200, 1000)) * 0.5;
 
 		SelectX.ar(section, [out, out * LFPulse.ar(8, width: 0.7).unipolar.lag(0.1)])*0.5 * amp;
-	});
+});
 
-	Ndef(\saw2, { | section=1, freq=600, x=0.5, y=0.5, z=0.5, amp=1, vowel=0 |
-		var out;
+Ndef(\saw2, { | section=1, freq=600, x=0.5, y=0.5, z=0.5, amp=1, vowel=0 |
+	var out;
 	var formants, createVowel, snd;
 		//var freq = (0 + (3*12)).midicps;
 		var pulses = Array.newClear(4);
@@ -247,7 +247,7 @@ Ndef(\saw, { | section=1, freq=300, x=0.5, y=0.5, z=0.5, amp=1 |
 
 		(SelectX.ar(x-1, [out, out * LFPulse.ar(8, width: 0.7).unipolar.lag(0.1)]) * 5).tanh * 0.95  * amp;
 
-	});
+});
 
 /*	Ndef(\saw, { | section=1, freq=600, x=0.5, y=0.5, z=0.5, amp=1, vowel=0 |
 		var out;
@@ -308,102 +308,102 @@ Ndef(\saw, { | section=1, freq=300, x=0.5, y=0.5, z=0.5, amp=1 |
 	});*/
 
 
-	Ndef(\reverb, { | amp=0, freq=2000 |
-		FreeVerb.ar( Ndef(\saw).ar + Ndef(\saw2).ar, room:0.8, mix: 0.6 ) * 1.0 * amp;
+Ndef(\reverb, { | amp=0, freq=2000 |
+	FreeVerb.ar( Ndef(\saw).ar + Ndef(\saw2).ar, room:0.8, mix: 0.6 ) * 1.0 * amp;
+});
+
+
+Ndef(\sawPad, { arg freq=75, amp=0, resonantFreq=1760;
+	var waveTable = Wavetable.chebyFill(513, [0, 0, 1]);
+	var buf = LocalBuf.newFrom(waveTable);
+	var out;
+	var numSaws = 9;
+	// var spread = MouseY.kr(3, 50);
+	var spread = 5;
+	var saws = Array.newClear(numSaws);
+	var saws2 = Array.newClear(numSaws);
+
+	// A bit of portamento...
+	freq = freq.lag(0.25);
+
+	numSaws.do({ arg index; // Which one are we doing... which iteration we are on
+		saws.put(index, Saw.ar(freq + (spread * 1.0.rand) ) );
+		saws2.put(index, Saw.ar(freq + (spread * 1.0.rand) ) );
 	});
 
-
-	Ndef(\sawPad, { arg freq=75, amp=0, resonantFreq=1760;
-		var waveTable = Wavetable.chebyFill(513, [0, 0, 1]);
-		var buf = LocalBuf.newFrom(waveTable);
-		var out;
-		var numSaws = 9;
-		// var spread = MouseY.kr(3, 50);
-		var spread = 5;
-		var saws = Array.newClear(numSaws);
-		var saws2 = Array.newClear(numSaws);
-
-		// A bit of portamento...
-		freq = freq.lag(0.25);
-
-		numSaws.do({ arg index; // Which one are we doing... which iteration we are on
-			saws.put(index, Saw.ar(freq + (spread * 1.0.rand) ) );
-			saws2.put(index, Saw.ar(freq + (spread * 1.0.rand) ) );
-		});
-
-		out = LPF.ar([ Mix.new(saws), Mix.new(saws2) ], 2000) * 0.6;
-		out = Shaper.ar(buf, out) + LPF.ar((BMoog.ar(out,freq: resonantFreq, q: 0.1, mode: 2.5, mul: 1) *0.9).wrap * 0.95, 9000);
-		out = FreeVerb2.ar(out[0], out[1]);
-		out * amp;
-	});
+	out = LPF.ar([ Mix.new(saws), Mix.new(saws2) ], 2000) * 0.6;
+	out = Shaper.ar(buf, out) + LPF.ar((BMoog.ar(out,freq: resonantFreq, q: 0.1, mode: 2.5, mul: 1) *0.9).wrap * 0.95, 9000);
+	out = FreeVerb2.ar(out[0], out[1]);
+	out * amp;
+});
 
 
-	Ndef(\clink, { | amp=0, freq=2000 |
-		var noise = WhiteNoise.ar() * LFPulse.ar(2, width: 0.1);
-		var delay = AllpassC.ar(noise, decaytime: 2.2);
+Ndef(\clink, { | amp=0, freq=2000 |
+	var noise = WhiteNoise.ar() * LFPulse.ar(2, width: 0.1);
+	var delay = AllpassC.ar(noise, decaytime: 2.2);
 
-		delay = HPF.ar(delay, [ 10000, 10100 ]);
+	delay = HPF.ar(delay, [ 10000, 10100 ]);
 
-		delay = delay * amp;
-		delay = FreeVerb.ar(delay );
+	delay = delay * amp;
+	delay = FreeVerb.ar(delay );
 
-		delay;
-	});
+	delay;
+});
 
 	// Buffer synths
-	b = Buffer.read(s, "/home/scott/discog/albums/Ingress/Scott Cazan - Ingress - 01 Ingress.aiff", action: { |buffer|
-		"".postln;
-		"Loaded: ".post;
-		/*path.postln;
-		"Channels: ".post;
-		buffer.numChannels.postln;*/
-		Ndef(\stutter2, { | x=1,y=1, rate=0.26, amp=0.85, switch=1 |
-			var buffer=b;
+b = Buffer.read(s, "/home/scott/discog/albums/Ingress/Scott Cazan - Ingress - 01 Ingress.aiff", action: { |buffer|
+	"".postln;
+	"Loaded: ".post;
+	/*path.postln;
+	"Channels: ".post;
+	buffer.numChannels.postln;*/
+	Ndef(\stutter2, { | x=1,y=1, rate=0.26, amp=0.85, switch=1 |
+		var buffer=b;
 
-			var out2 = PlayBuf.ar(buffer.numChannels, bufnum: buffer, rate: rate, trigger: 1, startPos: 0, loop: 1) * amp;
-			var out = BufRd.ar(1, b, Phasor.ar(0, BufRateScale.kr(b) * rate/1.5, 48000 * SinOsc.kr(12, mul: 0.5, add: 0.1).unipolar, 500 ));
+		var out2 = PlayBuf.ar(buffer.numChannels, bufnum: buffer, rate: rate, trigger: 1, startPos: 0, loop: 1) * amp;
+		var out = BufRd.ar(1, b, Phasor.ar(0, BufRateScale.kr(b) * rate/1.5, 48000 * SinOsc.kr(12, mul: 0.5, add: 0.1).unipolar, 500 ));
 
-			// var out2 = BufRd.ar(1, b, Phasor.ar(0, BufRateScale.kr(b) * rate, 0, BufFrames.kr(b) ));
+		// var out2 = BufRd.ar(1, b, Phasor.ar(0, BufRateScale.kr(b) * rate, 0, BufFrames.kr(b) ));
 
-			// out = LPF.ar(SelectX.ar(switch, [out, out2]), SelectX.kr(switch, [900, 9000])) * amp;
-			out = LPF.ar(XFade2.ar(out, out2, switch.linlin(0,1, -1, 1).lag(0.01) ), SelectX.kr(switch, [900, 9000]).lag(0.3)) * amp;
-
-		});
-
-		Ndef(\stutter1, { | x=1,y=1, rate=0.26, amp=0.85, switch=1 |
-			var buffer=b;
-
-			var out2 = PlayBuf.ar(buffer.numChannels, bufnum: buffer, rate: rate/1.5, trigger: 1, startPos: 0, loop: 1) * amp;
-			var out = BufRd.ar(1, b, Phasor.ar(0, BufRateScale.kr(b) * rate, 48000 * SinOsc.kr(12, mul: 0.5, add: 0.1).unipolar, 500 ));
-
-			// var out2 = BufRd.ar(1, b, Phasor.ar(0, BufRateScale.kr(b) * rate, 0, BufFrames.kr(b) ));
-
-			// out = LPF.ar(SelectX.ar(switch, [out, out2]), SelectX.kr(switch, [900, 9000])) * amp;
-			out = LPF.ar(XFade2.ar(out, out2, switch.linlin(0,1, -1, 1).lag(0.01) ), SelectX.kr(switch, [900, 9000]).lag(0.3)) * amp;
-
-		});
+		// out = LPF.ar(SelectX.ar(switch, [out, out2]), SelectX.kr(switch, [900, 9000])) * amp;
+		out = LPF.ar(XFade2.ar(out, out2, switch.linlin(0,1, -1, 1).lag(0.01) ), SelectX.kr(switch, [900, 9000]).lag(0.3)) * amp;
 
 	});
 
+	Ndef(\stutter1, { | x=1,y=1, rate=0.26, amp=0.85, switch=1 |
+		var buffer=b;
 
-	c = Buffer.read(s, "/home/scott/dev/AIam-sound/samples/emptywordsCompress.wav", action: { |buffer|
-		"".postln;
-		"Loaded: ".post;
+		var out2 = PlayBuf.ar(buffer.numChannels, bufnum: buffer, rate: rate/1.5, trigger: 1, startPos: 0, loop: 1) * amp;
+		var out = BufRd.ar(1, b, Phasor.ar(0, BufRateScale.kr(b) * rate, 48000 * SinOsc.kr(12, mul: 0.5, add: 0.1).unipolar, 500 ));
 
-		Ndef(\stutter0, { | x=1,y=1, rate=0.26, amp=0.85, switch=1 |
-			var buffer=c;
+		// var out2 = BufRd.ar(1, b, Phasor.ar(0, BufRateScale.kr(b) * rate, 0, BufFrames.kr(b) ));
 
-			var out2 = PlayBuf.ar(buffer.numChannels, bufnum: buffer, rate: rate * 2, trigger: 1, startPos: 0, loop: 1) * amp;
-			var out = BufRd.ar(1, c, Phasor.ar(0, BufRateScale.kr(b) * rate, start: 44100 * 3.1, end: (44100 * 3.1) + 980)) * 0.1;
+		// out = LPF.ar(SelectX.ar(switch, [out, out2]), SelectX.kr(switch, [900, 9000])) * amp;
+		out = LPF.ar(XFade2.ar(out, out2, switch.linlin(0,1, -1, 1).lag(0.01) ), SelectX.kr(switch, [900, 9000]).lag(0.3)) * amp;
 
-			// var out2 = BufRd.ar(1, b, Phasor.ar(0, BufRateScale.kr(b) * rate, 0, BufFrames.kr(b) ));
+	});
 
-			// out = LPF.ar(SelectX.ar(switch, [out, out2]), SelectX.kr(switch, [900, 9000])) * amp;
-			out = LPF.ar(XFade2.ar(out, out2, switch.linlin(0,1, -1, 1).lag(0.01) ), SelectX.kr(switch, [900, 9000]).lag(0.3)) * 0.15 * amp!2;
+});
 
-			LPF.ar(out, 9000)
 
-		});
+c = Buffer.read(s, "/home/scott/dev/AIam-sound/samples/emptywordsCompress.wav", action: { |buffer|
+	"".postln;
+	"Loaded: ".post;
+
+	Ndef(\stutter0, { | x=1,y=1, rate=0.26, amp=0.85, switch=1 |
+		var buffer=c;
+
+		var out2 = PlayBuf.ar(buffer.numChannels, bufnum: buffer, rate: rate * 2, trigger: 1, startPos: 0, loop: 1) * amp;
+		var out = BufRd.ar(1, c, Phasor.ar(0, BufRateScale.kr(b) * rate, start: 44100 * 3.1, end: (44100 * 3.1) + 980)) * 0.1;
+
+		// var out2 = BufRd.ar(1, b, Phasor.ar(0, BufRateScale.kr(b) * rate, 0, BufFrames.kr(b) ));
+
+		// out = LPF.ar(SelectX.ar(switch, [out, out2]), SelectX.kr(switch, [900, 9000])) * amp;
+		out = LPF.ar(XFade2.ar(out, out2, switch.linlin(0,1, -1, 1).lag(0.01) ), SelectX.kr(switch, [900, 9000]).lag(0.3)) * 0.15 * amp!2;
+
+		LPF.ar(out, 9000)
+
+	});
 
 
 });
@@ -414,51 +414,51 @@ Ndef(\reverb2, {
 }).play;
 
 Ndef(\graySineTrig, { | amp=0, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
-		var verb;
-		var noise = WhiteNoise.ar();
-		var modFreq = SelectX.kr((y.linlin(-1,1,0,1 * 4)).abs.floor % 2, [x.linlin(-1,1, 0, 18).sin * 20 + 0.1, x.linlin(-1,1, 0, 18).cos * 20 + 0.1]);
-		var lag = (modFreq/10).pow(4).clip(0,1);
+	var verb;
+	var noise = WhiteNoise.ar();
+	var modFreq = SelectX.kr((y.linlin(-1,1,0,1 * 4)).abs.floor % 2, [x.linlin(-1,1, 0, 18).sin * 20 + 0.1, x.linlin(-1,1, 0, 18).cos * 20 + 0.1]);
+	var lag = (modFreq/10).pow(4).clip(0,1);
 
-		var filtered;
+	var filtered;
 	// var freqs = [freq, (freq.cpsmidi + 3).midicps, (freq.cpsmidi + 7).midicps, (freq.cpsmidi - 5).midicps];
 	var freqs = [freq, freq * 1.3, freq * 2.1, freq * 0.5];
 
 	freq = SelectX.kr(switch, freqs).lag(0.00012);
 
-		filtered = BPF.ar(noise,
-			freq: [freq * 0.7, freq * 0.61] + LFPulse.ar(modFreq.clip(5, 30), mul: [freq/4, freq/2], width: 0.015).unipolar.lag(lag.abs),
-			rq: q * 0.001
-		);
+	filtered = BPF.ar(noise,
+		freq: [freq * 0.7, freq * 0.61] + LFPulse.ar(modFreq.clip(5, 30), mul: [freq/4, freq/2], width: 0.015).unipolar.lag(lag.abs),
+		rq: q * 0.001
+	);
 
-		filtered = (filtered*2).tanh * 1;
-		filtered = LPF.ar(filtered, freq: 9500);
+	filtered = (filtered*2).tanh * 1;
+	filtered = LPF.ar(filtered, freq: 9500);
 
-		verb = FreeVerb.ar( filtered * amp.lag(0.1),
-			mix: 0.6,
-			room: 0.5,
-			damp: 0.1
-		) ;
+	verb = FreeVerb.ar( filtered * amp.lag(0.1),
+		mix: 0.6,
+		room: 0.5,
+		damp: 0.1
+	);
 
 
 	verb = verb * 0.995 * SelectX.kr(switch, [0.5, 0.5, 0.5, 4]);
 
 	verb = EnvGen.ar(Env.perc(0.1, length), gate: t_trigger) * verb;
-			Out.ar(~reverbBus, verb * 0.6);
+	Out.ar(~reverbBus, verb * 0.6);
 
 	verb * 3;
-	});
+});
 
 
-	Ndef(\noiseImpulse, { | amp=0, freq=9000, t_trigger=1 |
-		var out;
-		out = BPF.ar(GrayNoise.ar(),[ freq, freq*1.01 ],0.2);
+Ndef(\noiseImpulse, { | amp=0, freq=9000, t_trigger=1 |
+	var out;
+	out = BPF.ar(GrayNoise.ar(),[ freq, freq*1.01 ],0.2);
 
-		out = out + (BPF.ar(GrayNoise.ar(),[ freq*0.25, freq*0.21 ],0.2) * 0.35);
+	out = out + (BPF.ar(GrayNoise.ar(),[ freq*0.25, freq*0.21 ],0.2) * 0.35);
 
-		out = EnvGen.ar(Env.new([0,1,0],[0.00001, 0.6, 0.000001]), gate: t_trigger) * out;
+	out = EnvGen.ar(Env.new([0,1,0],[0.00001, 0.6, 0.000001]), gate: t_trigger) * out;
 
-		( out*2 ).max * amp;
-	});
+	( out*2 ).max * amp;
+});
 
 
 

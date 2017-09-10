@@ -71,7 +71,6 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 			{state == "new"}, {
 				var inactiveSynths;
 				var existingSynths = actors.select({ | synth |
-					// (synth[\trackingID] == id) && (synth[\active] == true);
 					(synth[\id] == id) && (synth[\active] == true);
 				});
 
@@ -121,11 +120,11 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 					synth[\active] = false;
 				});
 
+				/// MOVE TO SceneController //////////////////////////////////
 				if(~outerWall == false, {
 					Ndef(\noiseImpulse).set(\amp, 0.6, \t_trigger, 1);
 				});
-				// Ndef(\noiseImpulse).set(\amp, 0.6, \t_trigger, 1);
-				///////////////////////
+
 				if(~quadrant2, {
 					{
 						var freq = 490, sin1, sin2, noise, out;
@@ -156,10 +155,10 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 					(synth[\id] == id);
 				});
 
-				msg.postln;
+				/*msg.postln;*/
 
-				existingSynths.postln;
-				existingSynths.size.postln;
+				/*existingSynths.postln;*/
+				/*existingSynths.size.postln;*/
 				// if((existingSynths.size > 0) && (existingSynths[0][\position][\x] >= 0) && (existingSynths[0][\position][\y] < 0), { // QuAD 2
 					Ndef(\noiseImpulse).set(\amp, 0.6, \t_trigger, 1);
 
@@ -173,9 +172,9 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 	OSCdef(\tracker, { | msg |
 		//var id = msg[1].asFloat - 1,
 		var id = msg[1].asFloat,
-		x = msg[2].asFloat / 1530,
-		y = msg[3].asFloat / 1530,
-		z = msg[4].asFloat / 7000;
+			x = msg[2].asFloat / 1530,
+			y = msg[3].asFloat / 1530,
+			z = msg[4].asFloat / 7000;
 
 		var diffX = 0,
 		diffY = 0,
@@ -186,8 +185,6 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 		var activeActors;
 
 		id = (id - 1);
-
-		Ndef(\bass2).set(\amp, 0);
 
 		// Check if this id already has an "Actor"
 		activeActors = actors.select({ | actor |
@@ -213,7 +210,7 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 				}, {
 					// TODO: what to do when there are no synths available? currently ignore that actor. This should be a violent takeover. Which one to takeover though... you don't want to takeover the one that is actually there and leave the ghost in charge. Maybe a timeout?
 
-					// Otherwise, choose just the first active one and take it over. This will cause occasional flitches and shift in control
+					// Otherwise, choose just the first active one and take it over. This will cause occasional glitches and shift in control
 					// VIOLENT TAKEOVER
 					activeActor = actors[0];
 					activeActor[\id] = id;
@@ -232,6 +229,7 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 		if(activeActor.notNil, {
 			var allActiveActors = actors.select({|item| item[\active] == true});
 			var energiesMotion = [0,0];
+			var cameraID = 0;
 
 
 			activeActor[\lastPosition][\x] = activeActor[\position][\x].asFloat;
@@ -246,18 +244,40 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 			//z = (z-0.5).abs / (1-0.5);
 
 
-			// ["position", activeActor[\position]].postln;
-			// update the proximities
-			// We need at least two actors to judge a distance
+			// Calculate the proximities
+			// (we need at least two actors to judge a distance)
 			if(allActiveActors.size >= 2, {
 				actorProximity = computeProximityN2D.value(allActiveActors.collect({ | item | [item[\position][\x], item[\position][\y] ] ; }));
 			});
 
 
-			// Update any synths with new info
-			sceneController[\getProcessors].value()[\proximity].value(actorProximity);
 
-			energiesMotion = sceneController[\getProcessors].value()[\energy].value(actors.indexOf(activeActor),
+			// UPDATES
+			// Update any synths with new info
+			/*sceneController[\getProcessors].value()[\proximity].value(actorProximity);*/
+
+			// Determine which camera we are using
+			if((actor[\id] >= 100) && (actor[\id] < 200), {
+				cameraID = 1;
+			}, {
+
+				if((actor[\id] >= 200) && (actor[\id] < 300), {
+					cameraID = 2;
+				}, {
+					if((actor[\id] >= 300) && (actor[\id] < 400), {
+						cameraID = 3;
+					}, {
+
+						cameraID = 0;
+					});
+
+				});
+			});
+
+			sceneController[\getCameraProcessor].value(cameraID)[\proximity].value(actorProximity);
+
+			// Calculate energy and store it
+			energiesMotion = sceneController[\getCameraProcessor].value(cameraID)[\energy].value(actors.indexOf(activeActor),
 				[
 					activeActor[\position][\x],
 					activeActor[\position][\z],
@@ -275,17 +295,12 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 			activeActor[\energies] = energiesMotion[0];
 			activeActor[\motion] = energiesMotion[1];
 
+			// TODO: Abstract this to a function on the scene controller
 			// Pass x, y, z to the synths registered for this scene
-			sceneController[\getSynths].value()[actors.indexOf(activeActor)].do({| synth, i |
-				synth.set(\x, activeActor[\position][\x], \z, activeActor[\position][\z], \y, activeActor[\position][\y]);
-			});
-
-			// TODO: don't think we need these anymore
-			// Ndef(\graySine).set(\amp, 1);
-			// Ndef(\bass).set(\amp, 1);
-
-			// testing onsets
-			// ~onsetBusses[activeActor[\id]].set(activeActor[\position][\x], activeActor[\position][\y], activeActor[\position][\z]);
+			sceneController[\getCameraProcessor].value(cameraID)[\synths].value( activeActor, actors.indexOf(activeActor) );
+			/*sceneController[\getSynths].value()[actors.indexOf(activeActor)].do({| synth, i |*/
+				/*synth.set(\x, activeActor[\position][\x], \z, activeActor[\position][\z], \y, activeActor[\position][\y]);*/
+			/*});*/
 
 		});
 
@@ -310,7 +325,7 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 
 	{ while { window.isClosed.not } { window.refresh; 0.04.wait; } }.fork(AppClock);
 
-	AppClock.sched(5, {
+	/*AppClock.sched(5, {
 		sceneController[\next].value();
-	});
+	});*/
 };
