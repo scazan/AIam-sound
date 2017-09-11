@@ -131,5 +131,6 @@ Ndef(\stutter1, { | x=1,y=1, rate=1.0, amp=0.5, switch=1 |
 // TODO
 // Make Ndef(\encouraging) and Ndef(\discouraging)
 // X On new functions pass the x,y coordinates to determiine where it appeared for walls and beeps
-// Make sounds for the high medium low in Top Left
+// Make sounds for the high medium low in Top Left (using graySine for now)
 // X Design Ndef(\beep)
+// Setup proximity to work across all four

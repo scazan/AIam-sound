@@ -462,15 +462,24 @@ Ndef(\noiseImpulse, { | amp=0, freq=9000, t_trigger=1 |
 
 Ndef(\beep, { | amp=0, freq=3700, t_trigger=1, length=0.12, pan=0 |
 	var out;
-		out = (SinOsc.ar(freq) + LFPulse.ar(freq * 2.05) )/2 ! 2;
+		out = WhiteNoise.ar() * 0.4;
+		out = EnvGen.ar(Env.new([0,1,0],[0.00001, 0.02, 0.000001]), gate: t_trigger) * out;
+		out = ((SinOsc.ar(freq) + LFPulse.ar(freq * 2.05) )/2 + out) ! 2;
 
 	out = EnvGen.ar(Env.new([0,1,0],[0.00001, length, 0.000001]), gate: t_trigger) * out;
 
 	out = ( out ) * amp;
 	out = Pan2.ar(out, pan);
+		out = LPF.ar(out, 9000);
 	Out.ar(~reverbBus, out);
 }).play;
 
+Ndef(\encouraging, { | amp=0, freq=3700, t_trigger=1, length=0.12, pan=0 |
+	SinOsc.ar(60); // Replace with sample from last session
+});
+Ndef(\discouraging, { | amp=0, freq=3700, t_trigger=1, length=0.12, pan=0 |
+	SinOsc.ar(60);
+});
 
 
 dict = Dictionary[
