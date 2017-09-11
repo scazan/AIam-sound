@@ -24,6 +24,31 @@ var actors;
 var actorProximity = 999;
 
 
+var getCameraID = { | actorID |
+	var cameraID;
+
+	// Determine which camera we are using
+	if((actorID >= 100) && (actorID < 200), {
+		cameraID = 1;
+	},
+	{
+
+		if((actorID >= 200) && (actorID < 300), {
+			cameraID = 2;
+		},
+		{
+			if((actorID >= 300) && (actorID < 400), {
+				cameraID = 3;
+			},
+			{
+				cameraID = 0;
+			});
+
+		});
+	});
+
+	cameraID;
+};
 
 
 // Distance Calculations
@@ -63,13 +88,13 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 	// Manages the assignment of ids to an "Actor". id is irrelevant in relation to the actual index of the actor.
 	OSCdef(\actorStateListener, { | msg |
 		var state = msg[2].asString().trim(),
-		id = msg[1].asInteger();
+			id = msg[1].asInteger();
 
 
 		[msg, state, state == "lost"].postln;
 		case(
 			{state == "new"}, {
-				var inactiveSynths;
+				var inactiveSynths, cameraID = 0;
 				var existingSynths = actors.select({ | synth |
 					(synth[\id] == id) && (synth[\active] == true);
 				});
@@ -103,9 +128,14 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 					Ndef(\noiseImpulse).set(\amp, 0.6, \t_trigger, 1);
 				});
 
+
+				cameraID = getCameraID.value(id);
+				sceneController[\getCameraProcessor].value(cameraID)[\new].value(id);
+
 			},
 			{state == "tracking"}, {},
 			{state == "lost"}, {
+				var cameraID = 0;
 
 				// find where this was being tracked previously
 				var lostSynth = actors.select({ | synth |
@@ -129,23 +159,26 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 					{
 						var freq = 490, sin1, sin2, noise, out;
 
-	freq = [290, 490, 900].choose/2;
+						freq = [290, 490, 900].choose/2;
 						freq = Line.kr([ freq, freq*1.1 ], freq-30, 0.3);
 
 						noise = DelayN.ar(BPF.ar(GrayNoise.ar(), 6000 + 1000.0.rand, 0.01), 0.5);
-	noise = GrayNoise.ar() * EnvGen.ar(Env.perc(0.01, 0.01));
-	noise = SinOsc.ar(80, mul: 2).max * EnvGen.ar(Env.perc(0.01, 0.01));
-	noise = LPF.ar(noise, 690);
+						noise = GrayNoise.ar() * EnvGen.ar(Env.perc(0.01, 0.01));
+						noise = SinOsc.ar(80, mul: 2).max * EnvGen.ar(Env.perc(0.01, 0.01));
+						noise = LPF.ar(noise, 690);
 						sin1 = SinOsc.ar(freq) * EnvGen.ar(Env.perc(0.1, 0.2));
 						sin2 = SinOsc.ar(freq * 2) * EnvGen.ar(Env.perc(0.1, 7), doneAction:2) * 0.5;
 						out = (((sin1) * 3) + ( noise * 3 )).max;
-	out = FreeVerb.ar(out, mix: 0.68);
+						out = FreeVerb.ar(out, mix: 0.68);
 						Out.ar(0, out * ~dirgeVol);
 
 					}.play;
 				});
 				///////////////////////
 
+
+				cameraID = getCameraID.value(id);
+				sceneController[\getCameraProcessor].value(cameraID)[\lost].value(id);
 			},
 			{
 				// Ndef(\bass2).set(\amp, 1);
@@ -256,27 +289,12 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 			// Update any synths with new info
 			/*sceneController[\getProcessors].value()[\proximity].value(actorProximity);*/
 
-			// Determine which camera we are using
-			if((actor[\id] >= 100) && (actor[\id] < 200), {
-				cameraID = 1;
-			}, {
+			cameraID = getCameraID.value(id);
 
-				if((actor[\id] >= 200) && (actor[\id] < 300), {
-					cameraID = 2;
-				}, {
-					if((actor[\id] >= 300) && (actor[\id] < 400), {
-						cameraID = 3;
-					}, {
-
-						cameraID = 0;
-					});
-
-				});
-			});
-
+			// PROXIMITY
 			sceneController[\getCameraProcessor].value(cameraID)[\proximity].value(actorProximity);
 
-			// Calculate energy and store it
+			// ENERGY
 			energiesMotion = sceneController[\getCameraProcessor].value(cameraID)[\energy].value(actors.indexOf(activeActor),
 				[
 					activeActor[\position][\x],
@@ -292,15 +310,12 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 				activeActor[\motion]
 			);
 
+			// store energy here
 			activeActor[\energies] = energiesMotion[0];
 			activeActor[\motion] = energiesMotion[1];
 
-			// TODO: Abstract this to a function on the scene controller
-			// Pass x, y, z to the synths registered for this scene
+			// SYNTHS
 			sceneController[\getCameraProcessor].value(cameraID)[\synths].value( activeActor, actors.indexOf(activeActor) );
-			/*sceneController[\getSynths].value()[actors.indexOf(activeActor)].do({| synth, i |*/
-				/*synth.set(\x, activeActor[\position][\x], \z, activeActor[\position][\z], \y, activeActor[\position][\y]);*/
-			/*});*/
 
 		});
 

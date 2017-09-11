@@ -460,6 +460,14 @@ Ndef(\noiseImpulse, { | amp=0, freq=9000, t_trigger=1 |
 	( out*2 ).max * amp;
 });
 
+Ndef(\beep, { | amp=0, t_trigger=1 |
+	var out;
+	out = SinOsc.ar(200) ! 2;
+
+	out = EnvGen.ar(Env.new([0,1,0],[0.00001, 0.6, 0.000001]), gate: t_trigger) * out;
+
+	( out*2 ).max * amp;
+}).play;
 
 
 

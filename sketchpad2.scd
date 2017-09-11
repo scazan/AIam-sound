@@ -123,3 +123,13 @@ Ndef(\stutter1, { | x=1,y=1, rate=1.0, amp=0.5, switch=1 |
 // Processing functions can now be camera functions
 // Tasks are mostly unused but could be in the future
 // How do we make the interactions and synths more modular and real-time flexible?
+
+
+
+
+
+// TODO
+// Make Ndef(\encouraging) and Ndef(\discouraging)
+// On new functions pass the x,y coordinates to determiine where it appeared for walls and beeps
+// Make sounds for the high medium low in Top Left
+// Design Ndef(\beep)

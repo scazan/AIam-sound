@@ -126,18 +126,35 @@
 
 	// Different behaviors based on different camera "zones"
 	var cameraFunctions = [
-		Dictionary[ // 0
+		Dictionary[ // 0: TOP LEFT
 			\synths -> { | actor, actorIndex |
-				var posVector = actor[\position];
+				var x = actor[\position][\x],
+					y = actor[\position][\y];
 
-				var synths = [
-					[Ndef(\graySine), Ndef(\graySine2)],
-					[Ndef(\graySine), Ndef(\graySine2)],
-					[Ndef(\graySine), Ndef(\graySine2)]
-				];
+				if((x >= 0.75) && (y <= -0.25), {
+					// THUMP ZONE
+					Ndef(\bass).fadeTime = 2;
+					Ndef(\bass).play();
+				}, {
+					Ndef(\bass).fadeTime = 2;
+					Ndef(\bass).stop();
 
-				synths[actorIndex].do({| synth, i |
-					synth.set(\x, posVector[\x], \z, posVector[\z], \y, posVector[\y]);
+					// Setting up four sections on the x-axis
+					if(x <= -0.5, {
+						// Low sound
+					}, {
+						if(x <= 0, {
+							//high sound
+						}, {
+							if(x <= 0.5, {
+								//med sound
+							}, {
+								if(x <= 1, {
+									//high sound
+								});
+							});
+						});
+					});
 				});
 			},
 			\energy -> { | id, vector1, vector2, energies, motion |
@@ -213,6 +230,257 @@
 				}, {
 					Tdef(\vocal).play;
 				});
+			},
+			\new -> { | id, x, y |
+				if(x >= 0.9, {
+					//bEEP
+					Ndef(\beep).set(\amp, 0.6, \t_trigger, 1);
+				});
+			},
+			\lost -> {
+			}
+		],
+		Dictionary[ // 1: TOP RIGHT
+			\synths -> { | actor, actorIndex |
+				var x = actor[\position][\x],
+					y = actor[\position][\y];
+
+				if((x <= -0.25) && (y <= -0.25), {
+					// THUMP ZONE
+					Ndef(\bass).fadeTime = 2;
+					Ndef(\bass).play();
+				}, {
+					Ndef(\bass).fadeTime = 2;
+					Ndef(\bass).stop();
+				});
+			},
+			\energy -> { | id, vector1, vector2, energies, motion |
+				var moving = false;
+				var energy = ((vector1[0]*100) - (vector2[0]*100)).abs + ((vector1[2]*100) - (vector2[2]*100)).abs;
+
+
+				energies = energies.shift(1);
+				energies[0] = energy;
+
+				energy = energies.sum / energies.size;
+
+				// energy.postln;
+
+				if(energy > ~energyThreshold, {
+					moving = true;
+
+					[id, "moving", vector1].postln;
+
+					// If we are moving and we are not already flagged as moving
+					if(motion == false, {
+
+						var x = vector1[0],
+						y = vector1[2];
+
+						// Quadrants
+						if((x >= 0) && (y >= 0), {
+
+							Ndef(\graySineTrig).set(\pan, 1, \amp, 3, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
+							"QUAD 1".postln;
+						},{
+								if((x >= 0) && (y < 0), {
+									Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 1903, \switch, 1, \length, 1.3, \t_trigger, 1);
+									"QUAD 2".postln;
+								}, {
+										if((x < 0) && (y < 0), {
+										Ndef(\graySineTrig).set(\pan, 1, \amp, 3, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
+											"QUAD 3".postln;
+									}, {
+												if((x < 0) && (y >= 0), {
+												Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 703, \switch, 2, \length, 1.3, \t_trigger, 1);
+												"QUAD 4".postln;
+											});
+									});
+								});
+						});
+
+						motion = true;
+
+						});
+				}, {
+						if(motion == true, {
+
+							// Ndef(\stutter2).set(\rate, 0.95, \switch, 0, \amp, 0.95);
+							Ndef(("stutter"++id).asSymbol).set(\rate, 0.26, \switch, 1, \amp, 0.85);
+
+							motion = false;
+
+							});
+
+				});
+
+				[energies, moving];
+			},
+			\proximity -> {|val|
+				val = ((1 - val)**1 * 2).abs;
+
+
+				if(val > ~proximityDistance, {
+					Tdef(\vocal).stop;
+					Ndef(\pulseTrain0).set(\lag, 4 );
+					Ndef(\pulseTrain0).set(\density, val+0.5 );
+				}, {
+					Tdef(\vocal).play;
+				});
+			},
+			\new -> { | id, x, y |
+				if(x <= -0.9, {
+					//BEEP
+					Ndef(\beep).set(\amp, 0.6, \t_trigger, 1);
+				});
+			},
+			\lost -> {
+			}
+		],
+		Dictionary[ // 2: BOTTOM LEFT
+			\synths -> { | actor, actorIndex |
+				var x = actor[\position][\x],
+					y = actor[\position][\y];
+
+				if((x >= 0.75) && (y >= 0.75), {
+					// THUMP ZONE
+					Ndef(\bass).fadeTime = 2;
+					Ndef(\bass).play();
+				}, {
+					var actorY = y,
+						actorYInverse =  (y - 2) * -1;
+
+					Ndef(\bass).fadeTime = 2;
+					Ndef(\bass).stop();
+
+					// Encouraging/Discouraging sound
+					Ndef(\encouraging).xset(\amp, actorY);
+					Ndef(\discouraging).xset(\amp, actorYInverse);
+				});
+
+			},
+			\energy -> { | id, vector1, vector2, energies, motion |
+			},
+			\proximity -> {|val|
+			},
+			\new -> { | id, x, y |
+				if(x <= -0.9, {
+					//bEEP
+					Ndef(\beep).set(\amp, 0.6, \t_trigger, 1);
+				}, {
+					if( (y>=0.9) || (x >= 0.9), {
+						// WALL
+						Ndef(\noiseImpulse).set(\amp, 0.6, \t_trigger, 1);
+					});
+				});
+			},
+			\lost -> {
+				Ndef(\noiseImpulse).set(\amp, 0.6, \t_trigger, 1);
+			}
+		],
+		Dictionary[ // 3: BOTTOM RIGHT
+			\synths -> { | actor, actorIndex |
+				var posVector = actor[\position];
+
+				var synths = [
+					[Ndef(\graySine), Ndef(\graySine2)],
+					[Ndef(\graySine), Ndef(\graySine2)],
+					[Ndef(\graySine), Ndef(\graySine2)]
+				];
+
+				synths[actorIndex].do({| synth, i |
+					synth.set(\x, posVector[\x], \z, posVector[\z], \y, posVector[\y]);
+				});
+			},
+			\energy -> { | id, vector1, vector2, energies, motion |
+				var moving = false;
+				var energy = ((vector1[0]*100) - (vector2[0]*100)).abs + ((vector1[2]*100) - (vector2[2]*100)).abs;
+
+
+				energies = energies.shift(1);
+				energies[0] = energy;
+
+				energy = energies.sum / energies.size;
+
+				// energy.postln;
+
+				if(energy > ~energyThreshold, {
+					moving = true;
+
+					[id, "moving", vector1].postln;
+
+					// If we are moving and we are not already flagged as moving
+					if(motion == false, {
+
+						var x = vector1[0],
+						y = vector1[2];
+
+						// QUADRANTS
+						if((x <= -0.25) && (y >= 0.75), {
+							// THUMP ZONE
+							Ndef(\bass).fadeTime = 2;
+							Ndef(\bass).play();
+						}, {
+							Ndef(\bass).stop();
+							if((x >= 0) && (y >= 0), {
+
+								Ndef(\graySineTrig).set(\pan, 1, \amp, 3, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
+								"QUAD 1".postln;
+							},{
+								if((x >= 0) && (y < 0), {
+									Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 1903, \switch, 1, \length, 1.3, \t_trigger, 1);
+									"QUAD 2".postln;
+								}, {
+									if((x < 0) && (y < 0), {
+										Ndef(\graySineTrig).set(\pan, 1, \amp, 3, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
+										"QUAD 3".postln;
+									}, {
+										if((x < 0) && (y >= 0), {
+											Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 703, \switch, 2, \length, 1.3, \t_trigger, 1);
+											"QUAD 4".postln;
+										});
+									});
+								});
+							});
+						});
+						 // END QUADRANTS
+
+						motion = true;
+
+					});
+				}, {
+					if(motion == true, {
+
+						// Ndef(\stutter2).set(\rate, 0.95, \switch, 0, \amp, 0.95);
+						Ndef(("stutter"++id).asSymbol).set(\rate, 0.26, \switch, 1, \amp, 0.85);
+
+						motion = false;
+
+					});
+
+				});
+
+				[energies, moving];
+			},
+			\proximity -> {|val|
+				val = ((1 - val)**1 * 2).abs;
+
+
+				if(val > ~proximityDistance, {
+					Tdef(\vocal).stop;
+					Ndef(\pulseTrain0).set(\lag, 4 );
+					Ndef(\pulseTrain0).set(\density, val+0.5 );
+				}, {
+					Tdef(\vocal).play;
+				});
+			},
+			\new -> { | id, x, y |
+				if(x >= 0.9, {
+					//bEEP
+					Ndef(\beep).set(\amp, 0.6, \t_trigger, 1);
+				});
+			},
+			\lost -> {
 			}
 		],
 	];
