@@ -142,15 +142,19 @@
 					// Setting up four sections on the x-axis
 					if(x <= -0.5, {
 						// Low sound
+						Ndef(\graySine2).set(\freq, 900);
 					}, {
 						if(x <= 0, {
 							//high sound
+							Ndef(\graySine2).set(\freq, 2000);
 						}, {
 							if(x <= 0.5, {
 								//med sound
+								Ndef(\graySine2).set(\freq, 1500);
 							}, {
 								if(x <= 1, {
 									//high sound
+									Ndef(\graySine2).set(\freq, 2000);
 								});
 							});
 						});
@@ -231,13 +235,17 @@
 					Tdef(\vocal).play;
 				});
 			},
-			\new -> { | id, x, y |
+			\new -> { | id, x, y, z |
 				if(x >= 0.9, {
 					//bEEP
-					Ndef(\beep).set(\amp, 0.6, \t_trigger, 1);
+					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan -1);
 				});
 			},
 			\lost -> {
+				if(x >= 0.9, {
+					//bEEP
+					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan -1);
+				});
 			}
 		],
 		Dictionary[ // 1: TOP RIGHT
@@ -331,10 +339,14 @@
 			\new -> { | id, x, y |
 				if(x <= -0.9, {
 					//BEEP
-					Ndef(\beep).set(\amp, 0.6, \t_trigger, 1);
+					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan 1);
 				});
 			},
 			\lost -> {
+				if(x <= -0.9, {
+					//BEEP
+					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan 1);
+				});
 			}
 		],
 		Dictionary[ // 2: BOTTOM LEFT
@@ -347,8 +359,8 @@
 					Ndef(\bass).fadeTime = 2;
 					Ndef(\bass).play();
 				}, {
-					var actorY = y,
-						actorYInverse =  (y - 2) * -1;
+					var actorY = (y + 1) / 2,
+						actorYInverse =  ((y - 1) / 2).abs;
 
 					Ndef(\bass).fadeTime = 2;
 					Ndef(\bass).stop();
@@ -366,7 +378,7 @@
 			\new -> { | id, x, y |
 				if(x <= -0.9, {
 					//bEEP
-					Ndef(\beep).set(\amp, 0.6, \t_trigger, 1);
+					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan -1);
 				}, {
 					if( (y>=0.9) || (x >= 0.9), {
 						// WALL
@@ -375,7 +387,15 @@
 				});
 			},
 			\lost -> {
-				Ndef(\noiseImpulse).set(\amp, 0.6, \t_trigger, 1);
+				if(x <= -0.9, {
+					//bEEP
+					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan -1);
+				}, {
+					if( (y>=0.9) || (x >= 0.9), {
+						// WALL
+						Ndef(\noiseImpulse).set(\amp, 0.6, \t_trigger, 1);
+					});
+				});
 			}
 		],
 		Dictionary[ // 3: BOTTOM RIGHT
@@ -477,10 +497,14 @@
 			\new -> { | id, x, y |
 				if(x >= 0.9, {
 					//bEEP
-					Ndef(\beep).set(\amp, 0.6, \t_trigger, 1);
+					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan 1);
 				});
 			},
 			\lost -> {
+				if(x >= 0.9, {
+					//bEEP
+					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan 1);
+				});
 			}
 		],
 	];

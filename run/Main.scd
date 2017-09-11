@@ -88,7 +88,10 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 	// Manages the assignment of ids to an "Actor". id is irrelevant in relation to the actual index of the actor.
 	OSCdef(\actorStateListener, { | msg |
 		var state = msg[2].asString().trim(),
-			id = msg[1].asInteger();
+			id = msg[1].asInteger(),
+		x = msg[3].asFloat / 1530,
+			y = msg[4].asFloat / 1530,
+			z = msg[5].asFloat / 7000;;
 
 
 		[msg, state, state == "lost"].postln;
@@ -100,8 +103,6 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 				});
 
 
-				Ndef(\bass2).set(\amp, 0);
-
 				if(existingSynths.size == 0, {
 					inactiveSynths = actors.select({ | synth |
 						synth[\active] == false;
@@ -109,7 +110,7 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 
 					}, {
 						// If there is an "active" synth.
-						inactiveSynths = existingSynths; // Assigning like this as a sortcut to allow us to use the same logic below
+						inactiveSynths = existingSynths; // Assigning like this as a shortcut to allow us to use the same logic below
 				});
 
 
@@ -122,15 +123,15 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 					inactiveSynth[\trackingID] = id;
 					inactiveSynth[\id] = id;
 					inactiveSynth[\active] = true;
-				});
 
-				if(~outerWall, {
-					Ndef(\noiseImpulse).set(\amp, 0.6, \t_trigger, 1);
+					inactiveSynth[\position][\x] = x;
+					inactiveSynth[\position][\y] = y;
+					inactiveSynth[\position][\z] = z;
 				});
 
 
 				cameraID = getCameraID.value(id);
-				sceneController[\getCameraProcessor].value(cameraID)[\new].value(id);
+				sceneController[\getCameraProcessor].value(cameraID)[\new].value(id, x, y, z);
 
 			},
 			{state == "tracking"}, {},
@@ -139,7 +140,6 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 
 				// find where this was being tracked previously
 				var lostSynth = actors.select({ | synth |
-					// synth[\trackingID] == id;
 					synth[\id] == id;
 				});
 				"LOST".postln;
@@ -150,10 +150,6 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 					synth[\active] = false;
 				});
 
-				/// MOVE TO SceneController //////////////////////////////////
-				if(~outerWall == false, {
-					Ndef(\noiseImpulse).set(\amp, 0.6, \t_trigger, 1);
-				});
 
 				if(~quadrant2, {
 					{
@@ -178,25 +174,14 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 
 
 				cameraID = getCameraID.value(id);
-				sceneController[\getCameraProcessor].value(cameraID)[\lost].value(id);
+				sceneController[\getCameraProcessor].value(cameraID)[\lost].value(id, x, y, z);
 			},
 			{
-				// Ndef(\bass2).set(\amp, 1);
-				// Ndef(\noiseImpulse).set(\amp, 0.1, \t_trigger, 1);
+				// TODO: This seems to do nothing
 				var existingSynths = actors.select({ | synth |
 					// (synth[\trackingID] == id) && (synth[\active] == true);
 					(synth[\id] == id);
 				});
-
-				/*msg.postln;*/
-
-				/*existingSynths.postln;*/
-				/*existingSynths.size.postln;*/
-				// if((existingSynths.size > 0) && (existingSynths[0][\position][\x] >= 0) && (existingSynths[0][\position][\y] < 0), { // QuAD 2
-					Ndef(\noiseImpulse).set(\amp, 0.6, \t_trigger, 1);
-
-
-		// });
 			}
 		);
 	}, path: \state, recvPort: 15002);
@@ -285,7 +270,7 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 
 
 
-			// UPDATES
+			// UPDATES ///////////////////////////////////////
 			// Update any synths with new info
 			/*sceneController[\getProcessors].value()[\proximity].value(actorProximity);*/
 
