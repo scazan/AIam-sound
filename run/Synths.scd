@@ -22,6 +22,7 @@
 		// freq = SelectX.kr((MouseY.kr(0,1) * freqs.size).abs.floor, freqs).lag(0.012);
 		freq = SelectX.kr(y.linlin(-1,1,0,1 * freqs.size).abs.floor, freqs).lag(0.012);
 
+		freq = freq/4;
 		// freq = freq + (x.abs * 100);
 
 
@@ -34,7 +35,7 @@
 		filtered = (filtered*2).tanh * 1;
 		filtered = LPF.ar(filtered, freq: 9500);
 
-		verb = FreeVerb.ar( filtered * amp.lag(1),
+		verb = FreeVerb.ar( filtered * amp.lag(2),
 			mix: 0.6,
 			room: 0.5,
 			damp: 0.1
@@ -74,7 +75,7 @@
 		filtered = (filtered*2).tanh * 1;
 		filtered = LPF.ar(filtered, freq: 9500);
 
-		verb = FreeVerb.ar( filtered * amp.lag(1),
+		verb = FreeVerb.ar( filtered * amp.lag(3),
 			mix: 0.6,
 			room: 0.5,
 			damp: 0.1
@@ -409,13 +410,15 @@ Ndef(\graySineTrig, { | amp=0, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5,
 
 	freq = SelectX.kr(switch, freqs).lag(0.00012);
 
-	filtered = BPF.ar(noise,
+	/*filtered = BPF.ar(noise,
 		freq: [freq * 0.7, freq * 0.61] + LFPulse.ar(modFreq.clip(5, 30), mul: [freq/4, freq/2], width: 0.015).unipolar.lag(lag.abs),
 		rq: q * 0.001
-	);
+	);*/
+		filtered = SinOsc.ar([freq * 0.7, freq * 0.61] + LFPulse.ar(modFreq.clip(5, 30), mul: [freq/4, freq/2], width: 0.015).unipolar.lag(lag.abs) ) * 0.01;
 
 	filtered = (filtered*2).tanh * 1;
 	filtered = LPF.ar(filtered, freq: 9500);
+		filtered = HPF.ar(filtered, freq: 880);
 
 	verb = FreeVerb.ar( filtered * amp.lag(0.1),
 		mix: 0.6,

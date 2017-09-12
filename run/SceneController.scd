@@ -131,29 +131,33 @@
 				var x = actor[\position][\x],
 					y = actor[\position][\y];
 
+				var synths = [\graySine2, \graySine];
+
 				if((x >= 0.75) && (y <= -0.25), {
 					// THUMP ZONE
 
 					Ndef(\bass).set(\amp, 0.4);
+					// Ndef(\graySine2).set(\amp, 0.2);
 				}, {
 					Ndef(\bass).set(\amp, 0);
+						// Ndef(\graySine2).set(\amp, 1);
 
 					// Setting up four sections on the x-axis
 					if(x <= -0.5, {
 						// Low sound
-						Ndef(\graySine2).set(\freq, 900);
+							Ndef(synths[actorIndex % (synths.size)]).set(\freq, 900);
 					}, {
 						if(x <= 0, {
 							//high sound
-							Ndef(\graySine2).set(\freq, 2000);
+							Ndef(synths[actorIndex % (synths.size)]).set(\freq, 2000);
 						}, {
 							if(x <= 0.5, {
 								//med sound
-								Ndef(\graySine2).set(\freq, 1500);
+								Ndef(synths[actorIndex % (synths.size)]).set(\freq, 1500);
 							}, {
 								if(x <= 1, {
 									//high sound
-									Ndef(\graySine2).set(\freq, 2000);
+									Ndef(synths[actorIndex % (synths.size)]).set(\freq, 2000);
 								});
 							});
 						});
@@ -163,7 +167,7 @@
 			\energy -> { | id, vector1, vector2, energies, motion |
 				var moving = false;
 				var energy = ((vector1[0]*100) - (vector2[0]*100)).abs + ((vector1[2]*100) - (vector2[2]*100)).abs;
-
+				var synths = [\graySine2, \graySine];
 
 				energies = energies.shift(1);
 				energies[0] = energy;
@@ -181,6 +185,15 @@
 
 						var x = vector1[0],
 						y = vector1[2];
+
+						Ndef(synths[id % (synths.size)]).set(\amp, 0.4);
+
+						// THUMP ZONE
+						if((x >= 0.75) && (y <= -0.25), {
+							Ndef(synths[id % (synths.size)]).set(\amp, 0.0);
+						}, {
+							Ndef(synths[id % (synths.size)]).set(\amp, 0.4);
+						});
 
 						// Quadrants
 						if((x >= 0) && (y >= 0), {
@@ -208,7 +221,16 @@
 
 						});
 				}, {
+						var x = vector1[0],
+						y = vector1[2];
+
 						if(motion == true, {
+
+						if((x >= 0.75) && (y <= -0.25), {
+							Ndef(synths[id % (synths.size)]).set(\amp, 0.0);
+						}, {
+							Ndef(synths[id % (synths.size)]).set(\amp, 0.05);
+						});
 
 							// Ndef(\stutter2).set(\rate, 0.95, \switch, 0, \amp, 0.95);
 							Ndef(("stutter"++id).asSymbol).set(\rate, 0.26, \switch, 1, \amp, 0.85);
@@ -234,12 +256,16 @@
 				});
 			},
 			\new -> { | id, x, y, z |
+				var synths = [\graySine2, \graySine];
+				Ndef(synths[id % (synths.size)]).set(\amp, 0.4);
 				if(x >= 0.9, {
 					//bEEP
 					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan, -1);
 				});
 			},
 			\lost -> { | id, x, y, z |
+				var synths = [\graySine2, \graySine];
+				Ndef(synths[id % (synths.size)]).set(\amp, 0);
 				if(x >= 0.9, {
 					//bEEP
 					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan, -1);
@@ -412,9 +438,9 @@
 					[Ndef(\graySine), Ndef(\graySine2)]
 				];
 
-				synths[actorIndex].do({| synth, i |
-					synth.set(\x, posVector[\x], \z, posVector[\z], \y, posVector[\y]);
-				});
+				// synths[actorIndex].do({| synth, i |
+					// synth.set(\x, posVector[\x], \z, posVector[\z], \y, posVector[\y]);
+		// });
 			},
 			\energy -> { | id, vector1, vector2, energies, motion |
 				var moving = false;
@@ -445,6 +471,7 @@
 							Ndef(\bass).set(\amp, 0.4);
 						}, {
 							Ndef(\bass).set(\amp, 0);
+
 							if((x >= 0) && (y >= 0), {
 
 								Ndef(\graySineTrig).set(\pan, 1, \amp, 3, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
