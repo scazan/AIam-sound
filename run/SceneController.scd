@@ -134,11 +134,9 @@
 				if((x >= 0.75) && (y <= -0.25), {
 					// THUMP ZONE
 
-					Ndef(\bass).fadeTime = 2;
-					Ndef(\bass).play();
+					Ndef(\bass).set(\amp, 0.4);
 				}, {
-					Ndef(\bass).fadeTime = 2;
-					Ndef(\bass).stop();
+					Ndef(\bass).set(\amp, 0);
 
 					// Setting up four sections on the x-axis
 					if(x <= -0.5, {
@@ -255,11 +253,9 @@
 
 				if((x <= -0.25) && (y <= -0.25), {
 					// THUMP ZONE
-					Ndef(\bass).fadeTime = 2;
-					Ndef(\bass).play();
+					Ndef(\bass).set(\amp, 0.4);
 				}, {
-					Ndef(\bass).fadeTime = 2;
-					Ndef(\bass).stop();
+					Ndef(\bass).set(\amp, 0);
 				});
 			},
 			\energy -> { | id, vector1, vector2, energies, motion |
@@ -355,18 +351,15 @@
 					y = actor[\position][\y];
 
 				// [x,y].postln;
-
 				if((x >= 0.75) && (y >= 0.75), {
 					// THUMP ZONE
 					["THUMP"].postln;
-					// Ndef(\bass).fadeTime = 2;
-					Ndef(\bass).play();
+					Ndef(\bass).set(\amp, 0.4);
 				}, {
 					var actorY = (y + 1) / 2,
 						actorYInverse =  ((y - 1) / 2).abs;
 
-						// Ndef(\bass).fadeTime = 2;
-					Ndef(\bass).stop();
+					Ndef(\bass).set(\amp, 0);
 
 
 					// Encouraging/Discouraging sound
@@ -449,10 +442,9 @@
 						// QUADRANTS
 						if((x <= -0.25) && (y >= 0.75), {
 							// THUMP ZONE
-							Ndef(\bass).fadeTime = 2;
-							Ndef(\bass).play();
+							Ndef(\bass).set(\amp, 0.4);
 						}, {
-							Ndef(\bass).stop();
+							Ndef(\bass).set(\amp, 0);
 							if((x >= 0) && (y >= 0), {
 
 								Ndef(\graySineTrig).set(\pan, 1, \amp, 3, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);

@@ -112,7 +112,7 @@
 
 		var out = reverb.value( lpf.value(rumble + hum) );
 
-		HPF.ar(out, 30).tanh * 0.9 * amp;
+		HPF.ar(out, 30).tanh * 0.9 * amp.lag(3);
 	});
 
 
@@ -383,7 +383,7 @@ u = Buffer.read(s, "/home/scott/dev/AIam-sound/samples/pads.wav", action: { |buf
 	Ndef(\encouraging, { | x=1,y=1, rate=1, amp=0.85, switch=1, volume=0 |
 		var buffer=u;
 
-			var out = PlayBuf.ar(buffer.numChannels, bufnum: buffer, rate: rate * 2, trigger: 1, startPos: 0, loop: 1) * amp.pow(1);
+			var out = PlayBuf.ar(buffer.numChannels, bufnum: buffer, rate: rate * 2, trigger: 1, startPos: 0, loop: 1) * amp.pow(3);
 
 			out * volume.lag(1);
 

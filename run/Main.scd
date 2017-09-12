@@ -89,12 +89,12 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 	OSCdef(\actorStateListener, { | msg |
 		var state = msg[2].asString().trim(),
 			id = msg[1].asInteger(),
-		x = msg[3].asFloat / 1530,
-			y = msg[4].asFloat / 1530,
+		x = msg[3].asFloat / 1430,
+			y = msg[4].asFloat / 900,
 			z = msg[5].asFloat / 7000;
 
 
-		[msg, state, state == "lost"].postln;
+		// [msg, state, state == "lost"].postln;
 		case(
 			{state == "new"}, {
 				var inactiveSynths, cameraID = 0;
@@ -142,7 +142,6 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 				var lostSynth = actors.select({ | synth |
 					synth[\id] == id;
 				});
-				"LOST".postln;
 
 
 				// Deactivate the slot allowing it to be re-assigned in the future
@@ -190,8 +189,8 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 	OSCdef(\tracker, { | msg |
 		//var id = msg[1].asFloat - 1,
 		var id = msg[1].asFloat,
-			x = msg[2].asFloat / 1530,
-			y = msg[3].asFloat / 1530,
+			x = msg[2].asFloat / 1430,
+			y = msg[3].asFloat / 900,
 			z = msg[4].asFloat / 7000;
 
 		var diffX = 0,
@@ -203,6 +202,7 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 		var activeActors;
 
 		// id = (id - 1);
+		/*[msg[2], msg[3]].postln;*/
 
 		// Check if this id already has an "Actor"
 		activeActors = actors.select({ | actor |
