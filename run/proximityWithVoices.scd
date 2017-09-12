@@ -13,8 +13,8 @@ s.waitForBoot({
 
 
 	// Load Synths
-	"Synths.scd".loadRelative; // returns ~cSynths
-	synthDefs = ~cSynths.value();
+	// "Synths.scd".loadRelative; // returns ~cSynths
+	// synthDefs = ~cSynths.value();
 	// synthDefs[\play].value();
 
 
@@ -34,7 +34,7 @@ s.waitForBoot({
 	AppClock.sched(3, main);
 
 
-	NdefMixer.new(s);
+	// NdefMixer.new(s);
 
 });
 

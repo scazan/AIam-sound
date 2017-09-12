@@ -133,6 +133,7 @@
 
 				if((x >= 0.75) && (y <= -0.25), {
 					// THUMP ZONE
+
 					Ndef(\bass).fadeTime = 2;
 					Ndef(\bass).play();
 				}, {
@@ -171,12 +172,11 @@
 
 				energy = energies.sum / energies.size;
 
-				// energy.postln;
 
 				if(energy > ~energyThreshold, {
 					moving = true;
 
-					[id, "moving", vector1].postln;
+					// [id, "moving", vector1].postln;
 
 					// If we are moving and we are not already flagged as moving
 					if(motion == false, {
@@ -187,19 +187,19 @@
 						// Quadrants
 						if((x >= 0) && (y >= 0), {
 
-							Ndef(\graySineTrig).set(\pan, 1, \amp, 3, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
+							/*Ndef(\graySineTrig).set(\pan, 1, \amp, 3, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);*/
 							"QUAD 1".postln;
 						},{
 								if((x >= 0) && (y < 0), {
-									Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 1903, \switch, 1, \length, 1.3, \t_trigger, 1);
+									/*Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 1903, \switch, 1, \length, 1.3, \t_trigger, 1);*/
 									"QUAD 2".postln;
 								}, {
 										if((x < 0) && (y < 0), {
-										Ndef(\graySineTrig).set(\pan, 1, \amp, 3, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
+										/*Ndef(\graySineTrig).set(\pan, 1, \amp, 3, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);*/
 											"QUAD 3".postln;
 									}, {
 												if((x < 0) && (y >= 0), {
-												Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 703, \switch, 2, \length, 1.3, \t_trigger, 1);
+												/*Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 703, \switch, 2, \length, 1.3, \t_trigger, 1);*/
 												"QUAD 4".postln;
 											});
 									});
@@ -238,13 +238,13 @@
 			\new -> { | id, x, y, z |
 				if(x >= 0.9, {
 					//bEEP
-					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan -1);
+					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan, -1);
 				});
 			},
-			\lost -> {
+			\lost -> { | id, x, y, z |
 				if(x >= 0.9, {
 					//bEEP
-					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan -1);
+					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan, -1);
 				});
 			}
 		],
@@ -339,13 +339,13 @@
 			\new -> { | id, x, y |
 				if(x <= -0.9, {
 					//BEEP
-					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan 1);
+					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan, 1);
 				});
 			},
-			\lost -> {
+			\lost -> { | id, x, y, z |
 				if(x <= -0.9, {
 					//BEEP
-					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan 1);
+					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan, 1);
 				});
 			}
 		],
@@ -354,31 +354,39 @@
 				var x = actor[\position][\x],
 					y = actor[\position][\y];
 
+				// [x,y].postln;
+
 				if((x >= 0.75) && (y >= 0.75), {
 					// THUMP ZONE
-					Ndef(\bass).fadeTime = 2;
+					["THUMP"].postln;
+					// Ndef(\bass).fadeTime = 2;
 					Ndef(\bass).play();
 				}, {
 					var actorY = (y + 1) / 2,
 						actorYInverse =  ((y - 1) / 2).abs;
 
-					Ndef(\bass).fadeTime = 2;
+						// Ndef(\bass).fadeTime = 2;
 					Ndef(\bass).stop();
 
+
 					// Encouraging/Discouraging sound
-					Ndef(\encouraging).xset(\amp, actorY);
-					Ndef(\discouraging).xset(\amp, actorYInverse);
+						Ndef(\encouraging).set(\volume, 1);
+				Ndef(\discouraging).set(\volume, 1);
+					Ndef(\encouraging).set(\amp, actorY);
+					Ndef(\discouraging).set(\amp, actorYInverse);
 				});
 
 			},
 			\energy -> { | id, vector1, vector2, energies, motion |
+				[[0,0], [0,0]];
 			},
 			\proximity -> {|val|
+				0;
 			},
 			\new -> { | id, x, y |
 				if(x <= -0.9, {
 					//bEEP
-					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan -1);
+					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan, -1);
 				}, {
 					if( (y>=0.9) || (x >= 0.9), {
 						// WALL
@@ -386,7 +394,7 @@
 					});
 				});
 			},
-			\lost -> {
+			\lost -> { | id, x, y, z |
 				if(x <= -0.9, {
 					//bEEP
 					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan -1);
@@ -396,6 +404,9 @@
 						Ndef(\noiseImpulse).set(\amp, 0.6, \t_trigger, 1);
 					});
 				});
+
+				Ndef(\encouraging).set(\volume, 0);
+				Ndef(\discouraging).set(\volume, 0);
 			}
 		],
 		Dictionary[ // 3: BOTTOM RIGHT
@@ -497,271 +508,24 @@
 			\new -> { | id, x, y |
 				if(x >= 0.9, {
 					//bEEP
-					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan 1);
+					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan, 1);
 				});
 			},
-			\lost -> {
+			\lost -> { | id, x, y, z |
 				if(x >= 0.9, {
 					//bEEP
-					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan 1);
+					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan, 1);
 				});
 			}
 		],
 	];
 
-	var processingFunctions = [
-		Dictionary[ // 0
-			\energy -> { | id, vector1, vector2, energies, motion |
-				var moving = false;
-				var energy = ((vector1[0]*100) - (vector2[0]*100)).abs + ((vector1[2]*100) - (vector2[2]*100)).abs;
-
-
-				energies = energies.shift(1);
-				energies[0] = energy;
-
-				energy = energies.sum / energies.size;
-
-				// energy.postln;
-
-				if(energy > ~energyThreshold, {
-					moving = true;
-
-					[id, "moving", vector1].postln;
-
-					// If we are moving and we are not already flagged as moving
-					if(motion == false, {
-
-						var x = vector1[0],
-						y = vector1[2];
-
-						// Quadrants
-						if((x >= 0) && (y >= 0), {
-
-							Ndef(\graySineTrig).set(\pan, 1, \amp, 3, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
-							"QUAD 1".postln;
-							// ~quadrant2 = false;
-						},{
-								if((x >= 0) && (y < 0), {
-									Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 1903, \switch, 1, \length, 1.3, \t_trigger, 1);
-									"QUAD 2".postln;
-									// ~quadrant2 = true;
-								}, {
-										if((x < 0) && (y < 0), {
-										Ndef(\graySineTrig).set(\pan, 1, \amp, 3, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
-											"QUAD 3".postln;
-											// ~quadrant2 = false;
-									}, {
-												if((x < 0) && (y >= 0), {
-												Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 703, \switch, 2, \length, 1.3, \t_trigger, 1);
-												"QUAD 4".postln;
-													// ~quadrant2 = false;
-											});
-									});
-								});
-						});
-
-
-						// [id, "moving"].postln;
-
-						motion = true;
-
-						});
-				}, {
-						// [id, "not moving"].postln;
-						if(motion == true, {
-
-							// Ndef(\stutter2).set(\rate, 0.95, \switch, 0, \amp, 0.95);
-							Ndef(("stutter"++id).asSymbol).set(\rate, 0.26, \switch, 1, \amp, 0.85);
-
-							motion = false;
-
-							});
-
-				});
-
-				[energies, moving];
-			},
-			\proximity -> {|val|
-				val = ((1 - val)**1 * 2).abs;
-
-
-				if(val > ~proximityDistance, {
-					Tdef(\vocal).stop;
-					Ndef(\pulseTrain0).set(\lag, 4 );
-					Ndef(\pulseTrain0).set(\density, val+0.5 );
-				}, {
-					Tdef(\vocal).play;
-				});
-			}
-		],
-		Dictionary[ // 1
-			\energy -> { | id, vector1, vector2, energies, motion |
-				var moving = false;
-				var energy = ((vector1[0]*100) - (vector2[0]*100)).abs + ((vector1[2]*100) - (vector2[2]*100)).abs;
-
-
-				energies = energies.shift(1);
-				energies[0] = energy;
-
-				energy = energies.sum / energies.size;
-
-				energy.postln;
-
-				if(energy > ~energyThreshold, {
-					moving = true;
-
-					// [id, "moving", vector1].postln;
-
-					// If we are moving and we are not already flagged as moving
-					if(motion == false, {
-						// Ndef(("stutter"++id).asSymbol).set(\rate, 5, \switch, 0, \amp, 0.95);
-						// Ndef(("stutter"++id).asSymbol).set(\rate, 0.26, \switch, 1, \amp, 0.85);
-						// Ndef(("stutter"++id).asSymbol).set(\rate, 0.75 * 2.5, \switch, 0, \amp, 0.95);
-						// Ndef(("stutter"++id).asSymbol).set(\rate, 0.26 * 2.5, \switch, 0, \amp, 0.45);
-
-						// Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 903, \x, 0.4, \y, 0.9, \length, 1.3, \t_trigger, 1);
-
-
-
-						if(id == 0, {
-							Ndef(\stretch).set(\amp, 0.8, \t_trigger, 1);
-						}, {
-
-								Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 903, \x, vector1[1], \y, vector1[0], \length, 1.3, \t_trigger, 1);
-						});
-
-						// [id, "moving"].postln;
-
-						motion = true;
-
-						});
-				}, {
-						// [id, "not moving"].postln;
-						if(motion == true, {
-
-							// Ndef(\stutter2).set(\rate, 0.95, \switch, 0, \amp, 0.95);
-							Ndef(("stutter"++id).asSymbol).set(\rate, 0.26, \switch, 1, \amp, 0.85);
-
-							motion = false;
-
-						});
-
-				});
-
-				[energies, moving];
-			},
-			\proximity -> {|val|
-				val = ((1 - val)**1 * 2).abs;
-
-				if(val > ~proximityDistance, {
-					Tdef(\vocal).stop;
-					Ndef(\pulseTrain0).set(\lag, 4 );
-					Ndef(\pulseTrain0).set(\density, val+0.5 );
-				}, {
-					Tdef(\vocal).play;
-				});
-			}
-		],
-		Dictionary[ // 2
-			\energy -> { |id, vector1, vector2, activeActor|
-				[[0,0],0];
-
-			},
-			\proximity -> { |val|
-				val = ((1 - val)**1 * 2).abs;
-
-
-				if(val > ~proximityDistance, {
-					Tdef(\vocal).stop;
-					Ndef(\pulseTrain0).set(\lag, 4 );
-					Ndef(\pulseTrain0).set(\density, val+0.5 );
-				}, {
-					Tdef(\vocal).play;
-				});
-			}
-		],
-		Dictionary[ // 3
-			\energy -> { |actor|
-				[[0,0],0];
-			},
-			\proximity -> { |val|
-				val = ((1 - val)**1 * 2).abs;
-
-				if(val > ~proximityDistance, {
-				// [">>", val ].postln;
-					Tdef(\vocal).stop;
-					Ndef(\pulseTrain0).set(\lag, 4 );
-					Ndef(\pulseTrain0).set(\density, val+0.5 );
-				}, {
-					Tdef(\vocal).play;
-				});
-			}
-		],
-		Dictionary[ // 4
-			\energy -> { | id, vector1, vector2, energies, motion |
-				var moving = false;
-				var energy = ((vector1[0]*100) - (vector2[0]*100)).abs + ((vector1[2]*100) - (vector2[2]*100)).abs;
-
-
-				energies = energies.shift(1);
-				energies[0] = energy;
-
-				energy = energies.sum / energies.size;
-
-				if(energy > ~energyThreshold, {
-					moving = true;
-
-					// [id, "moving"].postln;
-
-					// If we are moving and we are not already flagged as moving
-					if(motion == false, {
-						// Ndef(("stutter"++id).asSymbol).set(\rate, 5, \switch, 0, \amp, 0.95);
-						// Ndef(("stutter"++id).asSymbol).set(\rate, 0.26, \switch, 1, \amp, 0.85);
-						// Ndef(("stutter"++id).asSymbol).set(\rate, 0.75 * 2.5, \switch, 0, \amp, 0.95);
-						Ndef(("stutter"++id).asSymbol).set(\rate, 0.26 * 2.5, \switch, 0, \amp, 0.45);
-						// Ndef(\stutter2).set(\rate, 0.26, \switch, 1, \amp, 0.85);
-
-						// [id, "moving"].postln;
-
-						motion = true;
-
-						});
-				}, {
-						// [id, "not moving"].postln;
-						if(motion == true, {
-
-							// Ndef(\stutter2).set(\rate, 0.95, \switch, 0, \amp, 0.95);
-							Ndef(("stutter"++id).asSymbol).set(\rate, 0.26, \switch, 1, \amp, 0.85);
-
-							motion = false;
-
-							});
-
-				});
-
-				[energies, moving];
-			},
-			\proximity -> {|val|
-				val = ((1 - val)**1 * 2).abs;
-
-
-				if(val > ~proximityDistance, {
-					Tdef(\vocal).stop;
-					Ndef(\pulseTrain0).set(\lag, 4 );
-					Ndef(\pulseTrain0).set(\density, val+0.5 );
-				}, {
-					Tdef(\vocal).play;
-				});
-			}
-		],
-	];
 	// State is current state
 	var scene = -1;
 
 	Dictionary[
 		\getState -> { scene; },
 		\getSynths -> { synths[ scene ]; },
-		\getProcessors -> { processingFunctions[ scene ]; },
 		\getCameraProcessor -> { | camera | cameraFunctions[ camera ]; },
 		\next -> {
 

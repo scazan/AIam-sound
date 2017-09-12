@@ -63,10 +63,10 @@ computeProximityN2D = utils[\computeProximityN2D];
 
 
 "SceneController.scd".loadRelative; // returns ~cSceneController
-sceneController = ~cSceneController.value();
+~sceneController = ~cSceneController.value();
 
 //Set the synths for the initial scene
-//synths = sceneController[\getSynths].value(0); // You need to not set this but to constantly query the scene controller
+//synths = ~sceneController[\getSynths].value(0); // You need to not set this but to constantly query the scene controller
 
 // Create Actors
 actors = Array.fill(numActors, {|i| actor.value(i)});
@@ -91,7 +91,7 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 			id = msg[1].asInteger(),
 		x = msg[3].asFloat / 1530,
 			y = msg[4].asFloat / 1530,
-			z = msg[5].asFloat / 7000;;
+			z = msg[5].asFloat / 7000;
 
 
 		[msg, state, state == "lost"].postln;
@@ -131,7 +131,7 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 
 
 				cameraID = getCameraID.value(id);
-				sceneController[\getCameraProcessor].value(cameraID)[\new].value(id, x, y, z);
+				~sceneController[\getCameraProcessor].value(cameraID)[\new].value(id, x, y, z);
 
 			},
 			{state == "tracking"}, {},
@@ -174,7 +174,7 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 
 
 				cameraID = getCameraID.value(id);
-				sceneController[\getCameraProcessor].value(cameraID)[\lost].value(id, x, y, z);
+				~sceneController[\getCameraProcessor].value(cameraID)[\lost].value(id, x, y, z);
 			},
 			{
 				// TODO: This seems to do nothing
@@ -202,7 +202,7 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 		var activeActor;
 		var activeActors;
 
-		id = (id - 1);
+		// id = (id - 1);
 
 		// Check if this id already has an "Actor"
 		activeActors = actors.select({ | actor |
@@ -272,15 +272,15 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 
 			// UPDATES ///////////////////////////////////////
 			// Update any synths with new info
-			/*sceneController[\getProcessors].value()[\proximity].value(actorProximity);*/
+			/*~sceneController[\getProcessors].value()[\proximity].value(actorProximity);*/
 
 			cameraID = getCameraID.value(id);
 
 			// PROXIMITY
-			sceneController[\getCameraProcessor].value(cameraID)[\proximity].value(actorProximity);
+			~sceneController[\getCameraProcessor].value(cameraID)[\proximity].value(actorProximity);
 
 			// ENERGY
-			energiesMotion = sceneController[\getCameraProcessor].value(cameraID)[\energy].value(actors.indexOf(activeActor),
+			energiesMotion = ~sceneController[\getCameraProcessor].value(cameraID)[\energy].value(actors.indexOf(activeActor),
 				[
 					activeActor[\position][\x],
 					activeActor[\position][\z],
@@ -300,7 +300,7 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 			activeActor[\motion] = energiesMotion[1];
 
 			// SYNTHS
-			sceneController[\getCameraProcessor].value(cameraID)[\synths].value( activeActor, actors.indexOf(activeActor) );
+			~sceneController[\getCameraProcessor].value(cameraID)[\synths].value( activeActor, actors.indexOf(activeActor) );
 
 		});
 
@@ -317,7 +317,7 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 	window = Window.new("AIam Sound", Rect(100, 100, 100, 100)).front;
 	window.view.background_(Color.new255(153, 255, 102));
 
-	Button.new(window).action_(sceneController[\next]);
+	Button.new(window).action_(~sceneController[\next]);
 
 	window.onClose = {
 		onClose.value();
@@ -326,6 +326,6 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 	{ while { window.isClosed.not } { window.refresh; 0.04.wait; } }.fork(AppClock);
 
 	/*AppClock.sched(5, {
-		sceneController[\next].value();
+		~sceneController[\next].value();
 	});*/
 };
