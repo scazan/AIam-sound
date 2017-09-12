@@ -328,7 +328,7 @@ Ndef(\clink, { | amp=0, freq=2000 |
 	// });
 
 
-c = Buffer.read(s, "/home/scott/dev/AIam-sound/samples/emptywordsCompress.wav", action: { |buffer|
+c = Buffer.read(s, "/Users/aiam/projects/AIam-sound/samples/emptywordsCompress.wav", action: { |buffer|
 	"".postln;
 	"Loaded: ".post;
 
@@ -336,7 +336,7 @@ c = Buffer.read(s, "/home/scott/dev/AIam-sound/samples/emptywordsCompress.wav", 
 		var buffer=c;
 
 		var out2 = PlayBuf.ar(buffer.numChannels, bufnum: buffer, rate: rate * 2, trigger: 1, startPos: 0, loop: 1) * amp;
-		var out = BufRd.ar(1, c, Phasor.ar(0, BufRateScale.kr(b) * rate, start: 44100 * 3.1, end: (44100 * 3.1) + 980)) * 0.1;
+		var out = BufRd.ar(1, c, Phasor.ar(0, BufRateScale.kr(c) * rate, start: 44100 * 3.1, end: (44100 * 3.1) + 980)) * 0.1;
 
 		// var out2 = BufRd.ar(1, b, Phasor.ar(0, BufRateScale.kr(b) * rate, 0, BufFrames.kr(b) ));
 
@@ -376,7 +376,7 @@ Ndef(\discouraging, { arg freq=75, amp=0, resonantFreq=1760, volume=0;
 		out * amp.pow(3) * 0.02 * (0.12 + LFPulse.kr(5.5, add: 0.1).unipolar) * volume.lag(1);
 });
 
-u = Buffer.read(s, "/home/scott/dev/AIam-sound/samples/pads.wav", action: { |buffer|
+u = Buffer.read(s, "/Users/aiam/projects/AIam-sound/samples/pads.wav", action: { |buffer|
 	"".postln;
 	"Loaded: ".post;
 

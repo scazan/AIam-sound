@@ -87,14 +87,14 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 	// Listeners
 	// Manages the assignment of ids to an "Actor". id is irrelevant in relation to the actual index of the actor.
 	OSCdef(\actorStateListener, { | msg |
-		var state = msg[2].asString().trim(),
+		var state = msg[2].asString(),
 			id = msg[1].asInteger(),
 		x = msg[3].asFloat / 1430,
 			y = msg[4].asFloat / 900,
 			z = msg[5].asFloat / 7000;
 
 
-		// [msg, state, state == "lost"].postln;
+		[msg, state, state == "lost"].postln;
 		case(
 			{state == "new"}, {
 				var inactiveSynths, cameraID = 0;
