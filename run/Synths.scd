@@ -329,7 +329,7 @@ Ndef(\clink, { | amp=0, freq=2000 |
 	// });
 
 
-c = Buffer.read(s, "/home/scott/dev/AIam-sound/samples/emptywordsCompress.wav", action: { |buffer|
+c = Buffer.read(s, "/Users/aiam/projects/AIam-sound/samples/emptywordsCompress.wav", action: { |buffer|
 	"".postln;
 	"Loaded: ".post;
 
@@ -377,7 +377,7 @@ Ndef(\discouraging, { arg freq=75, amp=0, resonantFreq=1760, volume=0;
 		out * amp.pow(3) * 0.02 * (0.12 + LFPulse.kr(5.5, add: 0.1).unipolar) * volume.lag(1);
 });
 
-u = Buffer.read(s, "/home/scott/dev/AIam-sound/samples/pads.wav", action: { |buffer|
+u = Buffer.read(s, "/Users/aiam/projects/AIam-sound/samples/pads.wav", action: { |buffer|
 	"".postln;
 	"Loaded: ".post;
 
