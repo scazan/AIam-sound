@@ -44,7 +44,7 @@
 
 		verb = verb * 0.995;
 
-		verb * 3;
+		verb * 9;
 		//* z.abs;
 	});
 
@@ -188,9 +188,10 @@ Ndef(\saw, { | section=1, freq=300, x=0.5, y=0.5, z=0.5, amp=1 |
 	out = HPF.ar(out, 200);
 		//out = LPF.ar(out, MouseY.kr(200, 1000)) * 0.5;
 
-		SelectX.ar(section, [out, out * LFPulse.ar(8, width: 0.7).unipolar.lag(0.1)])*0.5 * amp;
+		SelectX.ar(section, [out, out * LFPulse.ar(8, width: 0.7).unipolar.lag(0.1)])*0.35 * amp;
 });
 
+	Ndef(\saw2).clear;
 Ndef(\saw2, { | section=1, freq=600, x=0.5, y=0.5, z=0.5, amp=1, vowel=0 |
 	var out;
 	var formants, createVowel, snd;
@@ -230,7 +231,8 @@ Ndef(\saw2, { | section=1, freq=600, x=0.5, y=0.5, z=0.5, amp=1, vowel=0 |
 		4.do({ | i |
 			//pulses[i] = LFPulse.ar([ freq, freq * MouseX.kr(1, 1.01) ] * (i+1), mul: 0.25);
 			// pulses[i] = Saw.ar([ freq, freq * MouseX.kr(1, 1.01) ] * (i+1), mul: 0.25);
-			pulses[i] = Saw.ar([ freq, freq * (x.abs+1.01)] * (i+1), mul: 0.25);
+			pulses[i] = Saw.ar([ freq, freq * (x.abs+1.01)] * (i+1), mul: 0.25)
+			+ Saw.ar([ freq/4, freq/4 * (x.abs+1.01)] * (i+1), mul: 0.25);
 		});
 
 		out = (Mix.new(pulses) * ( freq/6 * LFPulse.ar(8).lag(0.1) )).tanh * 0.5 ;
@@ -245,7 +247,7 @@ Ndef(\saw2, { | section=1, freq=600, x=0.5, y=0.5, z=0.5, amp=1, vowel=0 |
 		out = LPF.ar(out, (y.lag(0.1).abs*800) + 200) * 0.5;
 		// out = LPF.ar(out, MouseY.kr(200, 1000)) * 0.5;
 
-		(SelectX.ar(x-1, [out, out * LFPulse.ar(8, width: 0.7).unipolar.lag(0.1)]) * 5).tanh * 0.95  * amp;
+		(SelectX.ar(x-1, [out, out * LFPulse.ar(8, width: 0.7).unipolar.lag(0.1)]) * 5).tanh * 0.5  * amp.lag(3)!2;
 
 });
 
@@ -395,7 +397,7 @@ u = Buffer.read(s, "/Users/aiam/projects/AIam-sound/samples/pads.wav", action: {
 
 ~reverbBus = Bus.audio(s,2);
 Ndef(\reverb2, {
-		FreeVerb.ar(In.ar(~reverbBus, 2) + (Ndef(\noiseImpulse).ar*0.0), mix: 0.2);
+		FreeVerb.ar(In.ar(~reverbBus, 2), mix: 0.2);
 }).play;
 
 Ndef(\graySineTrig, { | amp=0, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
@@ -457,8 +459,10 @@ Ndef(\beep, { | amp=0, freq=3700, t_trigger=1, length=0.12, pan=0 |
 
 	out = ( out ) * amp;
 	out = Pan2.ar(out, pan);
-		out = LPF.ar(out, 9000);
-	Out.ar(~reverbBus, out);
+	out = LPF.ar(out, 9000);
+
+	FreeVerb.ar(out, mix: 0.2);
+		// Out.ar(~reverbBus, out);
 }).play;
 
 

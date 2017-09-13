@@ -9,7 +9,7 @@
 		],
 		[ // 1
 			\stutter0,
-			\stillness2
+			\saw2
 		],
 		[ // 2
 		],
@@ -174,6 +174,7 @@
 
 					Ndef(synths[1][id % (synths[1].size)]).set(\amp, 0.4);
 
+
 						// THUMP ZONE
 						if((x >= 0.75) && (y <= -0.25), {
 							Ndef(synths[1][id % (synths[1].size)]).set(\amp, 0.0);
@@ -181,11 +182,13 @@
 							Ndef(synths[1][id % (synths[1].size)]).set(\amp, 0.4);
 						});
 
+					// Ndef(synths[1][id % (synths[1].size)]).set(\x, (x + 1)/2);
+					Ndef(\saw2).set(\x, (x + 1)/2);
+
 					// If we are moving and we are not already flagged as moving
 					if(motion == false, {
 
-						var x = vector1[0],
-						y = vector1[2];
+
 
 						// Quadrants
 						/*if((x >= 0) && (y >= 0), {
