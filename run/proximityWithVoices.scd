@@ -18,23 +18,16 @@ s.waitForBoot({
 	// synthDefs[\play].value();
 
 
-	// ROUTINES
-	"Tasks.scd".loadRelative; // returns ~cTasks
-	tasks = ~cTasks.value();
-	// tasks[\play].value();
-
 	// Main Program
 	"Main.scd".loadRelative; // returns ~cMain
 	main = ~cMain.value({}, {
-		// tasks[\stop].value();
-		synthDefs[\stop].value();
 	});
 
 	// Start main function
 	AppClock.sched(3, main);
 
 
-	// NdefMixer.new(s);
+	NdefMixer.new(s);
 
 });
 

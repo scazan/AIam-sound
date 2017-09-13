@@ -308,16 +308,9 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 
 
 
-
-
-
-
-
 	// GUI
 	window = Window.new("AIam Sound", Rect(100, 100, 100, 100)).front;
 	window.view.background_(Color.new255(153, 255, 102));
-
-	Button.new(window).action_(~sceneController[\next]);
 
 	window.onClose = {
 		onClose.value();
@@ -325,7 +318,4 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 
 	{ while { window.isClosed.not } { window.refresh; 0.04.wait; } }.fork(AppClock);
 
-	/*AppClock.sched(5, {
-		~sceneController[\next].value();
-	});*/
 };

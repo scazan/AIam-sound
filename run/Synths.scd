@@ -37,7 +37,7 @@
 
 		verb = FreeVerb.ar( filtered * amp.lag(2),
 			mix: 0.6,
-			room: 0.5,
+			room: 0.8,
 			damp: 0.1
 		) ;
 
@@ -337,12 +337,12 @@ c = Buffer.read(s, "/home/scott/dev/AIam-sound/samples/emptywordsCompress.wav", 
 		var buffer=c;
 
 		var out2 = PlayBuf.ar(buffer.numChannels, bufnum: buffer, rate: rate * 2, trigger: 1, startPos: 0, loop: 1) * amp;
-		var out = BufRd.ar(1, c, Phasor.ar(0, BufRateScale.kr(b) * rate, start: 44100 * 3.1, end: (44100 * 3.1) + 980)) * 0.1;
+		var out = BufRd.ar(1, c, Phasor.ar(0, BufRateScale.kr(c) * rate, start: 44100 * 3.1, end: (44100 * 3.1) + 980)) * 0.1;
 
 		// var out2 = BufRd.ar(1, b, Phasor.ar(0, BufRateScale.kr(b) * rate, 0, BufFrames.kr(b) ));
 
 		// out = LPF.ar(SelectX.ar(switch, [out, out2]), SelectX.kr(switch, [900, 9000])) * amp;
-		out = LPF.ar(XFade2.ar(out, out2, switch.linlin(0,1, -1, 1).lag(0.01) ), SelectX.kr(switch, [900, 9000]).lag(0.3)) * 0.15 * amp!2;
+			out = LPF.ar(XFade2.ar(out, out2, switch.linlin(0,1, -1, 1).lag(0.01) ), SelectX.kr(switch, [900, 9000]).lag(0.3)) * 0.15 * (amp.lag(3))!2;
 
 		LPF.ar(out, 9000);
 
