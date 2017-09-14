@@ -105,7 +105,6 @@ Ndef(\stutter0, { | x=1,y=1, rate=1.0, amp=0.5, switch=1 |
 
 Ndef(\stutter1, { | x=1,y=1, rate=1.0, amp=0.5, switch=1 |
 
-
 	var out2 = WhiteNoise.ar() * amp * 0.6;
 	var out = SinOsc.ar(90) * amp;
 

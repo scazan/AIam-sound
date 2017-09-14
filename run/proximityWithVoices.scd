@@ -27,7 +27,7 @@ s.waitForBoot({
 	AppClock.sched(3, main);
 
 
-	NdefMixer.new(s);
+	//NdefMixer.new(s);
 
 });
 

@@ -5,11 +5,13 @@
 	var synths = [
 		[ // 0
 			\graySine2,
+			\graySine,
+			\graySine2,
 			\graySine
 		],
 		[ // 1
 			\stutter0,
-			\saw2
+			\pad
 		],
 		[ // 2
 		],
@@ -39,19 +41,19 @@
 					// Setting up four sections on the x-axis
 					if(x <= -0.5, {
 						// Low sound
-							Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1000);
+							Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1000/2);
 					}, {
 						if(x <= 0, {
 							//high sound
-									Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 2000);
+									Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 2700/2);
 						}, {
 							if(x <= 0.5, {
 								//med sound
-											Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1500);
+											Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1500/2);
 							}, {
 								if(x <= 1, {
 									//high sound
-													Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 2000);
+													Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1700/2);
 								});
 							});
 						});
@@ -117,6 +119,7 @@
 				val = ((1 - val)**1 * 2).abs;
 
 
+				[val, ~proximityDistance].postln;
 				if(val > ~proximityDistance, {
 					Tdef(\vocal).stop;
 					Ndef(\pulseTrain0).set(\lag, 4 );
@@ -172,18 +175,20 @@
 
 					moving = true;
 
-					Ndef(synths[1][id % (synths[1].size)]).set(\amp, 0.4);
+					Ndef(synths[1][id % (synths[1].size)]).set(\amp, 0.0);
 
 
 						// THUMP ZONE
 						if((x >= 0.75) && (y <= -0.25), {
 							Ndef(synths[1][id % (synths[1].size)]).set(\amp, 0.0);
+						Ndef(\pad).set(\amp, 0);
 						}, {
-							Ndef(synths[1][id % (synths[1].size)]).set(\amp, 0.4);
+							// Ndef(synths[1][id % (synths[1].size)]).set(\amp, 0.4);
 						});
 
 					// Ndef(synths[1][id % (synths[1].size)]).set(\x, (x + 1)/2);
-					Ndef(\saw2).set(\x, (x + 1)/2);
+					Ndef(\pad).set(\dist, (x + 1)*2);
+					Ndef(\pad).set(\amp, 0.1);
 
 					// If we are moving and we are not already flagged as moving
 					if(motion == false, {
@@ -218,6 +223,10 @@
 				}, {
 						var x = vector1[0],
 						y = vector1[2];
+
+						Ndef(\pad).set(\amp, 0.01);
+						Ndef(synths[1][id % (synths[1].size)]).set(\amp, 0.4);
+
 
 						if(motion == true, {
 							// THUMP ZONE

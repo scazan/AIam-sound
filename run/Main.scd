@@ -272,7 +272,7 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 
 			// UPDATES ///////////////////////////////////////
 			// Update any synths with new info
-			/*~sceneController[\getProcessors].value()[\proximity].value(actorProximity);*/
+			~sceneController[\getCameraProcessor].value(cameraID)[\proximity].value(actorProximity);
 
 			cameraID = getCameraID.value(id);
 

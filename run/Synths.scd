@@ -7,7 +7,7 @@
 
 	// Scene 1
 
-	Ndef(\graySine, { | amp=0, freq=703, q=0.4, x=0.5, y=0.5, z=0.5 |
+	Ndef(\graySine, { | amp=0, freq=2703, q=0.4, x=0.5, y=0.5, z=0.5 |
 		var verb;
 		var noise = WhiteNoise.ar();
 
@@ -21,13 +21,12 @@
 		// freq = SelectX.kr((MouseY.kr(0,1) * freqs.size).abs.floor, freqs).lag(0.012);
 		freq = SelectX.kr(y.linlin(-1,1,0,1 * freqs.size).abs.floor, freqs).lag(0.012);
 
-		freq = freq/4;
+		freq = freq/1;
 		// freq = freq + (x.abs * 100);
 
 
 		filtered = BPF.ar(noise,
-			//freq: [freq, freq * 1.1] + LFPulse.ar(modFreq, mul: 240).unipolar.lag(0.),
-			freq: [freq * 0.7, freq * 0.61] + LFPulse.ar(modFreq.clip(5, 30), mul: [freq/4, freq/2], width: 0.015).unipolar.lag(lag.abs),
+			freq: [freq * 0.7, freq * 0.61] + LFPulse.ar(modFreq.clip(5, 30), mul: [freq/4, freq/2], width: 0.02).unipolar.lag(lag.abs),
 			rq: q * 0.001
 		);
 
@@ -58,7 +57,7 @@
 		var freqs = [freq, (freq.cpsmidi + 1).midicps, (freq.cpsmidi + 7).midicps, (freq.cpsmidi - 2).midicps];
 
 		// freq = SelectX.kr(y.linlin(-1,1,0,1 * freqs.size).abs.floor, freqs);
-		freq = SelectX.kr(y.linlin(-1,1,0,1 * freqs.size).abs.floor, freqs).lag(0.082);
+		freq = SelectX.kr(y.linlin(-1,1,0,1 * freqs.size).abs.floor, freqs).lag(0.0082);
 
 		freq = freq/2;
 		// freq = freq + (x.abs * 100);
@@ -66,7 +65,7 @@
 
 		filtered = BPF.ar(noise,
 			//freq: [freq, freq * 1.1] + LFPulse.ar(modFreq, mul: 240).unipolar.lag(0.),
-			freq: [freq * 0.7, freq * 0.61] + LFPulse.ar(modFreq.clip(5, 30), mul: [freq/4, freq/2], width: 0.2).unipolar,
+			freq: [freq * 0.7, freq * 0.61] + LFPulse.ar(modFreq.clip(5, 30), mul: [freq/4, freq/2], width: 0.02).unipolar,
 			// .lag(lag.abs),
 			rq: q * 0.001
 		);
@@ -88,7 +87,7 @@
 	});
 
 	//Scene 2
-	Ndef(\pad, { | amp=0.25, freq = 500, mod = 0.3, dist=0 |
+	Ndef(\pad, { | amp=0.25, freq = 50.48, mod = 0.3, dist=0 |
 		var out = LFPulse.ar(freq) + (LFPulse.ar(freq / 0.75) * LFPulse.ar(20.2, mul: SinOsc.kr(0.1, mul:0.5), add: 0.4)) ;
 		out = LFNoise1.ar(0.5, mul: 0.4, add: 0.6) * out;
 		out = LPF.ar(out, 300).tanh;
@@ -98,7 +97,10 @@
 
 		out = out + (LPF.ar(SinOsc.ar(freq / 8) * LFPulse.ar(2.0/8, width: 0.25).unipolar, 70) * 0.25);
 
-		([ out, DelayL.ar( out) ] * 1).tanh * Lag.kr(amp, 0.5);
+		out = LPF.ar(out, 4000);
+		out = ([ out, DelayL.ar( out) ] * 1).tanh * Lag.kr(amp.lag(4), 0.5);
+
+		FreeVerb.ar(out, mix: 0.8) * 2;
 	});
 
 
@@ -386,7 +388,7 @@ u = Buffer.read(s, "/Users/aiam/projects/AIam-sound/samples/pads.wav", action: {
 
 			var out = PlayBuf.ar(buffer.numChannels, bufnum: buffer, rate: rate * 2, trigger: 1, startPos: 0, loop: 1) * amp.pow(3);
 
-			out * volume.lag(1);
+			out * volume.lag(3);
 
 	});
 
@@ -431,6 +433,7 @@ Ndef(\graySineTrig, { | amp=0, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5,
 
 	verb * 3;
 });
+	Ndef(\graySineTrig).set(\pan, 0.5, \amp, 1, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
 
 
 Ndef(\noiseImpulse, { | amp=0, freq=9000, t_trigger=1 |
@@ -454,13 +457,30 @@ Ndef(\beep, { | amp=0, freq=3700, t_trigger=1, length=0.12, pan=0 |
 
 	out = ( out ) * amp;
 	out = Pan2.ar(out, pan);
-	out = LPF.ar(out, 9000);
+	out = LPF.ar(out, 4000);
 
 	FreeVerb.ar(out, mix: 0.2);
 		// Out.ar(~reverbBus, out);
 }).play;
 
 
+
+	Tdef(\vocal, {
+		{
+			Ndef(\pulseTrain0).set(\density, [1,0.7,0.8,0.9, 0.7].choose);
+			( 1.0.rand + 0.7 ).wait;
+		}.loop;
+	});
+
+	Tdef(\vocal2, {
+		{
+			Ndef(\pulseTrain0).set(\vowel, [0,4,2].choose);
+			( 3.0.rand + 0.7 ).wait;
+		}.loop;
+
+	});
+		Tdef(\vocal).play;
+		Tdef(\vocal2).play;
 
 dict = Dictionary[
 	\play -> {
