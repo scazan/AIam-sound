@@ -136,3 +136,13 @@ Ndef(\stutter1, { | x=1,y=1, rate=1.0, amp=0.5, switch=1 |
 
 // Each section should really kind of suport more than one person. If not, it should be limited specifically to ID==0
 
+
+
+// Make all quadrants more basic and will develop.
+// Wall is discouraging sound. Maybe clink.
+// By time of trio wall is not there
+
+bottom left
+bottom right
+top left
+top right

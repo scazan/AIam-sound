@@ -94,7 +94,7 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 			z = msg[5].asFloat / 7000;
 
 
-		[msg, state, state == "lost"].postln;
+		//[msg, state, state == "lost"].postln;
 		case(
 			{state == "new"}, {
 				var inactiveSynths, cameraID = 0;

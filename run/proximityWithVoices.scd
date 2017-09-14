@@ -6,10 +6,10 @@ s.waitForBoot({
 	// Globals
 
 	~dirgeVol = 0.05;
-	~energyThreshold = 0.45;
+	~energyThreshold = 3.5;
 	~quadrant2 = false;
 	~proximityDistance = 0.9;
-	~energyThreshold = 0.7;
+	//~energyThreshold = 0.47;
 
 
 	// Load Synths

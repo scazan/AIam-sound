@@ -5,9 +5,9 @@
 	var synths = [
 		[ // 0
 			\graySine2,
-			\graySine,
 			\graySine2,
-			\graySine
+			\graySine2,
+			\graySine2
 		],
 		[ // 1
 			\stutter0,
@@ -23,52 +23,22 @@
 
 	// Different behaviors based on different camera "zones"
 	var cameraFunctions = [
-		Dictionary[ // 0: TOP LEFT
+		Dictionary[ // 3: BOTTOM RIGHT
 			\synths -> { | actor, actorIndex |
-				var x = actor[\position][\x],
-					y = actor[\position][\y];
+				var posVector = actor[\position];
 
-
-
-				if((x >= 0.75) && (y <= -0.25), {
-					// THUMP ZONE
-
-					Ndef(\bass).set(\amp, 0.4);
-				}, {
-					Ndef(\bass).set(\amp, 0);
-						// Ndef(\graySine2).set(\amp, 1);
-
-					// Setting up four sections on the x-axis
-					if(x <= -0.5, {
-						// Low sound
-							Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1000/2);
-					}, {
-						if(x <= 0, {
-							//high sound
-									Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 2700/2);
-						}, {
-							if(x <= 0.5, {
-								//med sound
-											Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1500/2);
-							}, {
-								if(x <= 1, {
-									//high sound
-													Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1700/2);
-								});
-							});
-						});
-					});
-				});
 			},
 			\energy -> { | id, vector1, vector2, energies, motion |
 				var moving = false;
 				var energy = ((vector1[0]*100) - (vector2[0]*100)).abs + ((vector1[2]*100) - (vector2[2]*100)).abs;
+
 
 				energies = energies.shift(1);
 				energies[0] = energy;
 
 				energy = energies.sum / energies.size;
 
+				energy.postln;
 
 				if(energy > ~energyThreshold, {
 					moving = true;
@@ -81,35 +51,48 @@
 						var x = vector1[0],
 						y = vector1[2];
 
-						Ndef(synths[0][id % (synths[0].size)]).set(\amp, 0.4);
-
-						// THUMP ZONE
-						if((x >= 0.75) && (y <= -0.25), {
-							Ndef(synths[0][id % (synths[0].size)]).set(\amp, 0.0);
+						// QUADRANTS
+						if((x >= 0.75) && (y = 0.75), {
+							// THUMP ZONE
+							Ndef(\bass).set(\amp, 0.4);
 						}, {
-							Ndef(synths[0][id % (synths[0].size)]).set(\amp, 0.4);
-						});
+							Ndef(\bass).set(\amp, 0);
 
+							if((x >= 0) && (y >= 0), {
+
+								Ndef(\graySineTrig).set(\pan, 1, \amp, 3, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
+								"QUAD 1".postln;
+							},{
+								if((x >= 0) && (y < 0), {
+									Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 1903, \switch, 1, \length, 1.3, \t_trigger, 1);
+									"QUAD 2".postln;
+								}, {
+									if((x < 0) && (y < 0), {
+										Ndef(\graySineTrig).set(\pan, 1, \amp, 3, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
+										"QUAD 3".postln;
+									}, {
+										if((x < 0) && (y >= 0), {
+											Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 703, \switch, 2, \length, 1.3, \t_trigger, 1);
+											"QUAD 4".postln;
+										});
+									});
+								});
+							});
+						});
+						 // END QUADRANTS
 
 						motion = true;
 
-						});
+					});
 				}, {
-						var x = vector1[0],
-						y = vector1[2];
+					if(motion == true, {
 
-						if(motion == true, {
+						// Ndef(\stutter2).set(\rate, 0.95, \switch, 0, \amp, 0.95);
+						Ndef(("stutter"++id).asSymbol).set(\rate, 0.26, \switch, 1, \amp, 0.85);
 
-							if((x >= 0.75) && (y <= -0.25), {
-								Ndef(synths[0][id % (synths[0].size)]).set(\amp, 0.0);
-							}, {
-								Ndef(synths[0][id % (synths[0].size)]).set(\amp, 0.05);
-							});
+						motion = false;
 
-
-							motion = false;
-
-						});
+					});
 
 				});
 
@@ -119,7 +102,6 @@
 				val = ((1 - val)**1 * 2).abs;
 
 
-				[val, ~proximityDistance].postln;
 				if(val > ~proximityDistance, {
 					Tdef(\vocal).stop;
 					Ndef(\pulseTrain0).set(\lag, 4 );
@@ -128,20 +110,16 @@
 					Tdef(\vocal).play;
 				});
 			},
-			\new -> { | id, x, y, z |
-
-				Ndef(synths[0][id % (synths[0].size)]).set(\amp, 0.4);
+			\new -> { | id, x, y |
 				if(x >= 0.9, {
 					//bEEP
-					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan, -1);
+					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan, 1);
 				});
 			},
 			\lost -> { | id, x, y, z |
-
-				Ndef(synths[0][id % (synths[0].size)]).set(\amp, 0);
 				if(x >= 0.9, {
 					//bEEP
-					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan, -1);
+					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan, 1);
 				});
 			}
 		],
@@ -150,7 +128,7 @@
 				var x = actor[\position][\x],
 					y = actor[\position][\y];
 
-				if((x <= -0.25) && (y <= -0.25), {
+				if((x >= 0.75) && (y <= -0.25), {
 					// THUMP ZONE
 					Ndef(\bass).set(\amp, 0.4);
 				}, {
@@ -179,7 +157,7 @@
 
 
 						// THUMP ZONE
-						if((x >= 0.75) && (y <= -0.25), {
+						if((x <= -0.25) && (y >= 0.75), {
 							Ndef(synths[1][id % (synths[1].size)]).set(\amp, 0.0);
 						Ndef(\pad).set(\amp, 0);
 						}, {
@@ -278,7 +256,7 @@
 					y = actor[\position][\y];
 
 				// [x,y].postln;
-				if((x >= 0.75) && (y >= 0.75), {
+				if((x <= -0.25) && (y >= 0.75), {
 					// THUMP ZONE
 					["THUMP"].postln;
 					Ndef(\bass).set(\amp, 0.4);
@@ -290,8 +268,8 @@
 
 
 					// Encouraging/Discouraging sound
-						Ndef(\encouraging).set(\volume, 1);
-				Ndef(\discouraging).set(\volume, 1);
+					Ndef(\encouraging).set(\volume, 1);
+					Ndef(\discouraging).set(\volume, 1);
 					Ndef(\encouraging).set(\amp, actorY);
 					Ndef(\discouraging).set(\amp, actorYInverse);
 				});
@@ -329,22 +307,55 @@
 				Ndef(\discouraging).set(\volume, 0);
 			}
 		],
-		Dictionary[ // 3: BOTTOM RIGHT
+		Dictionary[ // 0: TOP LEFT
 			\synths -> { | actor, actorIndex |
-				var posVector = actor[\position];
+				var x = actor[\position][\x],
+					y = actor[\position][\y];
 
+
+
+				if((x <= -0.25) && (y <= -0.25), {
+					// THUMP ZONE
+
+					Ndef(\bass).set(\amp, 0.4);
+				}, {
+					Ndef(\bass).set(\amp, 0);
+						// Ndef(\graySine2).set(\amp, 1);
+
+					// Setting up four sections on the x-axis
+					/*if(x <= -0.5, {
+						// Low sound
+							Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1000/2);
+					}, {
+						if(x <= 0, {
+							//high sound
+									Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1500);
+						}, {
+							if(x <= 0.5, {
+								//med sound
+
+								Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 2700/1, \amp, 0.1);
+							}, {
+								if(x <= 1, {
+									//high sound
+													Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1700/2);
+								});
+							});
+						});
+					});*/
+
+					Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, ((x.abs.pow(3) * 8000) + 90) );
+				});
 			},
 			\energy -> { | id, vector1, vector2, energies, motion |
 				var moving = false;
 				var energy = ((vector1[0]*100) - (vector2[0]*100)).abs + ((vector1[2]*100) - (vector2[2]*100)).abs;
-
 
 				energies = energies.shift(1);
 				energies[0] = energy;
 
 				energy = energies.sum / energies.size;
 
-				// energy.postln;
 
 				if(energy > ~energyThreshold, {
 					moving = true;
@@ -357,48 +368,35 @@
 						var x = vector1[0],
 						y = vector1[2];
 
-						// QUADRANTS
-						if((x <= -0.25) && (y >= 0.75), {
-							// THUMP ZONE
-							Ndef(\bass).set(\amp, 0.4);
+						Ndef(synths[0][id % (synths[0].size)]).set(\amp, 0.4);
+
+						// THUMP ZONE
+						if((x >= 0.75) && (y <= -0.25), {
+							Ndef(synths[0][id % (synths[0].size)]).set(\amp, 0.0);
 						}, {
-							Ndef(\bass).set(\amp, 0);
-
-							if((x >= 0) && (y >= 0), {
-
-								Ndef(\graySineTrig).set(\pan, 1, \amp, 3, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
-								"QUAD 1".postln;
-							},{
-								if((x >= 0) && (y < 0), {
-									Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 1903, \switch, 1, \length, 1.3, \t_trigger, 1);
-									"QUAD 2".postln;
-								}, {
-									if((x < 0) && (y < 0), {
-										Ndef(\graySineTrig).set(\pan, 1, \amp, 3, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
-										"QUAD 3".postln;
-									}, {
-										if((x < 0) && (y >= 0), {
-											Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 703, \switch, 2, \length, 1.3, \t_trigger, 1);
-											"QUAD 4".postln;
-										});
-									});
-								});
-							});
+							Ndef(synths[0][id % (synths[0].size)]).set(\amp, 0.4);
 						});
-						 // END QUADRANTS
+
 
 						motion = true;
 
-					});
+						});
 				}, {
-					if(motion == true, {
+						var x = vector1[0],
+						y = vector1[2];
 
-						// Ndef(\stutter2).set(\rate, 0.95, \switch, 0, \amp, 0.95);
-						Ndef(("stutter"++id).asSymbol).set(\rate, 0.26, \switch, 1, \amp, 0.85);
+						if(motion == true, {
 
-						motion = false;
+							if((x >= 0.75) && (y <= -0.25), {
+								Ndef(synths[0][id % (synths[0].size)]).set(\amp, 0.0);
+							}, {
+								Ndef(synths[0][id % (synths[0].size)]).set(\amp, 0.4);
+							});
 
-					});
+
+							motion = false;
+
+						});
 
 				});
 
@@ -408,6 +406,7 @@
 				val = ((1 - val)**1 * 2).abs;
 
 
+				//[val, ~proximityDistance].postln;
 				if(val > ~proximityDistance, {
 					Tdef(\vocal).stop;
 					Ndef(\pulseTrain0).set(\lag, 4 );
@@ -416,19 +415,24 @@
 					Tdef(\vocal).play;
 				});
 			},
-			\new -> { | id, x, y |
+			\new -> { | id, x, y, z |
+
+				Ndef(synths[0][id % (synths[0].size)]).set(\amp, 0.4);
 				if(x >= 0.9, {
 					//bEEP
-					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan, 1);
+					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan, -1);
 				});
 			},
 			\lost -> { | id, x, y, z |
+
+				Ndef(synths[0][id % (synths[0].size)]).set(\amp, 0);
 				if(x >= 0.9, {
 					//bEEP
-					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan, 1);
+					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan, -1);
 				});
 			}
 		],
+
 	];
 
 	// State is current state

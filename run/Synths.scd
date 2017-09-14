@@ -42,7 +42,7 @@
 
 		verb = verb * 0.995;
 
-		verb * 9;
+		verb * 12;
 		//* z.abs;
 	});
 
@@ -73,6 +73,7 @@
 		filtered = (filtered*2).tanh * 1;
 		filtered = LPF.ar(filtered, freq: 9500);
 
+		filtered = SinOsc.ar(freq);
 		verb = FreeVerb.ar( filtered * amp.lag(3),
 			mix: 0.6,
 			room: 0.5,
@@ -82,7 +83,7 @@
 
 		verb = verb * 0.995;
 
-		verb * 3 * 0.99;
+		verb * 9 * 0.99;
 		//* z.abs;
 	});
 
@@ -433,7 +434,7 @@ Ndef(\graySineTrig, { | amp=0, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5,
 
 	verb * 3;
 });
-	Ndef(\graySineTrig).set(\pan, 0.5, \amp, 1, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
+	//Ndef(\graySineTrig).set(\pan, 0.5, \amp, 1, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
 
 
 Ndef(\noiseImpulse, { | amp=0, freq=9000, t_trigger=1 |
