@@ -146,3 +146,16 @@ bottom left
 bottom right
 top left
 top right
+
+
+// touching sound
+// evolves into
+// stupid sinesweep
+// Nea gets to thump
+// Nea goes back into the space
+// Boghi hits the wall
+// (BOghi can enter but can't exit the quadrant)
+// Nea still in thump, Boghi keeps hitting wall, breaks on through to the other side, then in thump
+// proximity sound
+
+
