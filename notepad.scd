@@ -117,3 +117,6 @@ Ndef(\bass).set(\amp, 0);
 // X No energy results in dip in volume
 // X Invert the gaussian pitch
 // How do we tell when someone exits the thump through the space? There is no \lost signal
+
+// Create a recording system
+// X Create a global that turns off the interactions while thump is active

@@ -1,5 +1,6 @@
 ~cSceneController = {
 	var dict;
+	var thumpMode = false;
 
 	//Synths are what are controlled per Actor
 	var synths = [
@@ -42,6 +43,7 @@
 				if( ((x >= 0.75) && (y >= 0.75)), {
 					// THUMP ZONE
 					Ndef(\bass).set(\amp, 0.4);
+					thumpMode = true;
 
 					/*Ndef(synths[0][actorIndex % (synths[0].size)]).set(\amp, 0.4);*/
 					// Setting up four sections on the x-axis
@@ -66,23 +68,24 @@
 					});*/
 
 				}, {
-					// Setting up four sections on the x-axis
-					if(x <= -0.5, {
-						// Low sound
+					if(true == true, {
+						// Setting up four sections on the x-axis
+						if(x <= -0.5, {
+							// Low sound
 							Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1000/2);
-					}, {
-						if(x <= 0, {
-							//high sound
-									Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1500);
 						}, {
-							if(x <= 0.5, {
-								//med sound
-
-								Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 2700/1, \amp, 0.1);
+							if(x <= 0, {
+								//high sound
+								Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1500);
 							}, {
-								if(x <= 1, {
-									//high sound
-									Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1700/2);
+								if(x <= 0.5, {
+									//med sound
+									Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 2700/1, \amp, 0.1);
+								}, {
+									if(x <= 1, {
+										//high sound
+										Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1700/2);
+									});
 								});
 							});
 						});
@@ -122,6 +125,7 @@
 							// Ndef(synths[0][0]).set(\amp, 0);
 							Ndef(synths[0][id % (synths[0].size)]).set(\amp, 0);
 						}, {
+							if(true == true , {
 							// Ndef(\bass).set(\amp, 0);
 							Ndef(synths[0][id % (synths[0].size)]).set(\amp, 0.4);
 
@@ -184,6 +188,7 @@
 									});
 								});
 							});
+							});
 						});
 						 // END QUADRANTS
 
@@ -233,6 +238,7 @@
 
 				if( ((x >= 0.75) && (y >= 0.75)), {
 					Ndef(\bass).set(\amp, 0);
+					thumpZone = false;
 				});
 			}
 		],
@@ -240,30 +246,32 @@
 			\synths -> { | actor, actorIndex |
 				var x = actor[\position][\x],
 					y = actor[\position][\y];
-
-				if((x >= 0.75) && (y <= -0.25), {
-					// THUMP ZONE
-					Ndef(\bass).set(\amp, 0.4);
-				}, {
-					// Ndef(\bass).set(\amp, 0);
-
-					// Setting up four sections on the x-axis
-					if(x <= -0.5, {
-						// Low sound
-							Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1000/2);
+				if(true == true , {
+					if((x >= 0.75) && (y <= -0.25), {
+						// THUMP ZONE
+						Ndef(\bass).set(\amp, 0.4);
+						thumpZone = true;
 					}, {
-						if(x <= 0, {
-							//high sound
-									Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1500);
-						}, {
-							if(x <= 0.5, {
-								//med sound
+						// Ndef(\bass).set(\amp, 0);
 
-								Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 2700/1, \amp, 0.1);
+						// Setting up four sections on the x-axis
+						if(x <= -0.5, {
+							// Low sound
+							Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1000/2);
+						}, {
+							if(x <= 0, {
+								//high sound
+								Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1500);
 							}, {
-								if(x <= 1, {
-									//high sound
-													Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1700/2);
+								if(x <= 0.5, {
+									//med sound
+
+									Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 2700/1, \amp, 0.1);
+								}, {
+									if(x <= 1, {
+										//high sound
+										Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1700/2);
+									});
 								});
 							});
 						});
@@ -299,6 +307,7 @@
 							Ndef(synths[1][id % (synths[1].size)]).set(\amp, 0.0);
 						Ndef(\pad).set(\amp, 0);
 						}, {
+						if(true == true , {
 							Ndef(synths[1][id % (synths[1].size)]).set(\amp, 0.4);
 
 						/*if((x >= 0) && (y >= 0), {
@@ -325,6 +334,7 @@
 									});
 								});
 							});*/
+						});
 						});
 
 					// Ndef(synths[1][id % (synths[1].size)]).set(\x, (x + 1)/2);
@@ -416,6 +426,7 @@
 				if((x >= 0.75) && (y <= -0.25), {
 					// THUMP ZONE
 					Ndef(\bass).set(\amp, 0);
+					thumpZone = false;
 				});
 
 				Ndef(\stillness).set(\amp, 0);
@@ -431,6 +442,7 @@
 					// THUMP ZONE
 					["THUMP"].postln;
 					Ndef(\bass).set(\amp, 0.4);
+					thumpZone = true;
 				}, {
 					var actorY = (y + 1) / 2,
 						actorYInverse =  ((y - 1) / 2).abs;
@@ -440,28 +452,30 @@
 
 					// Encouraging/Discouraging sound
 					// Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, ((   (x.abs - 1).abs.pow(3) * 8000) + 90) );
-// Setting up four sections on the x-axis
-					if(x <= -0.5, {
-						// Low sound
-							Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1000/2);
-					}, {
-						if(x <= 0, {
-							//high sound
-									Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1500);
-						}, {
-							if(x <= 0.5, {
-								//med sound
 
-								Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 2700/1, \amp, 0.1);
+					if(true == true , {
+						// Setting up four sections on the x-axis
+						if(x <= -0.5, {
+							// Low sound
+							Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1000/2);
+						}, {
+							if(x <= 0, {
+								//high sound
+								Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1500);
 							}, {
-								if(x <= 1, {
-									//high sound
-													Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1700/2);
+								if(x <= 0.5, {
+									//med sound
+
+									Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 2700/1, \amp, 0.1);
+								}, {
+									if(x <= 1, {
+										//high sound
+										Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1700/2);
+									});
 								});
 							});
 						});
 					});
-
 
 				});
 
@@ -493,6 +507,7 @@
 						if((x >= 0.75) && (y <= -0.25), {
 							Ndef(synths[2][id % (synths[2].size)]).set(\amp, 0.0);
 						}, {
+							if(true == true , {
 							Ndef(synths[2][id % (synths[2].size)]).set(\amp, 0.4);
 							Ndef(\discouraging).set(\volume, 0.6);
 
@@ -519,6 +534,7 @@
 										});
 									});
 								});
+							});
 							});
 						});
 
@@ -577,6 +593,7 @@
 				if((x <= -0.25) && (y >= 0.75), {
 					// THUMP ZONE
 					Ndef(\bass).set(\amp, 0);
+					thumpZone = false;
 				});
 
 				Ndef(\encouraging).set(\volume, 0);
@@ -594,8 +611,11 @@
 				if((x >= 0.75) && (y >= 0.75), {
 					// THUMP ZONE
 					Ndef(\bass).set(\amp, 0.4);
+					thumpZone = true;
 				}, {
 					// Ndef(\bass).set(\amp, 0);
+
+										if(thumpMode == false , {
 					// Setting up four sections on the x-axis
 					if(x <= -0.5, {
 						// Low sound
@@ -617,7 +637,7 @@
 							});
 						});
 					});
-
+					});
 
 					// Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, ((   (x.abs - 1).abs.pow(3) * 8000) + 90) );
 				});
@@ -649,10 +669,11 @@
 						if((x >= 0.75) && (y >= 0.75), {
 							Ndef(synths[0][id % (synths[0].size)]).set(\amp, 0.0);
 						}, {
+
 							Ndef(synths[0][id % (synths[0].size)]).set(\amp, 0.4);
 							Ndef(\discouraging).set(\volume, 0.6);
 
-
+					if(thumpMode == false , {
 							if((x >= 0) && (y >= 0), {
 
 								// Ndef(\graySineTrig).set(\pan, 1, \amp, 3, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
@@ -680,6 +701,7 @@
 										});
 									});
 								});
+							});
 							});
 						});
 
@@ -741,6 +763,7 @@
 				if((x >= 0.75) && (y >= 0.75), {
 					// THUMP ZONE
 					Ndef(\bass).set(\amp, 0);
+					thumpZone = false;
 				});
 			}
 		],
