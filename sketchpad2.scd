@@ -158,4 +158,10 @@ top right
 // Nea still in thump, Boghi keeps hitting wall, breaks on through to the other side, then in thump
 // proximity sound
 
+// encouraging sound comes in
+
+// THINGS TO FIX:
+// MAke thump work for multiple people
+// Fix max-blob size to allow for two people
+
 

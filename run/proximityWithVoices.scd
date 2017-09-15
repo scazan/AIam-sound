@@ -6,7 +6,7 @@ s.waitForBoot({
 	// Globals
 
 	~dirgeVol = 0.05;
-	~energyThreshold = 3.5;
+	~energyThreshold = 3;
 	~quadrant2 = false;
 	~proximityDistance = 0.9;
 	//~energyThreshold = 0.47;
@@ -46,7 +46,7 @@ s.waitForBoot({
 
 
 /*
-
+EARLY SHOW
 Starts with prettier drone thing but needs to be more active, more responsive
 
 Low bass comes in
@@ -55,7 +55,5 @@ During duo, the whiney voices come in.
 
 Trio starts while the saw drone comes in.
 Explosion in dance is cause for drone to cut out and the samples in motion comes in (stillness/motion)
-
-WTF IS NEXT?
 
 */
