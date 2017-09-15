@@ -6,7 +6,7 @@ s.waitForBoot({
 	// Globals
 
 	~dirgeVol = 0.05;
-	~energyThreshold = 3;
+	~energyThreshold = 2.5;
 	~quadrant2 = false;
 	~proximityDistance = 0.9;
 	//~energyThreshold = 0.47;

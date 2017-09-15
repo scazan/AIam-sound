@@ -127,10 +127,133 @@ Ndef(\graySine3, { | amp=1, freq=2109, q=0.4, x=0.5, y=0.5, z=0.5 |
 
 		verb = verb * 0.995;
 
-		verb * 9 * 0.99;
+		verb * 9 * 0.99 * 8;
 		//* z.abs;
 	});
 
+	Ndef(\graySine6, { | amp=1, freq=2109, q=0.4, x=0.5, y=0.5, z=0.5 |
+		var verb;
+		var noise = WhiteNoise.ar();
+		// var modFreq = ( x.linlin(-1,1, 0, 4).sin * 20).abs + 0.1;
+		var modFreq = SelectX.kr(y.linlin(-1,1,0,1 * 4).abs.floor % 2, [x.linlin(-1,1, 0, 18).sin * 20 + 0.1, x.linlin(-1,1, 0, 18).cos * 20 + 0.1]);
+		var lag = (modFreq/2).pow(4).clip(0,1);
+
+		var filtered;
+		var freqs = [freq, (freq.cpsmidi + 1).midicps, (freq.cpsmidi + 7).midicps, (freq.cpsmidi - 2).midicps];
+
+		// freq = SelectX.kr(y.linlin(-1,1,0,1 * freqs.size).abs.floor, freqs);
+		freq = SelectX.kr(y.linlin(-1,1,0,1 * freqs.size).abs.floor, freqs).lag(0.0082);
+
+		freq = freq/2;
+		// freq = freq + (x.abs * 100);
+
+
+		filtered = BPF.ar(noise,
+			//freq: [freq, freq * 1.1] + LFPulse.ar(modFreq, mul: 240).unipolar.lag(0.),
+			freq: [freq * 0.7, freq * 0.61] + LFPulse.ar(modFreq.clip(5, 30), mul: [freq/4, freq/2], width: 0.02).unipolar,
+			// .lag(lag.abs),
+			rq: q * 0.001
+		);
+
+		filtered = (filtered*2).tanh * 1;
+		filtered = LPF.ar(filtered, freq: 9500);
+
+
+		verb = FreeVerb.ar( filtered * AmpComp.kr(freq, amp.lag(3)),
+			mix: 0.6,
+			room: 0.5,
+			damp: 0.1
+		) ;
+
+
+		verb = verb * 0.995;
+
+		verb * 9 * 0.99 * 8;
+		//* z.abs;
+	});
+
+
+	Ndef(\graySine4, { | amp=1, freq=2109, q=0.4, x=0.5, y=0.5, z=0.5 |
+		var verb;
+		var noise = WhiteNoise.ar();
+		// var modFreq = ( x.linlin(-1,1, 0, 4).sin * 20).abs + 0.1;
+		var modFreq = SelectX.kr(y.linlin(-1,1,0,1 * 4).abs.floor % 2, [x.linlin(-1,1, 0, 18).sin * 20 + 0.1, x.linlin(-1,1, 0, 18).cos * 20 + 0.1]);
+		var lag = (modFreq/2).pow(4).clip(0,1);
+
+		var filtered;
+		var freqs = [freq, (freq.cpsmidi + 1).midicps, (freq.cpsmidi + 7).midicps, (freq.cpsmidi - 2).midicps];
+
+		// freq = SelectX.kr(y.linlin(-1,1,0,1 * freqs.size).abs.floor, freqs);
+		freq = SelectX.kr(y.linlin(-1,1,0,1 * freqs.size).abs.floor, freqs).lag(0.0082);
+
+		freq = freq/2;
+		// freq = freq + (x.abs * 100);
+
+
+		filtered = BPF.ar(noise,
+			//freq: [freq, freq * 1.1] + LFPulse.ar(modFreq, mul: 240).unipolar.lag(0.),
+			freq: [freq * 0.7, freq * 0.61] + LFPulse.ar(modFreq.clip(5, 30), mul: [freq/4, freq/2], width: 0.02).unipolar,
+			// .lag(lag.abs),
+			rq: q * 0.001
+		);
+
+		filtered = (filtered*2).tanh * 1;
+		filtered = LPF.ar(filtered, freq: 9500);
+
+
+		verb = FreeVerb.ar( filtered * AmpComp.kr(freq, amp.lag(3)),
+			mix: 0.6,
+			room: 0.5,
+			damp: 0.1
+		) ;
+
+
+		verb = verb * 0.995;
+
+		verb * 9 * 0.99 * 8;
+		//* z.abs;
+	});
+
+	Ndef(\graySine5, { | amp=1, freq=2109, q=0.4, x=0.5, y=0.5, z=0.5 |
+		var verb;
+		var noise = WhiteNoise.ar();
+		// var modFreq = ( x.linlin(-1,1, 0, 4).sin * 20).abs + 0.1;
+		var modFreq = SelectX.kr(y.linlin(-1,1,0,1 * 4).abs.floor % 2, [x.linlin(-1,1, 0, 18).sin * 20 + 0.1, x.linlin(-1,1, 0, 18).cos * 20 + 0.1]);
+		var lag = (modFreq/2).pow(4).clip(0,1);
+
+		var filtered;
+		var freqs = [freq, (freq.cpsmidi + 1).midicps, (freq.cpsmidi + 7).midicps, (freq.cpsmidi - 2).midicps];
+
+		// freq = SelectX.kr(y.linlin(-1,1,0,1 * freqs.size).abs.floor, freqs);
+		freq = SelectX.kr(y.linlin(-1,1,0,1 * freqs.size).abs.floor, freqs).lag(0.0082);
+
+		freq = freq/2;
+		// freq = freq + (x.abs * 100);
+
+
+		filtered = BPF.ar(noise,
+			//freq: [freq, freq * 1.1] + LFPulse.ar(modFreq, mul: 240).unipolar.lag(0.),
+			freq: [freq * 0.7, freq * 0.61] + LFPulse.ar(modFreq.clip(5, 30), mul: [freq/4, freq/2], width: 0.02).unipolar,
+			// .lag(lag.abs),
+			rq: q * 0.001
+		);
+
+		filtered = (filtered*2).tanh * 1;
+		filtered = LPF.ar(filtered, freq: 9500);
+
+
+		verb = FreeVerb.ar( filtered * AmpComp.kr(freq, amp.lag(3)),
+			mix: 0.6,
+			room: 0.5,
+			damp: 0.1
+		) ;
+
+
+		verb = verb * 0.995;
+
+		verb * 9 * 0.99 * 8;
+		//* z.abs;
+	});
 
 	//Scene 2
 	Ndef(\pad, { | amp=0.25, freq = 50.48, mod = 0.3, dist=0 |
@@ -160,7 +283,7 @@ Ndef(\graySine3, { | amp=1, freq=2109, q=0.4, x=0.5, y=0.5, z=0.5 |
 
 		var out = reverb.value( lpf.value(rumble + hum) );
 
-		HPF.ar(out, 30).tanh * 0.9 * amp.lag(3);
+		HPF.ar(out, 30).tanh * 0.9 * amp.lag(5);
 	});
 
 
@@ -214,6 +337,8 @@ Ndef(\graySine3, { | amp=1, freq=2109, q=0.4, x=0.5, y=0.5, z=0.5 |
 		snd = HPF.ar(snd, 700);
 		snd * amp * 18.7 ;
 	});
+
+
 Ndef(\saw, { | section=1, freq=300, x=0.5, y=0.5, z=0.5, amp=1 |
 		var out;
 		//var freq = (0 + (3*12)).midicps;
@@ -422,7 +547,7 @@ Ndef(\discouraging, { arg freq=75, amp=0, resonantFreq=1760, volume=0;
 	out = LPF.ar([ Mix.new(saws), Mix.new(saws2) ], 2000) * 0.6;
 	out = Shaper.ar(buf, out) + LPF.ar((BMoog.ar(out,freq: resonantFreq, q: 0.1, mode: 2.5, mul: 1) *0.9).wrap * 0.95, 9000);
 	out = FreeVerb2.ar(out[0], out[1]);
-		out * amp.pow(3) * 0.02 * (0.12 + LFPulse.kr(5.5, add: 0.1).unipolar) * volume.lag(1);
+		out * amp.pow(3) * 0.02 * (0.12 + LFPulse.kr(5.5, add: 0.1).unipolar) * volume.lag(3);
 });
 
 u = Buffer.read(s, "/Users/aiam/projects/AIam-sound/samples/pads.wav", action: { |buffer|
@@ -447,14 +572,14 @@ Ndef(\reverb2, {
 		FreeVerb.ar(In.ar(~reverbBus, 2), mix: 0.95);
 }).play;
 
-	~graySineVol = 0.5;
+	~graySineVol = 0.25;
 	~createGraySineTrig = { | amp=0, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
 		{
 	var verb, filtered;
 
 var env, signal;
 	var rho, theta, b1, b2;
-		var pan=0, sustain=0.95, rq=0.06;
+		var pan=0, sustain=0.05, rq=0.06;
 
 	b1 = 2.0 * 0.97576 * cos(0.161447);
 	b2 = 0.9757.squared.neg;
@@ -473,23 +598,45 @@ var env, signal;
 
 	verb = verb * 0.995 * SelectX.kr(switch, [0.5, 0.5, 0.5, 4]);
 
-	verb = EnvGen.ar(Env.perc(0.01, length/2), gate: t_trigger) * verb;
+	verb = EnvGen.ar(Env.perc(0.01, length/2), gate: t_trigger, doneAction:2) * verb;
 	Out.ar(~reverbBus, verb * 0.6);
 
 	verb * ~graySineVol;
 }.play;
 
-		 {arg t_trig=1, sustain=0.5, gate=1, rq=0.006;
-	var env, signal;
+		~airySineVol = 0.15;
+	~createAiryTrig = { | amp=0, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
+	{var verb, filtered;
+
+var env, signal;
 	var rho, theta, b1, b2;
-	env = EnvGen.kr(Env.adsr(0.0001, sustain, sustain/2, 0.3), gate, doneAction:2);
-	b1 = 1.987 * 0.9889999999 * cos(0.09);
-	b2 = 0.998057.neg;
-	signal = SOS.ar(K2A.ar(t_trig), 0.3, 0.0, 0.0, b1, b2);
-	signal = RHPF.ar(signal*0.8, freq, rq) + DelayC.ar(RHPF.ar(signal*0.9, freq*0.99999, rq*0.999), 0.02, 0.01223);
-	signal = Decay2.ar(signal, 0.4, 0.3, signal);
-	(signal*env)*(~graySineVol*0.65)!2;
+		var pan=0, sustain=0.05, rq=0.06;
+
+	b1 = 2.0 * 0.97576 * cos(0.161447);
+	b2 = 0.9757.squared.neg;
+	signal = SOS.ar(K2A.ar(t_trigger), 1.0, 0.0, 0.0, b1, b2);
+	signal = Decay2.ar(signal, 0.4, 0.8, signal);
+			signal = Limiter.ar(Resonz.ar(signal, [freq, freq*1.1], rq*0.5), 0.9);
+	env = EnvGen.kr(Env.perc(0.00001, sustain, amp), doneAction:2);
+	filtered = Pan2.ar(signal, pan)*env;
+
+
+				filtered = PinkNoise.ar() * 0.2;
+	verb = FreeVerb.ar( filtered * amp.lag(0.1),
+		mix: 0.26,
+		room: 0.15,
+		damp: 0.4
+	);
+
+
+	verb = verb * 0.995 * SelectX.kr(switch, [0.5, 0.5, 0.5, 4]);
+
+	verb = EnvGen.ar(Env.perc(0.01, length/2), gate: t_trigger, doneAction:2) * verb;
+	Out.ar(~reverbBus, verb * 0.6);
+
+	verb * ~airySineVol;
 }.play;
+
 
 	};
 

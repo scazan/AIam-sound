@@ -323,7 +323,7 @@
 						// Ndef(\graySine2).set(\amp, 1);
 
 					// Setting up four sections on the x-axis
-					/*if(x <= -0.5, {
+					if(x <= -0.5, {
 						// Low sound
 							Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1000/2);
 					}, {
@@ -342,7 +342,7 @@
 								});
 							});
 						});
-					});*/
+					});
 
 					Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, ((x.abs.pow(3) * 8000) + 90) );
 				});
