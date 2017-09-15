@@ -1,29 +1,34 @@
 ~cSceneController = {
 	var dict;
 	var thumpMode = false;
+	var thumpZone = false;
 
 	//Synths are what are controlled per Actor
 	var synths = [
 		[ // 0
-			\graySine3,
-			\graySine4,
-			\graySine5
+			\graySine,
+			\graySine2,
+			\graySine,
+			\graySine2
 
 		],
 		[ // 1
-			\graySine3,
-			\graySine4,
-			\graySine5
+			\graySine,
+			\graySine2,
+			\graySine,
+			\graySine2
 		],
 		[ // 2
-			\graySine3,
-			\graySine4,
-			\graySine5
+			\graySine,
+			\graySine2,
+			\graySine,
+			\graySine2
 		],
 		[ // 3
-			\graySine3,
-			\graySine4,
-			\graySine5
+			\graySine,
+			\graySine2,
+			\graySine,
+			\graySine2
 		]
 
 	];
@@ -159,30 +164,30 @@
 							if((x >= 0) && (y >= 0), {
 
 								// Ndef(\graySineTrig).set(\pan, 1, \amp, 3, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
-								// ~createGraySineTrig.value(amp: 3, freq: 803, switch: 3, length: 1.3, t_trigger: 1);
+								 ~createGraySineTrig.value(amp: 3, freq: 803, switch: 3, length: 1.3, t_trigger: 1);
 								//~createAiryTrig.value(amp: 3, freq: 803, switch: 3, length: 1.3, t_trigger: 1);
-								Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan -1);
+								//Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan -1);
 								"QUAD 1".postln;
 							},{
 								if((x >= 0) && (y < 0), {
 									// Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 1903, \switch, 1, \length, 1.3, \t_trigger, 1);
-									// ~createGraySineTrig.value(amp: 2, freq: 1203, switch: 3, length: 1.3, t_trigger: 1);
+										~createGraySineTrig.value(amp: 2, freq: 1203, switch: 3, length: 1.3, t_trigger: 1);
 									//~createAiryTrig.value(amp: 3, freq: 803, switch: 3, length: 1.3, t_trigger: 1);
-									Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan -1);
+									//Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan -1);
 									"QUAD 2".postln;
 								}, {
 									if((x < 0) && (y < 0), {
 										// Ndef(\graySineTrig).set(\pan, 1, \amp, 3, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
-										// ~createGraySineTrig.value(amp: 2, freq: 903, switch: 3, length: 1.3, t_trigger: 1);
+										~createGraySineTrig.value(amp: 2, freq: 903, switch: 3, length: 1.3, t_trigger: 1);
 										//~createAiryTrig.value(amp: 3, freq: 803, switch: 3, length: 1.3, t_trigger: 1);
-										Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan -1);
+										//Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan -1);
 										"QUAD 3".postln;
 									}, {
 										if((x < 0) && (y >= 0), {
 											// Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 703, \switch, 2, \length, 1.3, \t_trigger, 1);
-											// ~createGraySineTrig.value(amp: 2, freq: 1403, switch: 3, length: 1.3, t_trigger: 1);
+											 ~createGraySineTrig.value(amp: 2, freq: 1403, switch: 3, length: 1.3, t_trigger: 1);
 											//~createAiryTrig.value(amp: 3, freq: 803, switch: 3, length: 1.3, t_trigger: 1);
-											Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan -1);
+											//Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan -1);
 											"QUAD 4".postln;
 										});
 									});
@@ -226,14 +231,14 @@
 			\new -> { | id, x, y |
 				if(x >= 0.9, {
 					//bEEP
-					// Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan, 1);
+					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan, 1);
 				});
 			},
 			\lost -> { | id, x, y, z |
 
 				if(x >= 0.9, {
 					//bEEP
-					// Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan, 1);
+					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan, 1);
 				});
 
 				if( ((x >= 0.75) && (y >= 0.75)), {
@@ -413,14 +418,14 @@
 			\new -> { | id, x, y |
 				if(x <= -0.9, {
 					//BEEP
-					// Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan, 1);
+					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan, 1);
 				});
 				Ndef(\stillness).set(\amp, 0.2);
 			},
 			\lost -> { | id, x, y, z |
 				if(x <= -0.9, {
 					//BEEP
-					// Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan, 1);
+					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan, 1);
 				});
 
 				if((x >= 0.75) && (y <= -0.25), {
@@ -570,7 +575,7 @@
 			\new -> { | id, x, y |
 				if(x >= 0.7, {
 					//bEEP
-					// Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan, -1);
+					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan, -1);
 				}, {
 					if( (y>=0.9) || (x >= 0.9) || (y<= -0.25) || (x <= -0.25), {
 						// WALL
@@ -677,26 +682,26 @@
 							if((x >= 0) && (y >= 0), {
 
 								// Ndef(\graySineTrig).set(\pan, 1, \amp, 3, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
-								// ~createGraySineTrig.value(amp: 3, freq: 803, switch: 3, length: 1.3, t_trigger: 1);
-								Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan -1);
+								~createGraySineTrig.value(amp: 3, freq: 803, switch: 3, length: 1.3, t_trigger: 1);
+								//Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan -1);
 								"QUAD 1".postln;
 							},{
 								if((x >= 0) && (y < 0), {
 									// Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 1903, \switch, 1, \length, 1.3, \t_trigger, 1);
-									// ~createGraySineTrig.value(amp: 2, freq: 1203, switch: 3, length: 1.3, t_trigger: 1);
+									~createGraySineTrig.value(amp: 2, freq: 1203, switch: 3, length: 1.3, t_trigger: 1);
 									Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan -1);
 									"QUAD 2".postln;
 								}, {
 									if((x < 0) && (y < 0), {
 										// Ndef(\graySineTrig).set(\pan, 1, \amp, 3, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
-										// ~createGraySineTrig.value(amp: 2, freq: 903, switch: 3, length: 1.3, t_trigger: 1);
-										Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan -1);
+										~createGraySineTrig.value(amp: 2, freq: 903, switch: 3, length: 1.3, t_trigger: 1);
+											// Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan -1);
 										"QUAD 3".postln;
 									}, {
 										if((x < 0) && (y >= 0), {
 											// Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 703, \switch, 2, \length, 1.3, \t_trigger, 1);
-											// ~createGraySineTrig.value(amp: 2, freq: 1403, switch: 3, length: 1.3, t_trigger: 1);
-											Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan -1);
+											~createGraySineTrig.value(amp: 2, freq: 1403, switch: 3, length: 1.3, t_trigger: 1);
+											//Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan -1);
 											"QUAD 4".postln;
 										});
 									});
@@ -749,7 +754,7 @@
 				Ndef(synths[0][id % (synths[0].size)]).set(\amp, 0.4);
 				if(x >= 0.9, {
 					//bEEP
-					// Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan, -1);
+					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan, -1);
 				});
 			},
 			\lost -> { | id, x, y, z |
@@ -757,7 +762,7 @@
 				Ndef(synths[0][id % (synths[0].size)]).set(\amp, 0);
 				if(x >= 0.9, {
 					//bEEP
-					// Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan, -1);
+					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan, -1);
 				});
 
 				if((x >= 0.75) && (y >= 0.75), {

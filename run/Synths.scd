@@ -572,7 +572,7 @@ Ndef(\reverb2, {
 		FreeVerb.ar(In.ar(~reverbBus, 2), mix: 0.95);
 }).play;
 
-	~graySineVol = 0.25;
+	~graySineVol = 0;
 	~createGraySineTrig = { | amp=0, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
 		{
 	var verb, filtered;
@@ -601,10 +601,10 @@ var env, signal;
 	verb = EnvGen.ar(Env.perc(0.01, length/2), gate: t_trigger, doneAction:2) * verb;
 	Out.ar(~reverbBus, verb * 0.6);
 
-	verb * ~graySineVol;
+	verb * ~graySineVol * 0;
 }.play;
-
-		~airySineVol = 0.15;
+	}
+		~airySineVol = 0;
 	~createAiryTrig = { | amp=0, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
 	{var verb, filtered;
 
@@ -634,7 +634,7 @@ var env, signal;
 	verb = EnvGen.ar(Env.perc(0.01, length/2), gate: t_trigger, doneAction:2) * verb;
 	Out.ar(~reverbBus, verb * 0.6);
 
-	verb * ~airySineVol;
+	verb * ~airySineVol * 0;
 }.play;
 
 

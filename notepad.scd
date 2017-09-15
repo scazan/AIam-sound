@@ -52,7 +52,7 @@ Tdef(\wood).stop;
 ~createGraySineTrig.value(amp: 2, freq: (a[1] + (4*12)).midicps, switch: 3, length: 1.3, t_trigger: 1);
 ~createGraySineTrig.value(amp: 2, freq: (a[2] + (4*12)).midicps, switch: 3, length: 1.3, t_trigger: 1);
 
-~graySineVol = 0.25;
+~graySineVol = 0;
 
 
 (
