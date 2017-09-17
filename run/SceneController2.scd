@@ -36,7 +36,7 @@
 
 	// Different behaviors based on different camera "zones"
 	var cameraFunctions = [
-		Dictionary[ // 3: TOP LEFT
+		Dictionary[ // Q1: TOP LEFT ////////////////////////////////////////////////////////////////////////////////////
 			\synths -> { | actor, actorIndex |
 				var posVector = actor[\position];
 
@@ -247,7 +247,7 @@
 				});
 			}
 		],
-		Dictionary[ // 1: TOP RIGHT
+		Dictionary[ // Q2: TOP RIGHT ////////////////////////////////////////////////////////////////////////////////////
 			\synths -> { | actor, actorIndex |
 				var x = actor[\position][\x],
 					y = actor[\position][\y];

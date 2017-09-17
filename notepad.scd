@@ -105,7 +105,7 @@ var env, signal;
 }.play;
 
 
-~createAiryTrig.value(amp: 2, freq: 803, switch: 3, length: 1.3, t_trigger: 1);
+~createAiryTrig.value(amp: 0.5, freq: 803, pan: 2.0.rand - 1);
 
 Ndef(\bass).set(\amp, 0);
 // One person goes into The Thump Zone, all other sounds turn off.
@@ -120,3 +120,7 @@ Ndef(\bass).set(\amp, 0);
 
 // Create a recording system
 // X Create a global that turns off the interactions while thump is active
+
+
+~createMetalTrig.value(amp: 0.5, freq: 1.0.rand + 0.5, pan: 2.0.rand - 1);
+~createEarthTrig.value(amp: 0.5, freq: 1.0.rand + 0.5, pan: 2.0.rand - 1);

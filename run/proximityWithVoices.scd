@@ -11,11 +11,15 @@ s.waitForBoot({
 	~proximityDistance = 0.9;
 	//~energyThreshold = 0.47;
 
+	~graySineVol = 0;
+	~airySineVol = 0.15;
+	~metalVol = 0.25;
+	~earthVol = 0.25;
+
 
 	// Load Synths
-	// "Synths.scd".loadRelative; // returns ~cSynths
-	// synthDefs = ~cSynths.value();
-	// synthDefs[\play].value();
+	"Synths.scd".loadRelative; // returns ~cSynths
+	synthDefs = ~cSynths.value();
 
 
 	// Main Program

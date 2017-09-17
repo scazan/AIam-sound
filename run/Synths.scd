@@ -502,27 +502,7 @@ Ndef(\clink, { | amp=0, freq=2000 |
 	// });
 
 
-c = Buffer.read(s, "/Users/aiam/projects/AIam-sound/samples/emptywordsCompress.wav", action: { |buffer|
-	"".postln;
-	"Loaded: ".post;
 
-	Ndef(\stutter0, { | x=1,y=1, rate=0.26, amp=0.85, switch=1 |
-		var buffer=c;
-
-		var out2 = PlayBuf.ar(buffer.numChannels, bufnum: buffer, rate: rate * 2, trigger: 1, startPos: 0, loop: 1) * amp;
-		var out = BufRd.ar(1, c, Phasor.ar(0, BufRateScale.kr(c) * rate, start: 44100 * 3.1, end: (44100 * 3.1) + 980)) * 0.1;
-
-		// var out2 = BufRd.ar(1, b, Phasor.ar(0, BufRateScale.kr(b) * rate, 0, BufFrames.kr(b) ));
-
-		// out = LPF.ar(SelectX.ar(switch, [out, out2]), SelectX.kr(switch, [900, 9000])) * amp;
-			out = LPF.ar(XFade2.ar(out, out2, switch.linlin(0,1, -1, 1).lag(0.01) ), SelectX.kr(switch, [900, 9000]).lag(0.3)) * 0.15 * (amp.lag(3))!2;
-
-		LPF.ar(out, 9000);
-
-	});
-
-
-});
 /*Ndef(\encouraging, { |amp=0|
 	SinOsc.ar(60) * 0.1 * amp !2;
 });*/
@@ -550,29 +530,18 @@ Ndef(\discouraging, { arg freq=75, amp=0, resonantFreq=1760, volume=0;
 		out * amp.pow(3) * 0.02 * (0.12 + LFPulse.kr(5.5, add: 0.1).unipolar) * volume.lag(3);
 });
 
-u = Buffer.read(s, "/Users/aiam/projects/AIam-sound/samples/pads.wav", action: { |buffer|
-		// u = Buffer.read(s, "/Users/aiam/projects/AIam-sound/samples/pads.wav", action: { |buffer|
-	"".postln;
-	"Loaded: ".post;
 
-	Ndef(\encouraging, { | x=1,y=1, rate=1, amp=0.85, switch=1, volume=0 |
-		var buffer=u;
-
-			var out = PlayBuf.ar(buffer.numChannels, bufnum: buffer, rate: rate * 2, trigger: 1, startPos: 0, loop: 1) * amp.pow(3);
-
-			out * volume.lag(3);
-
-	});
-
-
-});
 
 ~reverbBus = Bus.audio(s,2);
 Ndef(\reverb2, {
 		FreeVerb.ar(In.ar(~reverbBus, 2), mix: 0.95);
 }).play;
 
-	~graySineVol = 0;
+	/*~graySineVol = 0;
+	~airySineVol = 0.15;
+	~metalVol = 0.25;
+	~earthVol = 0.25;*/
+
 	~createGraySineTrig = { | amp=0, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
 		{
 	var verb, filtered;
@@ -603,40 +572,53 @@ var env, signal;
 
 	verb * ~graySineVol * 0;
 }.play;
-	}
-		~airySineVol = 0;
-	~createAiryTrig = { | amp=0, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
-	{var verb, filtered;
-
-var env, signal;
-	var rho, theta, b1, b2;
-		var pan=0, sustain=0.05, rq=0.06;
-
-	b1 = 2.0 * 0.97576 * cos(0.161447);
-	b2 = 0.9757.squared.neg;
-	signal = SOS.ar(K2A.ar(t_trigger), 1.0, 0.0, 0.0, b1, b2);
-	signal = Decay2.ar(signal, 0.4, 0.8, signal);
-			signal = Limiter.ar(Resonz.ar(signal, [freq, freq*1.1], rq*0.5), 0.9);
-	env = EnvGen.kr(Env.perc(0.00001, sustain, amp), doneAction:2);
-	filtered = Pan2.ar(signal, pan)*env;
+	};
 
 
-				filtered = PinkNoise.ar() * 0.2;
-	verb = FreeVerb.ar( filtered * amp.lag(0.1),
-		mix: 0.26,
-		room: 0.15,
-		damp: 0.4
-	);
+	~createAiryTrig = { | amp=0, pan=0.25, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
+
+		{
+			var filtered;
+
+			filtered = PlayBuf.ar(1, ~breathBuffers.choose, doneAction: 2);
+			filtered = Pan2.ar(filtered * ~airySineVol, pan);
+
+			Out.ar(~reverbBus, filtered * 0.16);
+
+			filtered * amp;
+		}.play;
+
+	};
 
 
-	verb = verb * 0.995 * SelectX.kr(switch, [0.5, 0.5, 0.5, 4]);
+	~createMetalTrig = { | amp=0, pan=0.25, freq=1, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
 
-	verb = EnvGen.ar(Env.perc(0.01, length/2), gate: t_trigger, doneAction:2) * verb;
-	Out.ar(~reverbBus, verb * 0.6);
+		{
+			var filtered;
 
-	verb * ~airySineVol * 0;
-}.play;
+			filtered = PlayBuf.ar(1, ~metalBuffers.choose, rate: freq, doneAction: 2);
+			filtered = Pan2.ar(filtered * ~metalVol, pan);
 
+			Out.ar(~reverbBus, filtered * 0.16);
+
+			filtered * amp;
+		}.play;
+
+	};
+
+
+	~createEarthTrig = { | amp=0, pan=0.25, freq=1, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
+
+		{
+			var filtered;
+
+			filtered = PlayBuf.ar(1, ~earthBuffers.choose, rate: freq, doneAction: 2);
+			filtered = Pan2.ar(filtered * ~earthVol, pan);
+
+			Out.ar(~reverbBus, filtered * 0.16);
+
+			filtered * amp;
+		}.play;
 
 	};
 
@@ -735,6 +717,40 @@ Ndef(\beep, { | amp=0, freq=3700, t_trigger=1, length=0.12, pan=0 |
 	});
 		Tdef(\vocal).play;
 		Tdef(\vocal2).play;
+
+
+	// , action: { |buffer|
+	// "".postln;
+	// "Loaded: ".post;
+
+	Ndef(\stutter0, { | x=1,y=1, rate=0.26, amp=0.85, switch=1 |
+		var buffer=c;
+
+		var out2 = PlayBuf.ar(buffer.numChannels, bufnum: buffer, rate: rate * 2, trigger: 1, startPos: 0, loop: 1) * amp;
+		var out = BufRd.ar(1, c, Phasor.ar(0, BufRateScale.kr(c) * rate, start: 44100 * 3.1, end: (44100 * 3.1) + 980)) * 0.1;
+
+		// var out2 = BufRd.ar(1, b, Phasor.ar(0, BufRateScale.kr(b) * rate, 0, BufFrames.kr(b) ));
+
+		// out = LPF.ar(SelectX.ar(switch, [out, out2]), SelectX.kr(switch, [900, 9000])) * amp;
+			out = LPF.ar(XFade2.ar(out, out2, switch.linlin(0,1, -1, 1).lag(0.01) ), SelectX.kr(switch, [900, 9000]).lag(0.3)) * 0.15 * (amp.lag(3))!2;
+
+		LPF.ar(out, 9000);
+
+	});
+
+
+
+
+
+	Ndef(\encouraging, { | x=1,y=1, rate=1, amp=0.85, switch=1, volume=0 |
+		var buffer=u;
+
+			var out = PlayBuf.ar(buffer.numChannels, bufnum: buffer, rate: rate * 2, trigger: 1, startPos: 0, loop: 1) * amp.pow(3);
+
+			out * volume.lag(3);
+
+	});
+
 
 dict = Dictionary[
 	\play -> {
