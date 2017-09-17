@@ -125,3 +125,21 @@ Ndef(\bass).set(\amp, 0);
 ~createMetalTrig.value(amp: 0.5, freq: 1.0.rand + 0.5, pan: 2.0.rand - 1);
 ~createEarthTrig.value(amp: 0.5, freq: 1.0.rand + 0.5, pan: 2.0.rand - 1);
 ~createEntranceScan.value(amp: 0.26 + 0.2, freq: 2700 + (200.0.rand), length: 0.08 + 0.1.rand, pan: 0);
+
+
+
+(
+Ndef(\noiseImpulse, { | amp=0, freq=1900, t_trigger=1 |
+	var out;
+	out = BPF.ar(GrayNoise.ar(),[ freq, freq*1.01 ],0.2);
+
+	out = out + (BPF.ar(GrayNoise.ar(),[ freq*0.25, freq*0.21 ],0.2) * 0.35);
+	out = out + SinOsc.ar(60, mul: 0.2);
+
+	out = EnvGen.ar(Env.new([0,1,0],[0.00001, 0.6, 0.000001]), gate: t_trigger) * out;
+
+	out = CombN.ar(out, delaytime: 0.03);
+	Out.ar(~reverbBus, out);
+	( out*2 ).tanh * amp * 1;
+});
+)

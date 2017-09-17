@@ -672,7 +672,7 @@ var env, signal;
 	//Ndef(\graySineTrig).set(\pan, 0.5, \amp, 1, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
 
 
-Ndef(\noiseImpulse, { | amp=0, freq=9000, t_trigger=1 |
+/*Ndef(\noiseImpulse, { | amp=0, freq=9000, t_trigger=1 |
 	var out;
 	out = BPF.ar(GrayNoise.ar(),[ freq, freq*1.01 ],0.2);
 
@@ -681,8 +681,21 @@ Ndef(\noiseImpulse, { | amp=0, freq=9000, t_trigger=1 |
 	out = EnvGen.ar(Env.new([0,1,0],[0.00001, 0.6, 0.000001]), gate: t_trigger) * out;
 
 	( out*2 ).max * amp * 1;
-});
+});*/
 
+Ndef(\noiseImpulse, { | amp=0, freq=1900, t_trigger=1 |
+	var out;
+	out = BPF.ar(GrayNoise.ar(),[ freq, freq*1.01 ],0.2);
+
+	out = out + (BPF.ar(GrayNoise.ar(),[ freq*0.25, freq*0.21 ],0.2) * 0.35);
+	out = out + SinOsc.ar(60, mul: 0.2);
+
+	out = EnvGen.ar(Env.new([0,1,0],[0.00001, 0.6, 0.000001]), gate: t_trigger) * out;
+
+	out = CombN.ar(out, delaytime: 0.03);
+	Out.ar(~reverbBus, out);
+	( out*2 ).tanh * amp * 1;
+});
 
 	~createEntranceScan = {| amp=0, freq=3700, t_trigger=1, length=0.12, pan=0 |
 		{
