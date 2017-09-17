@@ -5,14 +5,15 @@ s.waitForBoot({
 
 	// Globals
 
-	~SECTION = 0;
+	~section = 0;
+
 	~dirgeVol = 0.05;
 	~energyThreshold = 2.5;
 	~quadrant2 = false;
 	~proximityDistance = 0.9;
 	//~energyThreshold = 0.47;
 
-	~graySineVol = 0;
+	~graySineVol = 0.95;
 	~airySineVol = 0.15;
 	~metalVol = 0.25;
 	~earthVol = 0.25;

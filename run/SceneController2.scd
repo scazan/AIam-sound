@@ -1,34 +1,74 @@
 ~cSceneController = {
 	var dict;
-	var thumpMode = false;
 	var thumpZone = false;
 
 	//Synths are what are controlled per Actor
+	// [quadrant, section, synth]
 	var synths = [
 		[ // 0
-			\graySine,
-			\graySine2,
-			\graySine,
-			\graySine2
+			[
+				\graySine2,
+				\graySine,
+				\graySine2,
+				\graySine
+			],
+			[],
+			[],
+			[],
+			[
+				\graySine4,
+				\graySine5,
+				\graySine6
+			]
 
 		],
 		[ // 1
-			\graySine,
-			\graySine2,
-			\graySine,
-			\graySine2
+			[
+				\graySine2,
+				\graySine,
+				\graySine2,
+				\graySine
+			],
+			[],
+			[],
+			[],
+			[
+				\graySine4,
+				\graySine5,
+				\graySine6
+			]
 		],
 		[ // 2
-			\graySine,
-			\graySine2,
-			\graySine,
-			\graySine2
+			[
+				\graySine2,
+				\graySine,
+				\graySine2,
+				\graySine
+			],
+			[],
+			[],
+			[],
+			[
+				\graySine4,
+				\graySine5,
+				\graySine6
+			]
 		],
 		[ // 3
-			\graySine,
-			\graySine2,
-			\graySine,
-			\graySine2
+			[
+				\graySine2,
+				\graySine,
+				\graySine2,
+				\graySine
+			],
+			[],
+			[],
+			[],
+			[
+				\graySine4,
+				\graySine5,
+				\graySine6
+			]
 		]
 
 	];
@@ -43,58 +83,42 @@
 				var x = posVector[\x],
 				y = posVector[\y];
 
-				// Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, ((  (x.abs - 1).abs.pow(3) * 8000) + 90) );
+
 
 				if( ((x >= 0.75) && (y >= 0.75)), {
 					// THUMP ZONE
 					Ndef(\bass).set(\amp, 0.4);
-					thumpMode = true;
-
-					/*Ndef(synths[0][actorIndex % (synths[0].size)]).set(\amp, 0.4);*/
-					// Setting up four sections on the x-axis
-					/*if(x <= -0.5, {
-						// Low sound
-							Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1000/2);
-					}, {
-						if(x <= 0, {
-							//high sound
-									Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1500);
-						}, {
-							if(x <= 0.5, {
-								//med sound
-								Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 2700/1, \amp, 0.1);
-							}, {
-								if(x <= 1, {
-									//high sound
-								Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1700/2);
-								});
-							});
-						});
-					});*/
-
+					thumpZone = true;
 				}, {
-					if(thumpZone == false, {
-						// Setting up four sections on the x-axis
-						if(x <= -0.5, {
-							// Low sound
-							Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1000/2);
-						}, {
-							if(x <= 0, {
-								//high sound
-								Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1500);
-							}, {
-								if(x <= 0.5, {
-									//med sound
-									Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 2700/1, \amp, 0.1);
-								}, {
-									if(x <= 1, {
-										//high sound
-										Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1700/2);
+						if(thumpZone == false, {
+							if(~section == 0, {
+								Ndef(synths[0][~section][actorIndex % (synths[0][~section].size)]).set(\freq, ((  (x.abs - 1).abs.pow(3) * 8000) + 90) );
+							});
+
+							if(~section == 4, {
+								// GraySine controlled
+								// Setting up four sections on the x-axis
+								if(x <= -0.5, {
+									// Low sound
+									Ndef(synths[0][~section][actorIndex % (synths[0][~section].size)]).set(\freq, 1000/2);
+									}, {
+										if(x <= 0, {
+											//high sound
+											Ndef(synths[0][~section][actorIndex % (synths[0][~section].size)]).set(\freq, 1500);
+											}, {
+												if(x <= 0.5, {
+													//med sound
+													Ndef(synths[0][~section][actorIndex % (synths[0][~section].size)]).set(\freq, 2700/1, \amp, 0.1);
+													}, {
+														if(x <= 1, {
+															//high sound
+															Ndef(synths[0][~section][actorIndex % (synths[0][~section].size)]).set(\freq, 1700/2);
+														});
+												});
 									});
 								});
 							});
 						});
-					});
 				});
 
 			},
@@ -113,87 +137,33 @@
 				if(energy > ~energyThreshold, {
 					moving = true;
 
-					// [id, "moving", vector1].postln;
 
-					// If we are moving and we are not already flagged as moving
+					// IF WE ARE MOVING and we are not already flagged as moving
 					if(motion == false, {
-
 						var x = vector1[0],
 						y = vector1[2];
 
 
 						// QUADRANTS
-						// if((x >= 0.75) && (y >= 0.75), {
 						if((x >= 0.75) && (y <= -0.25), {
 							// THUMP ZONE
-							// Ndef(\bass).set(\amp, 0.4);
-							// Ndef(synths[0][0]).set(\amp, 0);
-							Ndef(synths[0][id % (synths[0].size)]).set(\amp, 0);
+							if(~section == 0, {
+								Ndef(synths[0][~section][id % (synths[0][~section].size)]).set(\amp, 0);
+							});
 						}, {
-							if(thumpZone == false, {
-							// Ndef(\bass).set(\amp, 0);
-							Ndef(synths[0][id % (synths[0].size)]).set(\amp, 0.4);
+								if(thumpZone == false, {
 
-							Ndef(\discouraging).set(\volume, 0.6);
-
-							/*if((x >= 0) && (y >= 0), {
-
-								// Ndef(\graySineTrig).set(\pan, 1, \amp, 3, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
-								~createGraySineTrig.value(amp: 3, freq: 803, switch: 3, length: 1.3, t_trigger: 1);
-								"QUAD 1".postln;
-							},{
-								if((x >= 0) && (y < 0), {
-									// Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 1903, \switch, 1, \length, 1.3, \t_trigger, 1);
-									~createGraySineTrig.value(amp: 2, freq: 1203, switch: 3, length: 1.3, t_trigger: 1);
-									"QUAD 2".postln;
-								}, {
-									if((x < 0) && (y < 0), {
-										// Ndef(\graySineTrig).set(\pan, 1, \amp, 3, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
-										~createGraySineTrig.value(amp: 2, freq: 903, switch: 3, length: 1.3, t_trigger: 1);
-										"QUAD 3".postln;
-									}, {
-										if((x < 0) && (y >= 0), {
-											// Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 703, \switch, 2, \length, 1.3, \t_trigger, 1);
-											~createGraySineTrig.value(amp: 2, freq: 1403, switch: 3, length: 1.3, t_trigger: 1);
-											"QUAD 4".postln;
-										});
+									if(~section == 4, {
+										// If we are moving, turn up the synth
+										Ndef(synths[0][~section][id % (synths[0][~section].size)]).set(\amp, 0.4);
 									});
-								});
-							});*/
 
-							if((x >= 0) && (y >= 0), {
-
-								// Ndef(\graySineTrig).set(\pan, 1, \amp, 3, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
-								 ~createGraySineTrig.value(amp: 3, freq: 803, switch: 3, length: 1.3, t_trigger: 1);
-								//~createAiryTrig.value(amp: 3, freq: 803, switch: 3, length: 1.3, t_trigger: 1);
-								//Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan -1);
-								"QUAD 1".postln;
-							},{
-								if((x >= 0) && (y < 0), {
-									// Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 1903, \switch, 1, \length, 1.3, \t_trigger, 1);
-										~createGraySineTrig.value(amp: 2, freq: 1203, switch: 3, length: 1.3, t_trigger: 1);
-									//~createAiryTrig.value(amp: 3, freq: 803, switch: 3, length: 1.3, t_trigger: 1);
-									//Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan -1);
-									"QUAD 2".postln;
-								}, {
-									if((x < 0) && (y < 0), {
-										// Ndef(\graySineTrig).set(\pan, 1, \amp, 3, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
-										~createGraySineTrig.value(amp: 2, freq: 903, switch: 3, length: 1.3, t_trigger: 1);
-										//~createAiryTrig.value(amp: 3, freq: 803, switch: 3, length: 1.3, t_trigger: 1);
-										//Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan -1);
-										"QUAD 3".postln;
-									}, {
-										if((x < 0) && (y >= 0), {
-											// Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 703, \switch, 2, \length, 1.3, \t_trigger, 1);
-											 ~createGraySineTrig.value(amp: 2, freq: 1403, switch: 3, length: 1.3, t_trigger: 1);
-											//~createAiryTrig.value(amp: 3, freq: 803, switch: 3, length: 1.3, t_trigger: 1);
-											//Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan -1);
-											"QUAD 4".postln;
-										});
+									if(~section == 0, {
+									// If we are moving, trigger a boop
+									~createGraySineTrig.value(amp: 2, freq: 1703, switch: 3, length: 0.25, t_trigger: 1);
 									});
+
 								});
-							});
-							});
 						});
 						 // END QUADRANTS
 
@@ -201,15 +171,14 @@
 
 					});
 				}, {
+					// IF WE ARE NOT MOVING
 					if(motion == true, {
-
-						// Ndef(\stutter2).set(\rate, 0.95, \switch, 0, \amp, 0.95);
-						Ndef(("stutter"++id).asSymbol).set(\rate, 0.26, \switch, 1, \amp, 0.85);
-						Ndef(synths[0][id % (synths[0].size)]).set(\amp, 0.2);
-						Ndef(\discouraging).set(\volume, 0);
+						if(~section == 0, {
+							// If we are not moving, turn down the volume on the synth
+							Ndef(synths[0][~section][id % (synths[0][~section].size)]).set(\amp, 0.2);
+						});
 
 						motion = false;
-
 					});
 
 				});
@@ -243,7 +212,7 @@
 
 				if( ((x >= 0.75) && (y >= 0.75)), {
 					Ndef(\bass).set(\amp, 0);
-					thumpZone = false;
+					thumpZone = false; // TODO: Fix for multiple users
 				});
 			}
 		],
@@ -251,39 +220,51 @@
 			\synths -> { | actor, actorIndex |
 				var x = actor[\position][\x],
 					y = actor[\position][\y];
-				if(true == true , {
-					if((x >= 0.75) && (y <= -0.25), {
-						// THUMP ZONE
-						Ndef(\bass).set(\amp, 0.4);
-						thumpZone = true;
+
+
+				if((x >= 0.75) && (y <= -0.25), {
+					// THUMP ZONE
+					Ndef(\bass).set(\amp, 0.4);
+					thumpZone = true;
 					}, {
-						// Ndef(\bass).set(\amp, 0);
 
-						// Setting up four sections on the x-axis
-						if(x <= -0.5, {
-							// Low sound
-							Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1000/2);
-						}, {
-							if(x <= 0, {
-								//high sound
-								Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1500);
-							}, {
-								if(x <= 0.5, {
-									//med sound
+						Ndef(\bass).set(\amp, 0);
 
-									Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 2700/1, \amp, 0.1);
-								}, {
-									if(x <= 1, {
-										//high sound
-										Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1700/2);
-									});
+
+						if(~section == 0, {
+							Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, (((x.abs - 1).abs.pow(3) * 8000) + 90) );
+						});
+
+						if(thumpZone == false, {
+							if(~section == 4, {
+								// Setting up four sections on the x-axis
+								if(x <= -0.5, {
+									// Low sound
+									Ndef(synths[1][~section][actorIndex % (synths[1][~section].size)]).set(\freq, 1000/2);
+									}, {
+
+										// graySine controlled
+										if(x <= 0, {
+											//high sound
+											Ndef(synths[1][~section][actorIndex % (synths[1][~section].size)]).set(\freq, 1500);
+											}, {
+												if(x <= 0.5, {
+													//med sound
+
+													Ndef(synths[1][~section][actorIndex % (synths[1][~section].size)]).set(\freq, 2700/1, \amp, 0.1);
+													}, {
+														if(x <= 1, {
+															//high sound
+															Ndef(synths[1][~section][actorIndex % (synths[1][~section].size)]).set(\freq, 1700/2);
+														});
+												});
+										});
 								});
 							});
 						});
-					});
 				});
 
-				// Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, (((x.abs - 1).abs.pow(3) * 8000) + 90) );
+
 			},
 			\energy -> { | id, vector1, vector2, energies, motion |
 				var moving = false;
@@ -304,74 +285,34 @@
 					moving = true;
 
 					// Ndef(synths[1][id % (synths[1].size)]).set(\amp, 0.4);
-					Ndef(\discouraging).set(\volume, 0.6);
 
-
-						// THUMP ZONE
-						if((x <= -0.25) && (y >= 0.75), {
-							Ndef(synths[1][id % (synths[1].size)]).set(\amp, 0.0);
-						Ndef(\pad).set(\amp, 0);
-						}, {
-						if(true == true , {
-							Ndef(synths[1][id % (synths[1].size)]).set(\amp, 0.4);
-
-						/*if((x >= 0) && (y >= 0), {
-
-								// Ndef(\graySineTrig).set(\pan, 1, \amp, 3, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
-								~createGraySineTrig.value(amp: 3, freq: 803, switch: 3, length: 1.3, t_trigger: 1);
-								"QUAD 1".postln;
-							},{
-								if((x >= 0) && (y < 0), {
-									// Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 1903, \switch, 1, \length, 1.3, \t_trigger, 1);
-									~createGraySineTrig.value(amp: 2, freq: 1203, switch: 3, length: 1.3, t_trigger: 1);
-									"QUAD 2".postln;
-								}, {
-									if((x < 0) && (y < 0), {
-										// Ndef(\graySineTrig).set(\pan, 1, \amp, 3, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
-										~createGraySineTrig.value(amp: 2, freq: 903, switch: 3, length: 1.3, t_trigger: 1);
-										"QUAD 3".postln;
-									}, {
-										if((x < 0) && (y >= 0), {
-											// Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 703, \switch, 2, \length, 1.3, \t_trigger, 1);
-											~createGraySineTrig.value(amp: 2, freq: 1403, switch: 3, length: 1.3, t_trigger: 1);
-											"QUAD 4".postln;
-										});
-									});
-								});
-							});*/
-						});
-						});
 
 					// Ndef(synths[1][id % (synths[1].size)]).set(\x, (x + 1)/2);
-					Ndef(\pad).set(\dist, (x + 1)*2);
-					Ndef(\pad).set(\amp, 0.1);
+					/* Ndef(\pad).set(\dist, (x + 1)*2);
+					Ndef(\pad).set(\amp, 0.1);*/
 
 					// If we are moving and we are not already flagged as moving
 					if(motion == false, {
 
-
-
-						// Quadrants
-						/*if((x >= 0) && (y >= 0), {
-
-							Ndef(\graySineTrig).set(\pan, 1, \amp, 3, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
-							"QUAD 1".postln;
-						},{
-								if((x >= 0) && (y < 0), {
-									Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 1903, \switch, 1, \length, 1.3, \t_trigger, 1);
-									"QUAD 2".postln;
-								}, {
-										if((x < 0) && (y < 0), {
-										Ndef(\graySineTrig).set(\pan, 1, \amp, 3, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
-											"QUAD 3".postln;
-									}, {
-												if((x < 0) && (y >= 0), {
-												Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 703, \switch, 2, \length, 1.3, \t_trigger, 1);
-												"QUAD 4".postln;
-											});
+						// THUMP ZONE
+						if((x <= -0.25) && (y >= 0.75), {
+							if(~section == 0, {
+								//If in the thumpZone, turn off the synth
+								Ndef(synths[1][~section][id % (synths[1][~section].size)]).set(\amp, 0.0);
+							});
+						}, {
+							if(thumpZone == false , {
+									if( (~section == 0) || (~section == 4), {
+										// IF WE ARE MOVING then turn up the synth
+										Ndef(synths[1][~section][id % (synths[1][~section].size)]).set(\amp, 0.4);
 									});
-								});
-						});*/
+									if( (~section == 0), {
+										// If we are moving, trigger a boop
+										~createGraySineTrig.value(amp: 3, freq: 603, switch: 3, length: 1.3, t_trigger: 1);
+									});
+							});
+						});
+
 
 						motion = true;
 
@@ -380,18 +321,22 @@
 						var x = vector1[0],
 						y = vector1[2];
 
-						Ndef(\pad).set(\amp, 0.01);
-						Ndef(synths[1][id % (synths[1].size)]).set(\amp, 0.2);
-
+						if( (~section == 0) || (~section == 4), {
+							// If we are not moving, turn down the synth
+							Ndef(synths[1][~section][id % (synths[1][~section].size)]).set(\amp, 0.2);
+						});
 
 						if(motion == true, {
-						Ndef(\discouraging).set(\volume, 0);
 
 							// THE THUMP ZONE
 							if((x <= -0.25) && (y <= -0.25), {
-								Ndef(synths[1][id % (synths[1].size)]).set(\amp, 0.0);
+								if( (~section == 0) || (~section == 4), {
+									Ndef(synths[1][~section][id % (synths[1][~section].size)]).set(\amp, 0.0);
+								});
 							}, {
-								Ndef(synths[1][id % (synths[1].size)]).set(\amp, 0.2);
+								if( (~section == 0) || (~section == 4), {
+									Ndef(synths[1][~section][id % (synths[1][~section].size)]).set(\amp, 0.2);
+								});
 
 							});
 
@@ -430,7 +375,7 @@
 
 				if((x >= 0.75) && (y <= -0.25), {
 					// THUMP ZONE
-					Ndef(\bass).set(\amp, 0);
+					Ndef(\bass).set(\amp, 0); // TODO: make this work for multiple ids
 					thumpZone = false;
 				});
 
@@ -442,7 +387,6 @@
 				var x = actor[\position][\x],
 					y = actor[\position][\y];
 
-				// [x,y].postln;
 				if( (x <= -0.25) && (y >= 0.75), {
 					// THUMP ZONE
 					["THUMP"].postln;
@@ -452,35 +396,40 @@
 					var actorY = (y + 1) / 2,
 						actorYInverse =  ((y - 1) / 2).abs;
 
-					// Ndef(\bass).set(\amp, 0);
-
-
 					// Encouraging/Discouraging sound
 					// Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, ((   (x.abs - 1).abs.pow(3) * 8000) + 90) );
 
-					if(true == true , {
-						// Setting up four sections on the x-axis
-						if(x <= -0.5, {
-							// Low sound
-							Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1000/2);
-						}, {
-							if(x <= 0, {
-								//high sound
-								Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1500);
-							}, {
-								if(x <= 0.5, {
-									//med sound
 
-									Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 2700/1, \amp, 0.1);
-								}, {
-									if(x <= 1, {
-										//high sound
-										Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1700/2);
-									});
+					// GRAYSINE CONTROLLED
+					if(thumpZone == false , {
+
+							if( (~section == 4), {
+								// Setting up four sections on the x-axis
+								if(x <= -0.5, {
+									// Low sound
+									Ndef(synths[2][~section][actorIndex % (synths[2][~section].size)]).set(\freq, 1000/2);
+									}, {
+										if(x <= 0, {
+											//high sound
+											Ndef(synths[2][~section][actorIndex % (synths[2][~section].size)]).set(\freq, 1500);
+											}, {
+												if(x <= 0.5, {
+													//med sound
+
+													Ndef(synths[2][~section][actorIndex % (synths[2][~section].size)]).set(\freq, 2700/1, \amp, 0.1);
+													}, {
+														if(x <= 1, {
+															//high sound
+															Ndef(synths[2][~section][actorIndex % (synths[2][~section].size)]).set(\freq, 1700/2);
+														});
+												});
+										});
 								});
-							});
-						});
+							}); // End Section
+
+
 					});
+
 
 				});
 
@@ -498,7 +447,6 @@
 				if(energy > ~energyThreshold, {
 					moving = true;
 
-					// [id, "moving", vector1].postln;
 
 					// If we are moving and we are not already flagged as moving
 					if(motion == false, {
@@ -510,37 +458,42 @@
 
 						// THUMP ZONE
 						if((x >= 0.75) && (y <= -0.25), {
-							Ndef(synths[2][id % (synths[2].size)]).set(\amp, 0.0);
+							if( (~section == 4), {
+								Ndef(synths[2][~section][id % (synths[2][~section].size)]).set(\amp, 0.0);
+							});
 						}, {
-							if(true == true , {
-							Ndef(synths[2][id % (synths[2].size)]).set(\amp, 0.4);
-							Ndef(\discouraging).set(\volume, 0.6);
-
-							if((x >= 0) && (y >= 0), {
-
-								// Ndef(\graySineTrig).set(\pan, 1, \amp, 3, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
-								 ~createGraySineTrig.value(amp: 3, freq: 803, switch: 3, length: 1.3, t_trigger: 1);
-								"QUAD 1".postln;
-							},{
-								if((x >= 0) && (y < 0), {
-									// Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 1903, \switch, 1, \length, 1.3, \t_trigger, 1);
-									 ~createGraySineTrig.value(amp: 2, freq: 1203, switch: 3, length: 1.3, t_trigger: 1);
-									"QUAD 2".postln;
-								}, {
-									if((x < 0) && (y < 0), {
-										// Ndef(\graySineTrig).set(\pan, 1, \amp, 3, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
-										 ~createGraySineTrig.value(amp: 2, freq: 903, switch: 3, length: 1.3, t_trigger: 1);
-										"QUAD 3".postln;
-									}, {
-										if((x < 0) && (y >= 0), {
-											// Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 703, \switch, 2, \length, 1.3, \t_trigger, 1);
-											~createGraySineTrig.value(amp: 2, freq: 1403, switch: 3, length: 1.3, t_trigger: 1);
-											"QUAD 4".postln;
-										});
+								if(thumpZone == false, {
+									if( (~section == 4), {
+									// If we are moving, turn up the synth
+										Ndef(synths[2][~section][id % (synths[2][~section].size)]).set(\amp, 0.4);
 									});
+
+									/*if((x >= 0) && (y >= 0), {
+
+										// Ndef(\graySineTrig).set(\pan, 1, \amp, 3, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
+										~createGraySineTrig.value(amp: 3, freq: 803, switch: 3, length: 1.3, t_trigger: 1);
+										"QUAD 1".postln;
+										},{
+											if((x >= 0) && (y < 0), {
+												// Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 1903, \switch, 1, \length, 1.3, \t_trigger, 1);
+												~createGraySineTrig.value(amp: 2, freq: 1203, switch: 3, length: 1.3, t_trigger: 1);
+												"QUAD 2".postln;
+												}, {
+													if((x < 0) && (y < 0), {
+														// Ndef(\graySineTrig).set(\pan, 1, \amp, 3, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
+														~createGraySineTrig.value(amp: 2, freq: 903, switch: 3, length: 1.3, t_trigger: 1);
+														"QUAD 3".postln;
+														}, {
+															if((x < 0) && (y >= 0), {
+																// Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 703, \switch, 2, \length, 1.3, \t_trigger, 1);
+																~createGraySineTrig.value(amp: 2, freq: 1403, switch: 3, length: 1.3, t_trigger: 1);
+																"QUAD 4".postln;
+															});
+													});
+											});
+									});*/
+
 								});
-							});
-							});
 						});
 
 
@@ -553,11 +506,15 @@
 
 						if(motion == true, {
 
-						Ndef(\discouraging).set(\volume, 0);
 							if((x >= 0.75) && (y <= -0.25), {
-								Ndef(synths[2][id % (synths[2].size)]).set(\amp, 0.0);
+								if( (~section == 0) || (~section == 4), {
+									Ndef(synths[2][~section][id % (synths[2][~section].size)]).set(\amp, 0.0);
+								});
 							}, {
-							Ndef(synths[2][id % (synths[2].size)]).set(\amp, 0.2);
+								if( (~section == 0) || (~section == 4), {
+									// If we are not moving and not in thump zone, turn down the synth
+									Ndef(synths[2][~section][id % (synths[2][~section].size)]).set(\amp, 0.2);
+								});
 							});
 
 
@@ -584,13 +541,16 @@
 				});
 			},
 			\lost -> { | id, x, y, z |
-				if(x <= -0.9, {
-					// WALL
-					Ndef(\noiseImpulse).set(\amp, 0.6, \t_trigger, 1);
-				}, {
-					if( (y>=0.9) || (x >= 0.9) || (x <= -0.21) || (y <= -0.21), {
+
+				if( (~section == 4), {
+					if(x <= -0.9, {
 						// WALL
 						Ndef(\noiseImpulse).set(\amp, 0.6, \t_trigger, 1);
+					}, {
+						if( (y>=0.9) || (x >= 0.9) || (x <= -0.21) || (y <= -0.21), {
+							// WALL
+							Ndef(\noiseImpulse).set(\amp, 0.6, \t_trigger, 1);
+						});
 					});
 				});
 
@@ -600,8 +560,6 @@
 					thumpZone = false;
 				});
 
-				Ndef(\encouraging).set(\volume, 0);
-				Ndef(\discouraging).set(\volume, 0);
 			}
 		],
 		Dictionary[ // Q4: BOTTOM RIGHT ////////////////////////////////////////////////////////////////////////////////////
@@ -610,40 +568,44 @@
 					y = actor[\position][\y];
 
 
-
-//				if((x <= -0.25) && (y <= -0.25), {
 				if((x >= 0.75) && (y >= 0.75), {
 					// THUMP ZONE
 					Ndef(\bass).set(\amp, 0.4);
 					thumpZone = true;
 				}, {
-					// Ndef(\bass).set(\amp, 0);
 
-										if(thumpMode == false , {
-					// Setting up four sections on the x-axis
-					if(x <= -0.5, {
-						// Low sound
-							Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1000/2);
-					}, {
-						if(x <= 0, {
-							//high sound
-									Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1500);
-						}, {
-							if(x <= 0.5, {
-								//med sound
+						if(thumpZone == false , {
+							if( (~section == 0) || (~section == 3), {
+								Ndef(synths[0][~section][actorIndex % (synths[0][~section].size)]).set(\freq, ((   (x.abs - 1).abs.pow(3) * 8000) + 90) );
+							});
 
-								Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 2700/1, \amp, 0.1);
-							}, {
-								if(x <= 1, {
-									//high sound
-													Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, 1700/2);
+							if( (~section == 4), {
+								// Setting up four sections on the x-axis
+								// GRAYSINE CONTROLLED
+								if(x <= -0.5, {
+									// Low sound
+									Ndef(synths[3][~section][actorIndex % (synths[3][~section].size)]).set(\freq, 1000/2);
+									}, {
+										if(x <= 0, {
+											//high sound
+											Ndef(synths[3][~section][actorIndex % (synths[3][~section].size)]).set(\freq, 1500);
+											}, {
+												if(x <= 0.5, {
+													//med sound
+													Ndef(synths[3][~section][actorIndex % (synths[3][~section].size)]).set(\freq, 2700/1, \amp, 0.1);
+													}, {
+														if(x <= 1, {
+															//high sound
+															Ndef(synths[3][~section][actorIndex % (synths[3][~section].size)]).set(\freq, 1700/2);
+														});
+												});
+										});
 								});
+
 							});
 						});
-					});
-					});
 
-					// Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, ((   (x.abs - 1).abs.pow(3) * 8000) + 90) );
+
 				});
 			},
 			\energy -> { | id, vector1, vector2, energies, motion |
@@ -659,54 +621,61 @@
 				if(energy > ~energyThreshold, {
 					moving = true;
 
-					// [id, "moving", vector1].postln;
-
 					// If we are moving and we are not already flagged as moving
 					if(motion == false, {
 
 						var x = vector1[0],
 						y = vector1[2];
 
-						// Ndef(synths[0][id % (synths[0].size)]).set(\amp, 0.4);
+						if( (~section == 0) || (~section == 3) || (~section == 4), {
+							Ndef(synths[3][~section][id % (synths[3][~section].size)]).set(\amp, 0.4);
+						});
 
 						// THUMP ZONE
 						if((x >= 0.75) && (y >= 0.75), {
-							Ndef(synths[0][id % (synths[0].size)]).set(\amp, 0.0);
+							if( (~section == 0) || (~section == 3), {
+								Ndef(synths[3][~section][id % (synths[3][~section].size)]).set(\amp, 0);
+							});
 						}, {
 
-							Ndef(synths[0][id % (synths[0].size)]).set(\amp, 0.4);
-							Ndef(\discouraging).set(\volume, 0.6);
+								if(thumpZone == false , {
+									if( (~section == 0) || (~section == 3), {
+										// IF NOT IN THUMP ZONE AND MOVING, turn up synth
+										Ndef(synths[3][~section][id % (synths[3][~section].size)]).set(\amp, 0.4);
+									});
 
-					if(thumpMode == false , {
-							if((x >= 0) && (y >= 0), {
 
-								// Ndef(\graySineTrig).set(\pan, 1, \amp, 3, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
-								~createGraySineTrig.value(amp: 3, freq: 803, switch: 3, length: 1.3, t_trigger: 1);
-								//Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan -1);
-								"QUAD 1".postln;
-							},{
-								if((x >= 0) && (y < 0), {
-									// Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 1903, \switch, 1, \length, 1.3, \t_trigger, 1);
-									~createGraySineTrig.value(amp: 2, freq: 1203, switch: 3, length: 1.3, t_trigger: 1);
-									Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan -1);
-									"QUAD 2".postln;
-								}, {
-									if((x < 0) && (y < 0), {
-										// Ndef(\graySineTrig).set(\pan, 1, \amp, 3, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
-										~createGraySineTrig.value(amp: 2, freq: 903, switch: 3, length: 1.3, t_trigger: 1);
-											// Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan -1);
-										"QUAD 3".postln;
-									}, {
-										if((x < 0) && (y >= 0), {
-											// Ndef(\graySineTrig).set(\pan, 1, \amp, 2, \freq, 703, \switch, 2, \length, 1.3, \t_trigger, 1);
-											~createGraySineTrig.value(amp: 2, freq: 1403, switch: 3, length: 1.3, t_trigger: 1);
-											//Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan -1);
-											"QUAD 4".postln;
+									if( (~section == 0), {
+										// QUADRANTS
+										if((x >= 0) && (y >= 0), {
+											// LOW
+											~createGraySineTrig.value(amp: 3, freq: 603, switch: 3, length: 1.3, t_trigger: 1);
+
+											"QUAD 2".postln;
+											},{
+												if((x >= 0) && (y < 0), {
+													// HIGH
+													~createGraySineTrig.value(amp: 2, freq: 1703, switch: 3, length: 0.25, t_trigger: 1);
+
+													"QUAD 4".postln;
+													}, {
+														if((x < 0) && (y < 0), {
+															// LOW
+															~createGraySineTrig.value(amp: 3, freq: 603, switch: 3, length: 1.3, t_trigger: 1);
+
+															"QUAD 3".postln;
+															}, {
+																if((x < 0) && (y >= 0), {
+																	// MEDIUM
+																	~createGraySineTrig.value(amp: 2, freq: 1003, switch: 3, length: 0.55, t_trigger: 1);
+
+																	"QUAD 1".postln;
+																});
+														});
+												});
 										});
 									});
 								});
-							});
-							});
 						});
 
 
@@ -719,13 +688,14 @@
 
 						if(motion == true, {
 
-						Ndef(\discouraging).set(\volume, 0);
-							if((x >= 0.75) && (y <= -0.25), {
-								Ndef(synths[0][id % (synths[0].size)]).set(\amp, 0.0);
-							}, {
-								Ndef(synths[0][id % (synths[0].size)]).set(\amp, 0.2);
+							if( (~section == 0) || (~section == 3) || (~section == 4), {
+								if((x >= 0.75) && (y <= -0.25), {
+									Ndef(synths[3][~section][id % (synths[3][~section].size)]).set(\amp, 0.0);
+								}, {
+									// IF NOT MOVING turn down synth
+									Ndef(synths[3][~section][id % (synths[3][~section].size)]).set(\amp, 0.2);
+								});
 							});
-
 
 							motion = false;
 
@@ -738,8 +708,6 @@
 			\proximity -> {|val|
 				val = ((1 - val)**1 * 2).abs;
 
-
-				//[val, ~proximityDistance].postln;
 				if(val > ~proximityDistance, {
 					Tdef(\vocal).stop;
 					Ndef(\pulseTrain0).set(\lag, 4 );
@@ -750,7 +718,10 @@
 			},
 			\new -> { | id, x, y, z |
 
-				Ndef(synths[0][id % (synths[0].size)]).set(\amp, 0.4);
+				if( (~section == 0) || (~section == 3) || (~section == 4), {
+					Ndef(synths[3][~section][id % (synths[3][~section].size)]).set(\amp, 0.4);
+				});
+
 				if(x >= 0.9, {
 					//bEEP
 					~createEntranceScan.value(amp: 0.26 + 0.2, freq: 2700 + (200.0.rand), length: 0.08 + 0.1.rand, pan: 0);
@@ -758,7 +729,9 @@
 			},
 			\lost -> { | id, x, y, z |
 
-				Ndef(synths[0][id % (synths[0].size)]).set(\amp, 0);
+				if( (~section == 0) || (~section == 3) || (~section == 4), {
+					Ndef(synths[3][~section][id % (synths[3][~section].size)]).set(\amp, 0);
+				});
 				if(x >= 0.9, {
 					//bEEP
 					~createEntranceScan.value(amp: 0.26 + 0.2, freq: 2700 + (200.0.rand), length: 0.08 + 0.1.rand, pan: 0);
@@ -766,7 +739,7 @@
 
 				if((x >= 0.75) && (y >= 0.75), {
 					// THUMP ZONE
-					Ndef(\bass).set(\amp, 0);
+					Ndef(\bass).set(\amp, 0); // TODO: Make this multi-user
 					thumpZone = false;
 				});
 			}
@@ -783,13 +756,6 @@
 		\getCameraProcessor -> { | camera | cameraFunctions[ camera ]; },
 		\next -> {
 
-			/*if(scene >= 0, {
-				tasks[ scene ][1].value(); // pseudo code
-			});
-
-			scene = scene + 1;
-			scene.postln;
-			tasks[ scene ][0].value();*/
 		},
 	];
 };
