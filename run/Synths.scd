@@ -45,7 +45,7 @@
 
 		verb = verb * 0.995;
 
-		verb * 1 * 0;
+		verb * 1 * vol;
 		//* z.abs;
 	});
 
@@ -63,18 +63,7 @@
 		freq = SelectX.kr(y.linlin(-1,1,0,1 * freqs.size).abs.floor, freqs).lag(0.0082);
 
 		freq = freq/2;
-		// freq = freq + (x.abs * 100);
 
-
-		/*filtered = BPF.ar(noise,
-			//freq: [freq, freq * 1.1] + LFPulse.ar(modFreq, mul: 240).unipolar.lag(0.),
-			freq: [freq * 0.7, freq * 0.61] + LFPulse.ar(modFreq.clip(5, 30), mul: [freq/4, freq/2], width: 0.02).unipolar,
-			// .lag(lag.abs),
-			rq: q * 0.001
-		);
-
-		filtered = (filtered*2).tanh * 1;
-		filtered = LPF.ar(filtered, freq: 9500);*/
 
 		filtered = SinOsc.ar(freq);
 		verb = FreeVerb.ar( filtered * AmpComp.kr(freq, amp.lag(3)),
@@ -86,8 +75,7 @@
 
 		verb = verb * 0.995;
 
-		verb * 1 * vol;
-		//* z.abs;
+		verb!2 * 1 * vol;
 	});
 
 
@@ -638,7 +626,7 @@ Ndef(\reverb2, {
 
 			Out.ar(~reverbBus, filtered * 0.16);
 
-			filtered * amp;
+			filtered * amp * ~waterVol;
 		}.play;
 
 	};

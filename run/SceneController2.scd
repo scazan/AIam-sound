@@ -1,6 +1,7 @@
 ~cSceneController = {
 	var dict;
 	var thumpZone = false;
+	var thumpZoneIDs = ~thumpZoneIDs = Dictionary.new;
 
 	//Synths are what are controlled per Actor
 	// [quadrant, section, synth]
@@ -108,11 +109,19 @@
 				if( ((x >= 0.75) && (y >= 0.75)), {
 					// THUMP ZONE
 					Ndef(\bass).set(\amp, 0.4);
-					thumpZone = true;
+
+					thumpZoneIDs[actor[\id]] = 1;
+					// thumpZone = true;
 				}, {
-						if(thumpZone == false, {
+
+						thumpZoneIDs[ actor[\id] ] = 0;
+
+						if(thumpZoneIDs.values.sum < 1, {
+							Ndef(\bass).set(\amp, 0);
+
 							if( (~section == 0) || (~section == 3), {
 								Ndef(synths[0][~section][actorIndex % (synths[0][~section].size)]).set(\freq, ((  (x.abs - 1).abs.pow(3) * 8000) + 90) );
+
 							});
 
 							if(~section == 4, {
@@ -152,7 +161,7 @@
 
 				energy = energies.sum / energies.size;
 
-				energy.postln;
+				// energy.postln;
 
 				if(energy > ~energyThreshold, {
 					moving = true;
@@ -171,7 +180,7 @@
 								Ndef(synths[0][~section][id % (synths[0][~section].size)]).set(\amp, 0);
 							});
 						}, {
-								if(thumpZone == false, {
+								if(thumpZoneIDs.values.sum < 1, {
 
 									if(~section == 4, {
 										// If we are moving, turn up the synth
@@ -223,6 +232,8 @@
 				});
 			},
 			\new -> { | id, x, y |
+				thumpZoneIDs[id] = 0;
+
 				if(x >= 0.9, {
 					//bEEP
 					~createEntranceScan.value(amp: 0.26 + 0.2, freq: 2700 + (200.0.rand), length: 0.08 + 0.1.rand, pan: 0);
@@ -236,8 +247,11 @@
 				});
 
 				if( ((x >= 0.75) && (y >= 0.75)), {
-					Ndef(\bass).set(\amp, 0);
-					thumpZone = false; // TODO: Fix for multiple users
+					// Ndef(\bass).set(\amp, 0);
+					thumpZoneIDs[id] = 1;
+					// thumpZone = false; // TODO: Fix for multiple users
+				}, {
+					thumpZoneIDs[id] = 0;
 				});
 			}
 		],
@@ -250,17 +264,19 @@
 				if((x >= 0.75) && (y <= -0.25), {
 					// THUMP ZONE
 					Ndef(\bass).set(\amp, 0.4);
-					thumpZone = true;
+					thumpZoneIDs[ actor[\id] ] = 1;
+					// thumpZone = true;
 					}, {
-
-						Ndef(\bass).set(\amp, 0);
+						thumpZoneIDs[ actor[\id] ] = 0;
 
 
 						if( (~section == 0) || (~section == 3), {
-							Ndef(synths[0][actorIndex % (synths[0].size)]).set(\freq, (((x.abs - 1).abs.pow(3) * 8000) + 90) );
+							Ndef(synths[0][~section][actorIndex % (synths[0][~section].size)]).set(\freq, (((x.abs - 1).abs.pow(3) * 8000) + 90) );
 						});
 
-						if(thumpZone == false, {
+						if(thumpZoneIDs.values.sum < 1, {
+							Ndef(\bass).set(\amp, 0);
+
 							if(~section == 4, {
 								// Setting up four sections on the x-axis
 								if(x <= -0.5, {
@@ -326,7 +342,7 @@
 								Ndef(synths[1][~section][id % (synths[1][~section].size)]).set(\amp, 0.0);
 							});
 						}, {
-							if(thumpZone == false , {
+							if(thumpZoneIDs.values.sum < 1 , {
 									if( (~section == 0) || (~section == 4), {
 										// IF WE ARE MOVING then turn up the synth
 										Ndef(synths[1][~section][id % (synths[1][~section].size)]).set(\amp, 0.4);
@@ -391,13 +407,16 @@
 				});
 			},
 			\new -> { | id, x, y |
+				thumpZoneIDs[id] = 0;
+
 				if(x <= -0.9, {
 					//BEEP
 					~createEntranceScan.value(amp: 0.26 + 0.2, freq: 2700 + (200.0.rand), length: 0.08 + 0.1.rand, pan: 0);
 				});
-				Ndef(\stillness).set(\amp, 0.2);
+
 			},
 			\lost -> { | id, x, y, z |
+
 				if(x <= -0.9, {
 					//BEEP
 					~createEntranceScan.value(amp: 0.26 + 0.2, freq: 2700 + (200.0.rand), length: 0.08 + 0.1.rand, pan: 0);
@@ -405,11 +424,12 @@
 
 				if((x >= 0.75) && (y <= -0.25), {
 					// THUMP ZONE
-					Ndef(\bass).set(\amp, 0); // TODO: make this work for multiple ids
-					thumpZone = false;
+					// Ndef(\bass).set(\amp, 0); // TODO: make this work for multiple ids
+					thumpZoneIDs[id] = 1;
+				}, {
+					thumpZoneIDs[id] = 0;
 				});
 
-				Ndef(\stillness).set(\amp, 0);
 			}
 		],
 		Dictionary[ // Q3: BOTTOM LEFT ////////////////////////////////////////////////////////////////////////////////////
@@ -420,16 +440,20 @@
 				if( (x <= -0.25) && (y >= 0.75), {
 					// THUMP ZONE
 					["THUMP"].postln;
+
 					Ndef(\bass).set(\amp, 0.4);
-					thumpZone = true;
+					thumpZoneIDs[ actor[\id] ] = 1;
 				}, {
 					var actorY = (y + 1) / 2,
 						actorYInverse =  ((y - 1) / 2).abs;
 
-					// GRAYSINE CONTROLLED
-					if(thumpZone == false , {
+						thumpZoneIDs[ actor[\id] ] = 0;
 
-							if( (~section == 0) || (~section == 3), {
+					// GRAYSINE CONTROLLED
+					if(thumpZoneIDs.values.sum < 1 , {
+							Ndef(\bass).set(\amp, 0);
+
+							if( (~section == 3), {
 								Ndef(synths[2][~section][actorIndex % (synths[2][~section].size)]).set(\freq, ((  (x.abs - 1).abs.pow(3) * 8000) + 90) );
 							});
 
@@ -484,15 +508,13 @@
 						var x = vector1[0],
 						y = vector1[2];
 
-						//Ndef(synths[0][id % (synths[0].size)]).set(\amp, 0.4);
-
 						// THUMP ZONE
 						if((x >= 0.75) && (y <= -0.25), {
 							if( (~section == 4), {
 								Ndef(synths[2][~section][id % (synths[2][~section].size)]).set(\amp, 0.0);
 							});
 						}, {
-								if(thumpZone == false, {
+								if(thumpZoneIDs.values.sum < 1, {
 									if( (~section == 4), {
 									// If we are moving, turn up the synth
 										Ndef(synths[2][~section][id % (synths[2][~section].size)]).set(\amp, 0.4);
@@ -540,6 +562,8 @@
 				0;
 			},
 			\new -> { | id, x, y |
+				thumpZoneIDs[id] = 0;
+
 				if(x >= 0.7, {
 					//bEEP
 					~createEntranceScan.value(amp: 0.26 + 0.2, freq: 2700 + (200.0.rand), length: 0.08 + 0.1.rand, pan: 0);
@@ -563,8 +587,9 @@
 
 				if((x <= -0.25) && (y >= 0.75), {
 					// THUMP ZONE
-					Ndef(\bass).set(\amp, 0);
-					thumpZone = false;
+					thumpZoneIDs[id] = 1;
+				}, {
+					thumpZoneIDs[id] = 0;
 				});
 
 			}
@@ -578,10 +603,15 @@
 				if((x >= 0.75) && (y >= 0.75), {
 					// THUMP ZONE
 					Ndef(\bass).set(\amp, 0.4);
-					thumpZone = true;
+
+					thumpZoneIDs[ actor[\id] ] = 1;
 				}, {
 
-						if(thumpZone == false , {
+						thumpZoneIDs[ actor[\id] ] = 0;
+
+						if(thumpZoneIDs.values.sum < 1, {
+							Ndef(\bass).set(\amp, 0);
+
 							if( (~section == 0) || (~section == 3), {
 								Ndef(synths[0][~section][actorIndex % (synths[0][~section].size)]).set(\freq, ((   (x.abs - 1).abs.pow(3) * 8000) + 90) );
 							});
@@ -645,7 +675,7 @@
 							});
 						}, {
 
-								if(thumpZone == false , {
+								if(thumpZoneIDs.values.sum < 1 , {
 									if( (~section == 0) || (~section == 3), {
 										// IF NOT IN THUMP ZONE AND MOVING, turn up synth
 										Ndef(synths[3][~section][id % (synths[3][~section].size)]).set(\amp, 0.4);
@@ -733,6 +763,8 @@
 			},
 			\new -> { | id, x, y, z |
 
+				thumpZoneIDs[id] = 0;
+
 				if( (~section == 0) || (~section == 3) || (~section == 4), {
 					Ndef(synths[3][~section][id % (synths[3][~section].size)]).set(\amp, 0.4);
 				});
@@ -754,8 +786,9 @@
 
 				if((x >= 0.75) && (y >= 0.75), {
 					// THUMP ZONE
-					Ndef(\bass).set(\amp, 0); // TODO: Make this multi-user
-					thumpZone = false;
+					thumpZoneIDs[id] = 1;
+				}, {
+					thumpZoneIDs[id] = 0;
 				});
 			}
 		],

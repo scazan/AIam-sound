@@ -1,4 +1,5 @@
-s.options.memSize = 1024 * 100;
+s.options.memSize = 1024 * 100; s.boot;
+"Buffers.scd".loadRelative;
 
 s.waitForBoot({
 	var tasks, synthDefs, main;
@@ -17,9 +18,9 @@ s.waitForBoot({
 
 	~airySineVol = 0.15;
 	~metalVol = 0.25;
-	~earthVol = 0.25;
-	~fireVol = 0.25;
-	~waterVol = 0.25;
+	~earthVol = 0.5;
+	~fireVol = 0.5;
+	~waterVol = 2;
 
 
 	// Load Synths

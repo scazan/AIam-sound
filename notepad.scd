@@ -146,3 +146,45 @@ Ndef(\noiseImpulse, { | amp=0, freq=1900, t_trigger=1 |
 	( out*2 ).tanh * amp * 1;
 });
 )
+
+(
+~section = 0;
+Ndef(\reverb2).play;
+Ndef(\beep).play
+)
+
+// Section 0a
+(
+Ndef(\graySine).play; Ndef(\graySine2).play;
+// Ndef(\graySine).fadeTime = 30;
+Ndef(\graySine2).fadeTime = 30;
+// Ndef(\graySine).xset(\vol, 0.5);
+Ndef(\graySine2).xset(\vol, 0.5);
+)
+(
+~section = 1;
+Ndef(\graySine).fadeTime = 5; Ndef(\graySine2).fadeTime = 5;
+Ndef(\graySine).xset(\vol, 0);Ndef(\graySine2).xset(\vol, 0);
+)
+(
+~section = 2;
+Ndef(\pulseTrain0).play; Ndef(\pulseTrain0).set(\amp, 1);
+)
+
+(
+~section = 3;
+Ndef(\graySine).play; Ndef(\graySine2).play;
+Ndef(\graySine).fadeTime = 30; Ndef(\graySine2).fadeTime = 30;
+Ndef(\graySine).xset(\vol, 0.5);Ndef(\graySine2).xset(\vol, 0.5);
+)
+
+(
+~section = 4;
+Ndef(\graySine4).play; Ndef(\graySine5).play; Ndef(\graySine6).play;
+Ndef(\graySine4).fadeTime = 30; Ndef(\graySine5).fadeTime = 30; Ndef(\graySine6).fadeTime = 30;
+Ndef(\graySine4).xset(\vol, 0.5); Ndef(\graySine5).xset(\vol, 0.5); Ndef(\graySine6).xset(\vol, 0.5);
+)
+
+(
+
+)
