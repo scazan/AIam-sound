@@ -582,6 +582,7 @@ Ndef(\reverb2, {
 
 			filtered = PlayBuf.ar(1, ~breathBuffers.choose, doneAction: 2);
 			filtered = Pan2.ar(filtered * ~airySineVol, pan);
+			filtered = CombN.ar(filtered, delaytime: 0.04, decaytime: 0.5);
 
 			Out.ar(~reverbBus, filtered * 0.16);
 
@@ -591,6 +592,22 @@ Ndef(\reverb2, {
 	};
 
 
+	~createFireTrig = { | amp=0, pan=0.25, freq=1, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
+
+		{
+			var filtered;
+
+			filtered = PlayBuf.ar(1, ~fireBuffers.choose, rate: freq, doneAction: 2);
+			filtered = Pan2.ar(filtered * ~fireVol, pan);
+			filtered = CombN.ar(filtered, delaytime: 0.04);
+
+			Out.ar(~reverbBus, filtered * 0.16);
+
+			filtered * amp;
+		}.play;
+
+	};
+
 	~createMetalTrig = { | amp=0, pan=0.25, freq=1, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
 
 		{
@@ -598,6 +615,26 @@ Ndef(\reverb2, {
 
 			filtered = PlayBuf.ar(1, ~metalBuffers.choose, rate: freq, doneAction: 2);
 			filtered = Pan2.ar(filtered * ~metalVol, pan);
+			filtered = CombN.ar(filtered, delaytime: 0.01);
+
+			Out.ar(~reverbBus, filtered * 0.16);
+
+			filtered * amp;
+		}.play;
+
+	};
+
+
+	~createWaterTrig = { | amp=0, pan=0.25, freq=900, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
+		var winenv, grainEnv;
+		winenv = Env([0, 1, 0], [0.5, 0.5], [-8, 8]);
+		grainEnv = Buffer.sendCollection(s, winenv.discretize, 1);
+
+		{
+			var filtered;
+
+			filtered = GrainSin.ar(2, Impulse.kr(9), 0.01, freq: freq, envbufnum: grainEnv);
+			filtered = filtered * EnvGen.ar(Env.perc(0.01, 0.4), doneAction:2);
 
 			Out.ar(~reverbBus, filtered * 0.16);
 
@@ -614,6 +651,7 @@ Ndef(\reverb2, {
 
 			filtered = PlayBuf.ar(1, ~earthBuffers.choose, rate: freq, doneAction: 2);
 			filtered = Pan2.ar(filtered * ~earthVol, pan);
+			filtered = CombN.ar(filtered, delaytime: 0.04);
 
 			Out.ar(~reverbBus, filtered * 0.16);
 
@@ -669,7 +707,7 @@ var env, signal;
 
 	verb * 3;
 });
-	//Ndef(\graySineTrig).set(\pan, 0.5, \amp, 1, \freq, 703, \switch, 3, \length, 1.3, \t_trigger, 1);
+
 
 
 /*Ndef(\noiseImpulse, { | amp=0, freq=9000, t_trigger=1 |

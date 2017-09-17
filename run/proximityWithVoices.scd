@@ -14,9 +14,12 @@ s.waitForBoot({
 	//~energyThreshold = 0.47;
 
 	~graySineVol = 0.95;
+
 	~airySineVol = 0.15;
 	~metalVol = 0.25;
 	~earthVol = 0.25;
+	~fireVol = 0.25;
+	~waterVol = 0.25;
 
 
 	// Load Synths

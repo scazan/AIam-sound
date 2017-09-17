@@ -1,0 +1,47 @@
+s.sendMsg(\n_free, 1105)
+
+
+
+So to clarify what we discussed on Friday and make sure we are on the same page for the sound section:
+
+(Q1: front right from audience perspective, Q2: front left, Q3: back left, Q4: back right)
+
+Solo:
+
+0.Nea enters, beep scan
+
+Q1: high boop
+Q2: low boop
+Q3: high and low boop
+Q4: wall
+
+0a. This would develop into 'wow wow'/sine wave with time
+
+Duo:
+1. Bogi enters, beep scan, wow wow out
+
+1. AI wall and Bogi (to develop movement wise. idea from menacing to playful)
+
+2. Nea comes close to wall, Proximity and Thump in
+
+2. Greeting in thump
+
+3. Proximity + wow wow
+
+Trio
+4. Val enter beep scan
+
+4. Grayscale interactive in,  with element beeps in,  wow wow out, Thump always on
+
+Q1: air
+Q2: fire
+Q3: metal
+Q4: water
+
+
+Idea for further development: heart beat and breath sounds replace elements
+
+e.g.. Q1: breath
+Q2: heart
+Q3: breath
+Q4: heart
