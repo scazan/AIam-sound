@@ -544,34 +544,34 @@ Ndef(\reverb2, {
 
 	~createGraySineTrig = { | amp=0, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
 		{
-	var verb, filtered;
+			var verb, filtered;
 
-var env, signal;
-	var rho, theta, b1, b2;
-		var pan=0, sustain=0.05, rq=0.06;
+			var env, signal;
+			var rho, theta, b1, b2;
+			var pan=0, sustain=0.05, rq=0.06;
 
-	b1 = 2.0 * 0.97576 * cos(0.161447);
-	b2 = 0.9757.squared.neg;
-	signal = SOS.ar(K2A.ar(t_trigger), 1.0, 0.0, 0.0, b1, b2);
-	signal = Decay2.ar(signal, 0.4, 0.8, signal);
+			b1 = 2.0 * 0.97576 * cos(0.161447);
+			b2 = 0.9757.squared.neg;
+			signal = SOS.ar(K2A.ar(t_trigger), 1.0, 0.0, 0.0, b1, b2);
+			signal = Decay2.ar(signal, 0.4, 0.8, signal);
 			signal = Limiter.ar(Resonz.ar(signal, [freq, freq*1.1], rq*0.5), 0.9);
-	env = EnvGen.kr(Env.perc(0.00001, sustain, amp), doneAction:2);
-	filtered = Pan2.ar(signal, pan)*env;
+			env = EnvGen.kr(Env.perc(0.00001, sustain, amp), doneAction:2);
+			filtered = Pan2.ar(signal, pan)*env;
 
-	verb = FreeVerb.ar( filtered * amp.lag(0.1),
-		mix: 0.6,
-		room: 0.5,
-		damp: 0.1
-	);
+			verb = FreeVerb.ar( filtered * amp.lag(0.1),
+				mix: 0.6,
+				room: 0.5,
+				damp: 0.1
+			);
 
 
-	verb = verb * 0.995 * SelectX.kr(switch, [0.5, 0.5, 0.5, 4]);
+			verb = verb * 0.995 * SelectX.kr(switch, [0.5, 0.5, 0.5, 4]);
 
-	verb = EnvGen.ar(Env.perc(0.01, length/2), gate: t_trigger, doneAction:2) * verb;
-	Out.ar(~reverbBus, verb * 0.6);
+			verb = EnvGen.ar(Env.perc(0.01, length/2), gate: t_trigger, doneAction:2) * verb;
+			Out.ar(~reverbBus, verb * 0.6);
 
-	verb * ~graySineVol * 0;
-}.play;
+			verb * ~graySineVol * 0;
+		}.play;
 	};
 
 
@@ -683,22 +683,24 @@ Ndef(\noiseImpulse, { | amp=0, freq=9000, t_trigger=1 |
 	( out*2 ).max * amp * 1;
 });
 
-Ndef(\beep, { | amp=0, freq=3700, t_trigger=1, length=0.12, pan=0 |
-	var out;
-		out = WhiteNoise.ar() * 0.4;
-		out = EnvGen.ar(Env.new([0,1,0],[0.00001, 0.02, 0.000001]), gate: t_trigger) * out;
-		out = ((SinOsc.ar(freq) + LFPulse.ar(freq * 2.05) )/2 + out) ! 2;
 
-	out = EnvGen.ar(Env.new([0,1,0],[0.00001, length, 0.000001]), gate: t_trigger) * out;
+	~createEntranceScan = {| amp=0, freq=3700, t_trigger=1, length=0.12, pan=0 |
+		{
+			var out;
+			out = WhiteNoise.ar() * 0.4;
+			out = EnvGen.ar(Env.new([0,1,0],[0.00001, 0.02, 0.000001]), gate: t_trigger) * out;
+			out = ((SinOsc.ar(freq) + LFPulse.ar(freq * 2.05) )/2 + out) ! 2;
 
-	out = ( out ) * amp;
-	out = Pan2.ar(out, pan);
-	out = LPF.ar(out, 4000);
+			out = EnvGen.ar(Env.new([0,1,0],[0.00001, length, 0.000001]), gate: t_trigger, doneAction: 2) * out;
 
-	FreeVerb.ar(out, mix: 0.2) ;
-		// Out.ar(~reverbBus, out);
-}).play;
+			out = ( out ) * amp;
+			out = Pan2.ar(out, pan);
+			out = LPF.ar(out, 2000);
 
+			Out.ar(~reverbBus, out);
+			FreeVerb.ar(out, mix: 0.2) ;
+		}.play;
+	};
 
 
 	Tdef(\vocal, {

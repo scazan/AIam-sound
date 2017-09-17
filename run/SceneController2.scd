@@ -73,7 +73,7 @@
 					});*/
 
 				}, {
-					if(true == true, {
+					if(thumpZone == false, {
 						// Setting up four sections on the x-axis
 						if(x <= -0.5, {
 							// Low sound
@@ -130,7 +130,7 @@
 							// Ndef(synths[0][0]).set(\amp, 0);
 							Ndef(synths[0][id % (synths[0].size)]).set(\amp, 0);
 						}, {
-							if(true == true , {
+							if(thumpZone == false, {
 							// Ndef(\bass).set(\amp, 0);
 							Ndef(synths[0][id % (synths[0].size)]).set(\amp, 0.4);
 
@@ -231,14 +231,14 @@
 			\new -> { | id, x, y |
 				if(x >= 0.9, {
 					//bEEP
-					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan, 1);
+					~createEntranceScan.value(amp: 0.26 + 0.2, freq: 2700 + (200.0.rand), length: 0.08 + 0.1.rand, pan: 0);
 				});
 			},
 			\lost -> { | id, x, y, z |
 
 				if(x >= 0.9, {
 					//bEEP
-					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan, 1);
+					~createEntranceScan.value(amp: 0.26 + 0.2, freq: 2700 + (200.0.rand), length: 0.08 + 0.1.rand, pan: 0);
 				});
 
 				if( ((x >= 0.75) && (y >= 0.75)), {
@@ -418,14 +418,14 @@
 			\new -> { | id, x, y |
 				if(x <= -0.9, {
 					//BEEP
-					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan, 1);
+					~createEntranceScan.value(amp: 0.26 + 0.2, freq: 2700 + (200.0.rand), length: 0.08 + 0.1.rand, pan: 0);
 				});
 				Ndef(\stillness).set(\amp, 0.2);
 			},
 			\lost -> { | id, x, y, z |
 				if(x <= -0.9, {
 					//BEEP
-					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan, 1);
+					~createEntranceScan.value(amp: 0.26 + 0.2, freq: 2700 + (200.0.rand), length: 0.08 + 0.1.rand, pan: 0);
 				});
 
 				if((x >= 0.75) && (y <= -0.25), {
@@ -437,7 +437,7 @@
 				Ndef(\stillness).set(\amp, 0);
 			}
 		],
-		Dictionary[ // 2: BOTTOM LEFT
+		Dictionary[ // Q3: BOTTOM LEFT ////////////////////////////////////////////////////////////////////////////////////
 			\synths -> { | actor, actorIndex |
 				var x = actor[\position][\x],
 					y = actor[\position][\y];
@@ -575,7 +575,7 @@
 			\new -> { | id, x, y |
 				if(x >= 0.7, {
 					//bEEP
-					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan, -1);
+					~createEntranceScan.value(amp: 0.26 + 0.2, freq: 2700 + (200.0.rand), length: 0.08 + 0.1.rand, pan: 0);
 				}, {
 					if( (y>=0.9) || (x >= 0.9) || (y<= -0.25) || (x <= -0.25), {
 						// WALL
@@ -585,9 +585,8 @@
 			},
 			\lost -> { | id, x, y, z |
 				if(x <= -0.9, {
-					//bEEP
+					// WALL
 					Ndef(\noiseImpulse).set(\amp, 0.6, \t_trigger, 1);
-					//Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan -1);
 				}, {
 					if( (y>=0.9) || (x >= 0.9) || (x <= -0.21) || (y <= -0.21), {
 						// WALL
@@ -605,7 +604,7 @@
 				Ndef(\discouraging).set(\volume, 0);
 			}
 		],
-		Dictionary[ // 0: BOTTOM RIGHT
+		Dictionary[ // Q4: BOTTOM RIGHT ////////////////////////////////////////////////////////////////////////////////////
 			\synths -> { | actor, actorIndex |
 				var x = actor[\position][\x],
 					y = actor[\position][\y];
@@ -754,7 +753,7 @@
 				Ndef(synths[0][id % (synths[0].size)]).set(\amp, 0.4);
 				if(x >= 0.9, {
 					//bEEP
-					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan, -1);
+					~createEntranceScan.value(amp: 0.26 + 0.2, freq: 2700 + (200.0.rand), length: 0.08 + 0.1.rand, pan: 0);
 				});
 			},
 			\lost -> { | id, x, y, z |
@@ -762,7 +761,7 @@
 				Ndef(synths[0][id % (synths[0].size)]).set(\amp, 0);
 				if(x >= 0.9, {
 					//bEEP
-					Ndef(\beep).set(\amp, 0.26 + 0.2.rand, \freq, 2700 + (200.0.rand), \length, 0.08 + 0.1.rand, \t_trigger, 1, \pan, -1);
+					~createEntranceScan.value(amp: 0.26 + 0.2, freq: 2700 + (200.0.rand), length: 0.08 + 0.1.rand, pan: 0);
 				});
 
 				if((x >= 0.75) && (y >= 0.75), {

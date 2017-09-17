@@ -124,3 +124,4 @@ Ndef(\bass).set(\amp, 0);
 
 ~createMetalTrig.value(amp: 0.5, freq: 1.0.rand + 0.5, pan: 2.0.rand - 1);
 ~createEarthTrig.value(amp: 0.5, freq: 1.0.rand + 0.5, pan: 2.0.rand - 1);
+~createEntranceScan.value(amp: 0.26 + 0.2, freq: 2700 + (200.0.rand), length: 0.08 + 0.1.rand, pan: 0);
