@@ -146,11 +146,24 @@ Ndef(\noiseImpulse, { | amp=0, freq=1900, t_trigger=1 |
 	( out*2 ).tanh * amp * 1;
 });
 )
+~thumpZoneIDs
+~thumpZoneIDs.values.sum
 
 (
+~resetThump = {
+	~thumpZoneIDs.keysValuesDo({ | value, key, i |
+		~thumpZoneIDs[value] = 0;
+	});
+};
+)
+~resetThump.value();
+(
 ~section = 0;
+"SceneController2.scd".loadRelative; // returns ~cSceneController
+~sceneController = ~cSceneController.value();
 Ndef(\reverb2).play;
-Ndef(\beep).play
+Ndef(\beep).play;
+Ndef(\bass).stop;
 )
 
 // Section 0a
@@ -160,26 +173,40 @@ Ndef(\graySine).play; Ndef(\graySine2).play;
 Ndef(\graySine2).fadeTime = 30;
 // Ndef(\graySine).xset(\vol, 0.5);
 Ndef(\graySine2).xset(\vol, 0.5);
+Ndef(\beep).play;
 )
 (
 ~section = 1;
-Ndef(\graySine).fadeTime = 5; Ndef(\graySine2).fadeTime = 5;
+"SceneController2.scd".loadRelative; // returns ~cSceneController
+~sceneController = ~cSceneController.value();
+Ndef(\graySine).fadeTime = 5; Ndef(\graySine2).fadeTime = 15;
 Ndef(\graySine).xset(\vol, 0);Ndef(\graySine2).xset(\vol, 0);
+Ndef(\bass).stop;
+Ndef(\noiseImpulse).play;
 )
 (
 ~section = 2;
-Ndef(\pulseTrain0).play; Ndef(\pulseTrain0).set(\amp, 1);
+"SceneController2.scd".loadRelative; // returns ~cSceneController
+~sceneController = ~cSceneController.value();
+Ndef(\pulseTrain0).play; Ndef(\pulseTrain0).xset(\amp, 1);
+Ndef(\bass).play;
+Ndef(\noiseImpulse).stop;
+Ndef(\graySine).set(\vol, 0);Ndef(\graySine2).set(\vol, 0);
 )
 
 (
 ~section = 3;
+"SceneController2.scd".loadRelative; // returns ~cSceneController
+~sceneController = ~cSceneController.value();
 Ndef(\graySine).play; Ndef(\graySine2).play;
-Ndef(\graySine).fadeTime = 30; Ndef(\graySine2).fadeTime = 30;
+Ndef(\graySine).fadeTime = 10; Ndef(\graySine2).fadeTime = 10;
 Ndef(\graySine).xset(\vol, 0.5);Ndef(\graySine2).xset(\vol, 0.5);
 )
 
 (
 ~section = 4;
+"SceneController2.scd".loadRelative; // returns ~cSceneController
+~sceneController = ~cSceneController.value();
 Ndef(\graySine4).play; Ndef(\graySine5).play; Ndef(\graySine6).play;
 Ndef(\graySine4).fadeTime = 30; Ndef(\graySine5).fadeTime = 30; Ndef(\graySine6).fadeTime = 30;
 Ndef(\graySine4).xset(\vol, 0.5); Ndef(\graySine5).xset(\vol, 0.5); Ndef(\graySine6).xset(\vol, 0.5);
@@ -188,3 +215,5 @@ Ndef(\graySine4).xset(\vol, 0.5); Ndef(\graySine5).xset(\vol, 0.5); Ndef(\graySi
 (
 
 )
+~resetThump.value();
+~thumpZoneIDs.values.sum

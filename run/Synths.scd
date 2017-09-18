@@ -79,7 +79,7 @@
 	});
 
 
-Ndef(\graySine3, { | amp=1, freq=2109, q=0.4, x=0.5, y=0.5, z=0.5 |
+Ndef(\graySine3, { | amp=1, freq=2109, q=0.4, x=0.5, y=0.5, z=0.5, vol |
 		var verb;
 		var noise = WhiteNoise.ar();
 		// var modFreq = ( x.linlin(-1,1, 0, 4).sin * 20).abs + 0.1;
@@ -732,7 +732,7 @@ Ndef(\noiseImpulse, { | amp=0, freq=1900, t_trigger=1 |
 
 			out = EnvGen.ar(Env.new([0,1,0],[0.00001, length, 0.000001]), gate: t_trigger, doneAction: 2) * out;
 
-			out = ( out ) * amp;
+			out = ( out ) * amp * ~entranceScanVol;
 			out = Pan2.ar(out, pan);
 			out = LPF.ar(out, 2000);
 
@@ -792,6 +792,14 @@ Ndef(\noiseImpulse, { | amp=0, freq=1900, t_trigger=1 |
 
 	});
 
+	Ndef(\yoruba, { | x=1,y=1, rate=1, amp=0.85, switch=1, volume=0 |
+		var buffer = ~yorubaBuffer;
+
+			var out = PlayBuf.ar(buffer.numChannels, bufnum: buffer, rate: rate * 2, trigger: 1, startPos: 0, loop: 1) * amp.pow(3);
+
+			out * volume.lag(3);
+
+	});
 
 dict = Dictionary[
 	\play -> {

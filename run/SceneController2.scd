@@ -90,6 +90,27 @@
 				\graySine5,
 				\graySine6
 			]
+		],
+		[ // 4
+			[ // 0
+				\graySine2,
+				\graySine,
+				\graySine2,
+				\graySine
+			],
+			[],
+			[],
+			[ // 3
+				\graySine2,
+				\graySine,
+				\graySine2,
+				\graySine
+			],
+			[ // 4
+				\graySine4,
+				\graySine5,
+				\graySine6
+			]
 		]
 
 	];
@@ -130,6 +151,7 @@
 								if(x <= -0.5, {
 									// Low sound
 									Ndef(synths[0][~section][actorIndex % (synths[0][~section].size)]).set(\freq, 1000/2);
+									["setting", 1000, synths[0][~section], actorIndex % (synths[0][~section].size)].postln;
 									}, {
 										if(x <= 0, {
 											//high sound
@@ -161,7 +183,6 @@
 
 				energy = energies.sum / energies.size;
 
-				// energy.postln;
 
 				if(energy > ~energyThreshold, {
 					moving = true;
@@ -181,7 +202,7 @@
 							});
 						}, {
 								if(thumpZoneIDs.values.sum < 1, {
-
+energy.postln;
 									if(~section == 4, {
 										// If we are moving, turn up the synth
 										Ndef(synths[0][~section][id % (synths[0][~section].size)]).set(\amp, 0.4);
@@ -197,6 +218,10 @@
 										~createAiryTrig.value(amp: 1, freq: 1703, switch: 3, length: 0.25, t_trigger: 1);
 									});
 
+									if(~section == 5, {
+										Ndef(\yoruba).set(\volume, 0.5);
+									});
+
 								});
 						});
 						 // END QUADRANTS
@@ -210,6 +235,10 @@
 						if(~section == 0, {
 							// If we are not moving, turn down the volume on the synth
 							Ndef(synths[0][~section][id % (synths[0][~section].size)]).set(\amp, 0.2);
+						});
+
+						if(~section == 5, {
+							Ndef(\yoruba).set(\volume, 0.2);
 						});
 
 						motion = false;
@@ -248,7 +277,7 @@
 
 				if( ((x >= 0.75) && (y >= 0.75)), {
 					// Ndef(\bass).set(\amp, 0);
-					thumpZoneIDs[id] = 1;
+					thumpZoneIDs[id] = 0;
 					// thumpZone = false; // TODO: Fix for multiple users
 				}, {
 					thumpZoneIDs[id] = 0;
@@ -347,6 +376,7 @@
 										// IF WE ARE MOVING then turn up the synth
 										Ndef(synths[1][~section][id % (synths[1][~section].size)]).set(\amp, 0.4);
 									});
+									energy.postln;
 									if( (~section == 0), {
 										// If we are moving, trigger a boop
 										~createGraySineTrig.value(amp: 3, freq: 603, switch: 3, length: 1.3, t_trigger: 1);
@@ -425,7 +455,7 @@
 				if((x >= 0.75) && (y <= -0.25), {
 					// THUMP ZONE
 					// Ndef(\bass).set(\amp, 0); // TODO: make this work for multiple ids
-					thumpZoneIDs[id] = 1;
+					thumpZoneIDs[id] = 0;
 				}, {
 					thumpZoneIDs[id] = 0;
 				});
@@ -587,7 +617,7 @@
 
 				if((x <= -0.25) && (y >= 0.75), {
 					// THUMP ZONE
-					thumpZoneIDs[id] = 1;
+					thumpZoneIDs[id] = 0;
 				}, {
 					thumpZoneIDs[id] = 0;
 				});
@@ -769,7 +799,7 @@
 					Ndef(synths[3][~section][id % (synths[3][~section].size)]).set(\amp, 0.4);
 				});
 
-				if(x >= 0.9, {
+				if(x <= 0.1, {
 					//bEEP
 					~createEntranceScan.value(amp: 0.26 + 0.2, freq: 2700 + (200.0.rand), length: 0.08 + 0.1.rand, pan: 0);
 				});
@@ -779,16 +809,23 @@
 				if( (~section == 0) || (~section == 3) || (~section == 4), {
 					Ndef(synths[3][~section][id % (synths[3][~section].size)]).set(\amp, 0);
 				});
-				if(x >= 0.9, {
+				/*if(x >= 0.9, {
 					//bEEP
 					~createEntranceScan.value(amp: 0.26 + 0.2, freq: 2700 + (200.0.rand), length: 0.08 + 0.1.rand, pan: 0);
 				});
-
+*/
 				if((x >= 0.75) && (y >= 0.75), {
 					// THUMP ZONE
-					thumpZoneIDs[id] = 1;
+					thumpZoneIDs[id] = 0;
 				}, {
 					thumpZoneIDs[id] = 0;
+				});
+
+				// Callback at corner
+				if( (~section == 1) || (~section == 2) {
+					if( (x <= -0.1) || (y <= -0.9), {
+						~playQ4Callback.value();
+					});
 				});
 			}
 		],

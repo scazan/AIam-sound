@@ -9,18 +9,18 @@ s.waitForBoot({
 	~section = 0;
 
 	~dirgeVol = 0.05;
-	~energyThreshold = 2.5;
+	~energyThreshold = 1.0;
 	~quadrant2 = false;
 	~proximityDistance = 0.9;
 	//~energyThreshold = 0.47;
 
-	~graySineVol = 0.95;
-
-	~airySineVol = 0.15;
-	~metalVol = 0.25;
-	~earthVol = 0.5;
-	~fireVol = 0.5;
-	~waterVol = 2;
+	~graySineVol = 0.05;
+	~entranceScanVol = 0.1;
+	~airySineVol = 0.02;
+	~metalVol = 0.01;
+	~earthVol = 0.02;
+	~fireVol = 0.02;
+	~waterVol = 0.25;
 
 
 	// Load Synths
@@ -67,3 +67,9 @@ Trio starts while the saw drone comes in.
 Explosion in dance is cause for drone to cut out and the samples in motion comes in (stillness/motion)
 
 */
+
+// BASS Thump method is not so reliable
+
+// Add corners that cause a sound when you are lost. This should be panned towards the corner.
+// Mock up sound that is triggered when you want the dancers to move towards that area (panned)
+// When the dancers move towards that space the volume goes up towards the edge as if to punish (sort of)
