@@ -143,6 +143,9 @@
 							if( (~section == 0) || (~section == 3), {
 								Ndef(synths[0][~section][actorIndex % (synths[0][~section].size)]).set(\freq, ((  (x.abs - 1).abs.pow(3) * 8000) + 90) );
 
+								if(~distortionMode == true, {
+									Ndef(synths[0][~section][actorIndex % (synths[0][~section].size)]).set(\dist, ( ((x-1)/2).abs.pow(3) * 9 ));
+								});
 							});
 
 							if(~section == 4, {
@@ -283,7 +286,7 @@ energy.postln;
 					thumpZoneIDs[id] = 0;
 				});
 
-				if( (~section == 1) || (~section == 2), {
+				if( (~section == 1) || (~section == 2) || (~section == 3), {
 					if( (x >= 0.9) || (y >= 0.9), {
 						~createQ1Callback.value(pan: 1);
 					});
@@ -306,7 +309,11 @@ energy.postln;
 
 
 						if( (~section == 0) || (~section == 3), {
-							Ndef(synths[0][~section][actorIndex % (synths[0][~section].size)]).set(\freq, (((x.abs - 1).abs.pow(3) * 8000) + 90) );
+							Ndef(synths[1][~section][actorIndex % (synths[1][~section].size)]).set(\freq, (((x.abs - 1).abs.pow(3) * 8000) + 90) );
+
+							if(~distortionMode == true, {
+								Ndef(synths[1][~section][actorIndex % (synths[1][~section].size)]).set(\dist, ( ((x+1)/2).abs.pow(3) * 9 ));
+							});
 						});
 
 						if(thumpZoneIDs.values.sum < 1, {
@@ -465,7 +472,7 @@ energy.postln;
 					thumpZoneIDs[id] = 0;
 				});
 
-				if( (~section == 1) || (~section == 2), {
+				if( (~section == 1) || (~section == 2) || (~section == 3), {
 					if( (x <= -0.9) || (y >= 0.9), {
 						~createQ2Callback.value(pan: 1);
 					});
@@ -496,6 +503,10 @@ energy.postln;
 
 							if( (~section == 3), {
 								Ndef(synths[2][~section][actorIndex % (synths[2][~section].size)]).set(\freq, ((  (x.abs - 1).abs.pow(3) * 8000) + 90) );
+
+								if(~distortionMode == true, {
+									Ndef(synths[2][~section][actorIndex % (synths[2][~section].size)]).set(\dist, ( ((x-1)/2).abs.pow(3) * 9 ));
+								});
 							});
 
 							if( (~section == 4), {
@@ -633,7 +644,7 @@ energy.postln;
 					thumpZoneIDs[id] = 0;
 				});
 
-				if( (~section == 1) || (~section == 2), {
+				if( (~section == 1) || (~section == 2) || (~section == 3), {
 					if( (x <= -0.1) || (y <= -0.9), {
 						~createQ3Callback.value(pan: -1);
 					});
@@ -660,7 +671,11 @@ energy.postln;
 							Ndef(\bass).set(\amp, 0);
 
 							if( (~section == 0) || (~section == 3), {
-								Ndef(synths[0][~section][actorIndex % (synths[0][~section].size)]).set(\freq, ((   (x.abs - 1).abs.pow(3) * 8000) + 90) );
+								Ndef(synths[3][~section][actorIndex % (synths[3][~section].size)]).set(\freq, ((   (x.abs - 1).abs.pow(3) * 8000) + 90) );
+
+								if(~distortionMode == true, {
+									Ndef(synths[3][~section][actorIndex % (synths[3][~section].size)]).set(\dist, ( ((x+1)/2).abs.pow(3) * 9 ));
+								});
 							});
 
 							if( (~section == 4), {
@@ -839,7 +854,7 @@ energy.postln;
 				});
 
 				// Callback at corner
-				if( (~section == 1) || (~section == 2), {
+				if( (~section == 1) || (~section == 2) || (~section == 3), {
 					if( (x >= 0.9) || (y <= -0.9), {
 						~createQ4Callback.value(pan: -1);
 					});

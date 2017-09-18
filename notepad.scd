@@ -222,3 +222,5 @@ Ndef(\graySine4).xset(\vol, 0.5); Ndef(\graySine5).xset(\vol, 0.5); Ndef(\graySi
 ~createQ2Callback.value();
 ~createQ3Callback.value()
 ~createQ4Callback.value()
+
+~distortionMode = true;
