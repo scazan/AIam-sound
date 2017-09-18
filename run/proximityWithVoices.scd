@@ -22,6 +22,12 @@ s.waitForBoot({
 	~fireVol = 0.02;
 	~waterVol = 0.25;
 
+	// Callback volumes
+	~q1CallbackVol = 0.4;
+	~q2CallbackVol = 0.8;
+	~q3CallbackVol = 0.4;
+	~q4CallbackVol = 0.8;
+
 
 	// Load Synths
 	"Synths.scd".loadRelative; // returns ~cSynths

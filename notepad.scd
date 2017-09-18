@@ -216,4 +216,9 @@ Ndef(\graySine4).xset(\vol, 0.5); Ndef(\graySine5).xset(\vol, 0.5); Ndef(\graySi
 
 )
 ~resetThump.value();
-~thumpZoneIDs.values.sum
+~thumpZoneIDs.values.sum;
+
+~createQ1Callback.value(pan: -1)
+~createQ2Callback.value();
+~createQ3Callback.value()
+~createQ4Callback.value()

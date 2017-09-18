@@ -282,6 +282,12 @@ energy.postln;
 				}, {
 					thumpZoneIDs[id] = 0;
 				});
+
+				if( (~section == 1) || (~section == 2), {
+					if( (x >= 0.9) || (y >= 0.9), {
+						~createQ1Callback.value(pan: 1);
+					});
+				});
 			}
 		],
 		Dictionary[ // Q2: TOP RIGHT ////////////////////////////////////////////////////////////////////////////////////
@@ -454,10 +460,15 @@ energy.postln;
 
 				if((x >= 0.75) && (y <= -0.25), {
 					// THUMP ZONE
-					// Ndef(\bass).set(\amp, 0); // TODO: make this work for multiple ids
 					thumpZoneIDs[id] = 0;
 				}, {
 					thumpZoneIDs[id] = 0;
+				});
+
+				if( (~section == 1) || (~section == 2), {
+					if( (x <= -0.9) || (y >= 0.9), {
+						~createQ2Callback.value(pan: 1);
+					});
 				});
 
 			}
@@ -620,6 +631,12 @@ energy.postln;
 					thumpZoneIDs[id] = 0;
 				}, {
 					thumpZoneIDs[id] = 0;
+				});
+
+				if( (~section == 1) || (~section == 2), {
+					if( (x <= -0.1) || (y <= -0.9), {
+						~createQ3Callback.value(pan: -1);
+					});
 				});
 
 			}
@@ -822,9 +839,9 @@ energy.postln;
 				});
 
 				// Callback at corner
-				if( (~section == 1) || (~section == 2) {
-					if( (x <= -0.1) || (y <= -0.9), {
-						~playQ4Callback.value();
+				if( (~section == 1) || (~section == 2), {
+					if( (x >= 0.9) || (y <= -0.9), {
+						~createQ4Callback.value(pan: -1);
 					});
 				});
 			}

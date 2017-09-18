@@ -8,7 +8,7 @@
 	// Scene 1
 
 
-	Ndef(\graySine, { | amp=0, freq=2703, q=0.4, x=0.5, y=0.5, z=0.5, vol=0 |
+	Ndef(\graySine, { | amp=0, freq=2703, q=0.4, x=0.5, y=0.5, z=0.5, vol=0, dist=1 |
 		var verb;
 		var noise = WhiteNoise.ar();
 
@@ -36,6 +36,7 @@
 
 
 		filtered = LFTri.ar([freq, freq*1.1]);
+		filtered = (filtered * dist).max;
 		verb = FreeVerb.ar( filtered * AmpComp.kr(freq, amp.lag(3)),
 			mix: 0.6,
 			room: 0.8,
@@ -49,7 +50,7 @@
 		//* z.abs;
 	});
 
-	Ndef(\graySine2, { | amp=1, freq=2109, q=0.4, x=0.5, y=0.5, z=0.5, vol=0 |
+	Ndef(\graySine2, { | amp=1, freq=2109, q=0.4, x=0.5, y=0.5, z=0.5, vol=0, dist=1 |
 		var verb;
 		var noise = WhiteNoise.ar();
 		// var modFreq = ( x.linlin(-1,1, 0, 4).sin * 20).abs + 0.1;
@@ -66,6 +67,7 @@
 
 
 		filtered = SinOsc.ar(freq);
+		filtered = (filtered * dist).max;
 		verb = FreeVerb.ar( filtered * AmpComp.kr(freq, amp.lag(3)),
 			mix: 0.6,
 			room: 0.5,
@@ -579,6 +581,67 @@ Ndef(\reverb2, {
 
 	};
 
+
+
+	~createQ1Callback = { | amp=0, pan=0.25, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
+		{
+			var filtered;
+
+			filtered = PlayBuf.ar(1, ~q1CallbackBuffer, doneAction: 2);
+			filtered = Pan2.ar(filtered * ~q1CallbackVol, pan);
+			filtered = CombN.ar(filtered, delaytime: 0.04, decaytime: 0.5);
+
+			Out.ar(~reverbBus, filtered * 0.16);
+
+			filtered * 1;
+		}.play;
+
+	};
+
+	~createQ2Callback = { | amp=0, pan=0.25, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
+		{
+			var filtered;
+
+			filtered = PlayBuf.ar(1, ~q2CallbackBuffer, doneAction: 2);
+			filtered = Pan2.ar(filtered * ~q2CallbackVol, pan);
+			filtered = CombN.ar(filtered, delaytime: 0.04, decaytime: 0.5);
+
+			Out.ar(~reverbBus, filtered * 0.16);
+
+			filtered * 1;
+		}.play;
+
+	};
+
+	~createQ3Callback = { | amp=0, pan=0.25, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
+		{
+			var filtered;
+
+			filtered = PlayBuf.ar(1, ~q3CallbackBuffer, doneAction: 2);
+			filtered = Pan2.ar(filtered * ~q3CallbackVol, pan);
+			filtered = CombN.ar(filtered, delaytime: 0.04, decaytime: 0.5);
+
+			Out.ar(~reverbBus, filtered * 0.16);
+
+			filtered * 1;
+		}.play;
+
+	};
+
+	~createQ4Callback = { | amp=0, pan=0.25, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
+		{
+			var filtered;
+
+			filtered = PlayBuf.ar(1, ~q4CallbackBuffer, doneAction: 2);
+			filtered = Pan2.ar(filtered * ~q4CallbackVol, pan);
+			filtered = CombN.ar(filtered, delaytime: 0.04, decaytime: 0.5);
+
+			Out.ar(~reverbBus, filtered * 0.16);
+
+			filtered * 1;
+		}.play;
+
+	};
 
 	~createFireTrig = { | amp=0, pan=0.25, freq=1, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
 

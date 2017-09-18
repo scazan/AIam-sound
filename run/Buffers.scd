@@ -29,3 +29,9 @@ u = Buffer.read(s, "/Users/scott/dev/AIam-sound/samples/pads.wav");
 c = Buffer.read(s, "/Users/scott/dev/AIam-sound/samples/emptywordsCompress.wav");
 
 ~yorubaBuffer = Buffer.read(s, "/Users/scott/dev/AIam-sound/samples/yoruba.wav");
+
+
+~q1CallbackBuffer = Buffer.read(s, "/Users/scott/dev/AIam-sound/samples/quarterCallback-001.wav");
+~q2CallbackBuffer = Buffer.read(s, "/Users/scott/dev/AIam-sound/samples/quarterCallback-002.wav");
+~q3CallbackBuffer = Buffer.read(s, "/Users/scott/dev/AIam-sound/samples/scrambleBoost.aiff");
+~q4CallbackBuffer = Buffer.read(s, "/Users/scott/dev/AIam-sound/samples/steenberge.aiff");
