@@ -24,9 +24,9 @@ s.waitForBoot({
 
 	// Callback volumes
 	~q1CallbackVol = 0.4;
-	~q2CallbackVol = 0.0;
-	~q3CallbackVol = 0.0;
-	~q4CallbackVol = 0.0;
+	~q2CallbackVol = 0.01;
+	~q3CallbackVol = 0.01;
+	~q4CallbackVol = 0.01;
 
 
 	// Load Synths

@@ -177,7 +177,7 @@ Ndef(\beep).play;
 )
 (
 ~section = 1;
-"SceneController2.scd".loadRelative; // returns ~cSceneController
+"run/SceneController2.scd".loadRelative; // returns ~cSceneController
 ~sceneController = ~cSceneController.value();
 Ndef(\graySine).fadeTime = 5; Ndef(\graySine2).fadeTime = 15;
 Ndef(\graySine).xset(\vol, 0);Ndef(\graySine2).xset(\vol, 0);
@@ -205,11 +205,12 @@ Ndef(\graySine).xset(\vol, 0.5);Ndef(\graySine2).xset(\vol, 0.5);
 
 (
 ~section = 4;
-"SceneController2.scd".loadRelative; // returns ~cSceneController
+"run/SceneController2.scd".loadRelative; // returns ~cSceneController
 ~sceneController = ~cSceneController.value();
-Ndef(\graySine4).play; Ndef(\graySine5).play; Ndef(\graySine6).play;
-Ndef(\graySine4).fadeTime = 30; Ndef(\graySine5).fadeTime = 30; Ndef(\graySine6).fadeTime = 30;
-Ndef(\graySine4).xset(\vol, 0.5); Ndef(\graySine5).xset(\vol, 0.5); Ndef(\graySine6).xset(\vol, 0.5);
+~createQ1Callback.value(pan: 1);
+// Ndef(\graySine4).play; Ndef(\graySine5).play; Ndef(\graySine6).play;
+// Ndef(\graySine4).fadeTime = 30; Ndef(\graySine5).fadeTime = 30; Ndef(\graySine6).fadeTime = 30;
+// Ndef(\graySine4).xset(\vol, 0.5); Ndef(\graySine5).xset(\vol, 0.5); Ndef(\graySine6).xset(\vol, 0.5);
 )
 
 (

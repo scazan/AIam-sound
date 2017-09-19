@@ -638,11 +638,11 @@ Ndef(\reverb2, {
 	};
 
 
-		Ndef(\q2Callback, {| amp=0, pan=0.25, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
+	// Ndef(\q2Callback, {| amp=0, pan=0.25, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
+	Ndef(\q2Callback, { | amp=0, pan=0.25, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
 			var filtered;
-
 			filtered = PlayBuf.ar(1, ~q2CallbackBuffer, loop: 1);
-			filtered = Pan2.ar(filtered * ~q2CallbackVol, pan);
+		filtered = Pan2.ar(filtered * ~q2CallbackVol, pan);
 			filtered = CombN.ar(filtered, delaytime: 0.04, decaytime: 0.5) * amp;
 
 			Out.ar(~reverbBus, filtered * 0.16);

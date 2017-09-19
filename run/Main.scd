@@ -130,7 +130,7 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 					inactiveSynth[\position][\z] = z;
 				});
 
-				// [x].postln;
+				[x].postln;
 
 
 				~sceneController[\getCameraProcessor].value(cameraID)[\new].value(id, x, y, z);

@@ -265,7 +265,7 @@ energy.postln;
 			},
 			\new -> { | id, x, y |
 				thumpZoneIDs[id] = 0;
-
+"new".postln;
 				if(x >= 0.9, {
 					//bEEP
 					~createEntranceScan.value(amp: 0.26 + 0.2, freq: 2700 + (200.0.rand), length: 0.08 + 0.1.rand, pan: 0);
@@ -280,7 +280,7 @@ energy.postln;
 				});
 			},
 			\lost -> { | id, x, y, z |
-
+"lost".postln;
 				if(x >= 0.9, {
 					//bEEP
 					~createEntranceScan.value(amp: 0.26 + 0.2, freq: 2700 + (200.0.rand), length: 0.08 + 0.1.rand, pan: 0);
@@ -298,6 +298,15 @@ energy.postln;
 					if( (x >= 0.9) || (y >= 0.9), {
 						["lost", x, y].postln;
 						~createQ1Callback.value(pan: 1);
+					});
+				});
+
+				if( (~section == 4), {
+					"WALL".postln;
+					if( (y>=0.9) || (x >= 0.9) || (x <= -0.21) || (y <= -0.21), {
+						// WALL
+						"WALL".postln;
+						Ndef(\noiseImpulse).set(\amp, 0.6, \t_trigger, 1);
 					});
 				});
 			}
