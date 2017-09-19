@@ -584,7 +584,7 @@ Ndef(\reverb2, {
 
 
 	~createQ1Callback = { | amp=0, pan=0.25, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
-		{
+		/*{
 			var filtered;
 
 			filtered = PlayBuf.ar(1, ~q1CallbackBuffer, doneAction: 2);
@@ -594,12 +594,31 @@ Ndef(\reverb2, {
 			Out.ar(~reverbBus, filtered * 0.16);
 
 			filtered * 1;
-		}.play;
+		}.play;*/
+
+		Ndef(\q1Callback).set(\amp, 0.1, \pan, pan);
+		Ndef(\q1Callback).fadeTime = 1;
+		Ndef(\pulseTrain0).stop;
+		Ndef(\graySine).stop;
+		Ndef(\graySine2).stop;
+		// Ndef(\q1Callback).xset(\amp, 0);
 
 	};
 
+	Ndef(\q1Callback, { | amp=0, pan=0.25, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
+			var filtered;
+
+			filtered = PlayBuf.ar(1, ~q1CallbackBuffer, loop: 1);
+			filtered = Pan2.ar(filtered * ~q1CallbackVol, pan);
+			filtered = CombN.ar(filtered, delaytime: 0.04, decaytime: 0.5) * amp;
+
+			Out.ar(~reverbBus, filtered * 0.16);
+
+			filtered;
+	}).play;
+
 	~createQ2Callback = { | amp=0, pan=0.25, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
-		{
+		/*{
 			var filtered;
 
 			filtered = PlayBuf.ar(1, ~q2CallbackBuffer, doneAction: 2);
@@ -609,12 +628,30 @@ Ndef(\reverb2, {
 			Out.ar(~reverbBus, filtered * 0.16);
 
 			filtered * 1;
-		}.play;
-
+		}.play;*/
+		Ndef(\q2Callback).set(\amp, 0.1, \pan, pan);
+		Ndef(\q2Callback).fadeTime = 1;
+		Ndef(\pulseTrain0).stop;
+		Ndef(\graySine).stop;
+		Ndef(\graySine2).stop;
+		// Ndef(\q2Callback).xset(\amp, 0);
 	};
 
+
+		Ndef(\q2Callback, {| amp=0, pan=0.25, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
+			var filtered;
+
+			filtered = PlayBuf.ar(1, ~q2CallbackBuffer, loop: 1);
+			filtered = Pan2.ar(filtered * ~q2CallbackVol, pan);
+			filtered = CombN.ar(filtered, delaytime: 0.04, decaytime: 0.5) * amp;
+
+			Out.ar(~reverbBus, filtered * 0.16);
+
+			filtered * 3;
+	}).play;
+
 	~createQ3Callback = { | amp=0, pan=0.25, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
-		{
+		/*{
 			var filtered;
 
 			filtered = PlayBuf.ar(1, ~q3CallbackBuffer, doneAction: 2);
@@ -624,12 +661,31 @@ Ndef(\reverb2, {
 			Out.ar(~reverbBus, filtered * 0.16);
 
 			filtered * 1;
-		}.play;
+		}.play;*/
+		Ndef(\q3Callback).set(\amp, 0.1, \pan, pan);
+		Ndef(\q3Callback).fadeTime = 1;
+		Ndef(\pulseTrain0).stop;
+		Ndef(\graySine).stop;
+		Ndef(\graySine2).stop;
+		// Ndef(\q3Callback).xset(\amp, 0);
 
 	};
 
+	Ndef(\q3Callback, { | amp=0, pan=0.25, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
+			var filtered;
+
+			filtered = PlayBuf.ar(1, ~q3CallbackBuffer, loop: 1);
+			filtered = Pan2.ar(filtered * ~q3CallbackVol, pan);
+			filtered = CombN.ar(filtered, delaytime: 0.04, decaytime: 0.5);
+
+			Out.ar(~reverbBus, filtered * 0.16);
+
+			filtered * amp;
+	}).play;
+
+
 	~createQ4Callback = { | amp=0, pan=0.25, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
-		{
+		/*{
 			var filtered;
 
 			filtered = PlayBuf.ar(1, ~q4CallbackBuffer, doneAction: 2);
@@ -638,10 +694,28 @@ Ndef(\reverb2, {
 
 			Out.ar(~reverbBus, filtered * 0.16);
 
-			filtered * 1;
-		}.play;
+			filtered * amp;
+		}.play;*/
+		Ndef(\q4Callback).set(\amp, 0.1, \pan, pan);
+		Ndef(\q4Callback).fadeTime = 1;
+		// Ndef(\q4Callback).xset(\amp, 0);
+		Ndef(\pulseTrain0).stop;
+		Ndef(\graySine).stop;
+		Ndef(\graySine2).stop;
 
 	};
+
+	Ndef(\q4Callback, { | amp=0, pan=0.25, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
+			var filtered;
+
+			filtered = PlayBuf.ar(1, ~q4CallbackBuffer, doneAction: 2);
+			filtered = Pan2.ar(filtered * ~q4CallbackVol, pan);
+			filtered = CombN.ar(filtered, delaytime: 0.04, decaytime: 0.5) * amp;
+
+			Out.ar(~reverbBus, filtered * 1);
+
+			filtered;
+	}).play;
 
 	~createFireTrig = { | amp=0, pan=0.25, freq=1, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
 

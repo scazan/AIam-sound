@@ -9,17 +9,17 @@
 		[ // 0
 			[ // 0
 				\graySine2,
-				\graySine,
 				\graySine2,
-				\graySine
+				\graySine2,
+				\graySine2
 			],
 			[],
 			[],
 			[ // 3
 				\graySine2,
-				\graySine,
 				\graySine2,
-				\graySine
+				\graySine2,
+				\graySine2
 			],
 			[ // 4
 				\graySine4,
@@ -31,9 +31,9 @@
 		[ // 1
 			[ // 0
 				\graySine2,
-				\graySine,
 				\graySine2,
-				\graySine
+				\graySine2,
+				\graySine2
 			],
 			[],
 			[],
@@ -52,9 +52,9 @@
 		[ // 2
 			[ // 0
 				\graySine2,
-				\graySine,
 				\graySine2,
-				\graySine
+				\graySine2,
+				\graySine2
 			],
 			[],
 			[],
@@ -73,9 +73,9 @@
 		[ // 3
 			[ // 0
 				\graySine2,
-				\graySine,
 				\graySine2,
-				\graySine
+				\graySine2,
+				\graySine2
 			],
 			[],
 			[],
@@ -94,9 +94,9 @@
 		[ // 4
 			[ // 0
 				\graySine2,
-				\graySine,
 				\graySine2,
-				\graySine
+				\graySine2,
+				\graySine2
 			],
 			[],
 			[],
@@ -141,7 +141,7 @@
 							Ndef(\bass).set(\amp, 0);
 
 							if( (~section == 0) || (~section == 3), {
-								Ndef(synths[0][~section][actorIndex % (synths[0][~section].size)]).set(\freq, ((  (x.abs - 1).abs.pow(3) * 8000) + 90) );
+								Ndef(synths[0][~section][actorIndex % (synths[0][~section].size)]).set(\freq, ((  (x.abs - 1).abs.pow(3) * 8000) + 90), \pan, -1 );
 
 								if(~distortionMode == true, {
 									Ndef(synths[0][~section][actorIndex % (synths[0][~section].size)]).set(\dist, ( ((x-1)/2).abs.pow(3) * 9 ));
@@ -270,6 +270,14 @@ energy.postln;
 					//bEEP
 					~createEntranceScan.value(amp: 0.26 + 0.2, freq: 2700 + (200.0.rand), length: 0.08 + 0.1.rand, pan: 0);
 				});
+
+				if( (~section == 1) || (~section == 2) || (~section == 3), {
+					["turning off Q1"].postln;
+					Ndef(\q1Callback).set(\amp, 0);
+					Ndef(\pulseTrain0).play;
+					Ndef(\graySine).play;
+					Ndef(\graySine2).play;
+				});
 			},
 			\lost -> { | id, x, y, z |
 
@@ -288,6 +296,7 @@ energy.postln;
 
 				if( (~section == 1) || (~section == 2) || (~section == 3), {
 					if( (x >= 0.9) || (y >= 0.9), {
+						["lost", x, y].postln;
 						~createQ1Callback.value(pan: 1);
 					});
 				});
@@ -309,7 +318,7 @@ energy.postln;
 
 
 						if( (~section == 0) || (~section == 3), {
-							Ndef(synths[1][~section][actorIndex % (synths[1][~section].size)]).set(\freq, (((x.abs - 1).abs.pow(3) * 8000) + 90) );
+							Ndef(synths[1][~section][actorIndex % (synths[1][~section].size)]).set(\freq, (((x.abs - 1).abs.pow(3) * 8000) + 90), \pan, -1 );
 
 							if(~distortionMode == true, {
 								Ndef(synths[1][~section][actorIndex % (synths[1][~section].size)]).set(\dist, ( ((x+1)/2).abs.pow(3) * 9 ));
@@ -420,7 +429,7 @@ energy.postln;
 							// THE THUMP ZONE
 							if((x <= -0.25) && (y <= -0.25), {
 								if( (~section == 0) || (~section == 4), {
-									Ndef(synths[1][~section][id % (synths[1][~section].size)]).set(\amp, 0.0);
+									Ndef(synths[1][~section][id % (synths[1][~section].size)]).set(\amp, 0.2);
 								});
 							}, {
 								if( (~section == 0) || (~section == 4), {
@@ -457,6 +466,11 @@ energy.postln;
 					~createEntranceScan.value(amp: 0.26 + 0.2, freq: 2700 + (200.0.rand), length: 0.08 + 0.1.rand, pan: 0);
 				});
 
+				Ndef(\q2Callback).set(\amp, 0);
+				Ndef(\pulseTrain0).play;
+				Ndef(\graySine).play;
+				Ndef(\graySine2).play;
+
 			},
 			\lost -> { | id, x, y, z |
 
@@ -474,6 +488,7 @@ energy.postln;
 
 				if( (~section == 1) || (~section == 2) || (~section == 3), {
 					if( (x <= -0.9) || (y >= 0.9), {
+						["lost", x, y].postln;
 						~createQ2Callback.value(pan: 1);
 					});
 				});
@@ -592,7 +607,7 @@ energy.postln;
 
 							if((x >= 0.75) && (y <= -0.25), {
 								if( (~section == 0) || (~section == 4), {
-									Ndef(synths[2][~section][id % (synths[2][~section].size)]).set(\amp, 0.0);
+									Ndef(synths[2][~section][id % (synths[2][~section].size)]).set(\amp, 0.2);
 								});
 							}, {
 								if( (~section == 0) || (~section == 4), {
@@ -622,6 +637,10 @@ energy.postln;
 				}, {
 
 				});
+				Ndef(\q3Callback).xset(\amp, 0);
+				Ndef(\pulseTrain0).play;
+				Ndef(\graySine).play;
+				Ndef(\graySine2).play;
 			},
 			\lost -> { | id, x, y, z |
 
@@ -645,7 +664,8 @@ energy.postln;
 				});
 
 				if( (~section == 1) || (~section == 2) || (~section == 3), {
-					if( (x <= -0.1) || (y <= -0.9), {
+					if( (x >= 0.9) || (y <= -0.9), {
+						["lost", x, y].postln;
 						~createQ3Callback.value(pan: -1);
 					});
 				});
@@ -797,7 +817,7 @@ energy.postln;
 
 							if( (~section == 0) || (~section == 3) || (~section == 4), {
 								if((x >= 0.75) && (y <= -0.25), {
-									Ndef(synths[3][~section][id % (synths[3][~section].size)]).set(\amp, 0.0);
+									Ndef(synths[3][~section][id % (synths[3][~section].size)]).set(\amp, 0.2);
 								}, {
 									// IF NOT MOVING turn down synth
 									Ndef(synths[3][~section][id % (synths[3][~section].size)]).set(\amp, 0.2);
@@ -835,6 +855,11 @@ energy.postln;
 					//bEEP
 					~createEntranceScan.value(amp: 0.26 + 0.2, freq: 2700 + (200.0.rand), length: 0.08 + 0.1.rand, pan: 0);
 				});
+
+				Ndef(\q4Callback).set(\amp, 0);
+				Ndef(\pulseTrain0).play;
+				Ndef(\graySine).play;
+				Ndef(\graySine2).play;
 			},
 			\lost -> { | id, x, y, z |
 
@@ -855,7 +880,8 @@ energy.postln;
 
 				// Callback at corner
 				if( (~section == 1) || (~section == 2) || (~section == 3), {
-					if( (x >= 0.9) || (y <= -0.9), {
+					if( (x <= -0.9) || (y <= -0.9), {
+						["lost", x, y].postln;
 						~createQ4Callback.value(pan: -1);
 					});
 				});

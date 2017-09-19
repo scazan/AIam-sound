@@ -159,7 +159,7 @@ Ndef(\noiseImpulse, { | amp=0, freq=1900, t_trigger=1 |
 ~resetThump.value();
 (
 ~section = 0;
-"SceneController2.scd".loadRelative; // returns ~cSceneController
+"run/SceneController2.scd".loadRelative; // returns ~cSceneController
 ~sceneController = ~cSceneController.value();
 Ndef(\reverb2).play;
 Ndef(\beep).play;
@@ -186,7 +186,7 @@ Ndef(\noiseImpulse).play;
 )
 (
 ~section = 2;
-"SceneController2.scd".loadRelative; // returns ~cSceneController
+"run/SceneController2.scd".loadRelative; // returns ~cSceneController
 ~sceneController = ~cSceneController.value();
 Ndef(\pulseTrain0).play; Ndef(\pulseTrain0).xset(\amp, 1);
 Ndef(\bass).play;
@@ -196,7 +196,7 @@ Ndef(\graySine).set(\vol, 0);Ndef(\graySine2).set(\vol, 0);
 
 (
 ~section = 3;
-"SceneController2.scd".loadRelative; // returns ~cSceneController
+"run/SceneController2.scd".loadRelative; // returns ~cSceneController
 ~sceneController = ~cSceneController.value();
 Ndef(\graySine).play; Ndef(\graySine2).play;
 Ndef(\graySine).fadeTime = 10; Ndef(\graySine2).fadeTime = 10;
@@ -218,9 +218,17 @@ Ndef(\graySine4).xset(\vol, 0.5); Ndef(\graySine5).xset(\vol, 0.5); Ndef(\graySi
 ~resetThump.value();
 ~thumpZoneIDs.values.sum;
 
-~createQ1Callback.value(pan: -1)
-~createQ2Callback.value();
-~createQ3Callback.value()
-~createQ4Callback.value()
+~createQ1Callback.value(pan: 1);
+~createQ2Callback.value(pan: 1);
+~createQ3Callback.value(pan: -1)
+~createQ4Callback.value(pan: 1);
 
-~distortionMode = true;
+~createQ1CallbackHOLD.value(pan: 1);~distortionMode = true;
+~distortionMode = false;
+
+
+
+// Only proximity no thump
+// 'bout a minute 1/2 single wowow creeps in
+// Just the breath callback is on
+

@@ -102,6 +102,7 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 					(synth[\id] == id) && (synth[\active] == true);
 				});
 
+				cameraID = getCameraID.value(id);
 
 				if(existingSynths.size == 0, {
 					inactiveSynths = actors.select({ | synth |
@@ -129,8 +130,9 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 					inactiveSynth[\position][\z] = z;
 				});
 
+				// [x].postln;
 
-				cameraID = getCameraID.value(id);
+
 				~sceneController[\getCameraProcessor].value(cameraID)[\new].value(id, x, y, z);
 
 			},

@@ -9,7 +9,7 @@ s.waitForBoot({
 	~section = 0;
 
 	~dirgeVol = 0.05;
-	~energyThreshold = 1.0;
+	~energyThreshold = 1.05;
 	~quadrant2 = false;
 	~proximityDistance = 0.9;
 	//~energyThreshold = 0.47;
@@ -24,9 +24,9 @@ s.waitForBoot({
 
 	// Callback volumes
 	~q1CallbackVol = 0.4;
-	~q2CallbackVol = 0.8;
-	~q3CallbackVol = 0.4;
-	~q4CallbackVol = 0.8;
+	~q2CallbackVol = 0.0;
+	~q3CallbackVol = 0.0;
+	~q4CallbackVol = 0.0;
 
 
 	// Load Synths
