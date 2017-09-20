@@ -8,10 +8,6 @@
 	var synths = [
 		[ // 0
 			[ // 0
-				\graySine2,
-				\graySine2,
-				\graySine2,
-				\graySine2
 			],
 			[],
 			[],

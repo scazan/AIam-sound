@@ -10,7 +10,6 @@ s.waitForBoot({
 
 	~dirgeVol = 0.05;
 	~energyThreshold = 1.05;
-	~quadrant2 = false;
 	~proximityDistance = 0.9;
 	//~energyThreshold = 0.47;
 
@@ -28,6 +27,7 @@ s.waitForBoot({
 	~q3CallbackVol = 0.01;
 	~q4CallbackVol = 0.01;
 
+	~wallOn = false;
 
 	// Load Synths
 	"Synths.scd".loadRelative; // returns ~cSynths

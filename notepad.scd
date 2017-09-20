@@ -171,79 +171,99 @@ Ndef(\noiseImpulse, { | amp=0, freq=1900, t_trigger=1 |
 };
 )
 ~resetThump.value();
-(
-~section = 0;
-"run/SceneController2.scd".loadRelative; // returns ~cSceneController
-~sceneController = ~cSceneController.value();
-Ndef(\reverb2).play;
-Ndef(\beep).play;
-Ndef(\bass).stop;
-)
 
-// Section 0a
+
+// SEQUENCE!
 (
-Ndef(\graySine).play; Ndef(\graySine2).play;
-// Ndef(\graySine).fadeTime = 30;
-Ndef(\graySine2).fadeTime = 30;
-// Ndef(\graySine).xset(\vol, 0.5);
-Ndef(\graySine2).xset(\vol, 0.5);
-Ndef(\beep).play;
-)
-(
-~section = 1;
-"run/SceneController2.scd".loadRelative; // returns ~cSceneController
-~sceneController = ~cSceneController.value();
-Ndef(\graySine).fadeTime = 5; Ndef(\graySine2).fadeTime = 15;
-Ndef(\graySine).xset(\vol, 0);Ndef(\graySine2).xset(\vol, 0);
-Ndef(\bass).stop;
-Ndef(\noiseImpulse).play;
-)
-(
-~section = 2;
-"run/SceneController2.scd".loadRelative; // returns ~cSceneController
-~sceneController = ~cSceneController.value();
-Ndef(\pulseTrain0).play; Ndef(\pulseTrain0).xset(\amp, 1);
-Ndef(\bass).play;
-Ndef(\noiseImpulse).stop;
-Ndef(\graySine).set(\vol, 0);Ndef(\graySine2).set(\vol, 0);
+	// Boops in Q1, Q3, Q4. Q2 has only the wowow (boops no longer becoming wowow), no boops in Q2 with wowow.
+	~section = 0;
+	"run/SceneController3.scd".loadRelative;
+	~sceneController = ~cSceneController.value();
+
+	Ndef(\graySine2).play;
+	Ndef(\reverb2).play;
+	Ndef(\beep).play;
+
+	Ndef(\bass).stop;
 )
 
 (
-~section = 3;
-"run/SceneController2.scd".loadRelative; // returns ~cSceneController
-~sceneController = ~cSceneController.value();
-Ndef(\graySine).play; Ndef(\graySine2).play;
-Ndef(\graySine).fadeTime = 10; Ndef(\graySine2).fadeTime = 10;
-Ndef(\graySine).xset(\vol, 0.5);Ndef(\graySine2).xset(\vol, 0.5);
+	// Bogi enters, now we have proximity, eventually wowow comes in (1.5 minutes). Q1 callback is on.
+	~section = 1;
+	"run/SceneController3.scd".loadRelative;
+	~sceneController = ~cSceneController.value();
+
+	Ndef(\graySine2).fadeTime = 10;
+	Ndef(\graySine2).xset(\amp, 0);
+
+	Ndef(\pulseTrain0).fadeTime = 2;
+	Ndef(\pulseTrain0).xset(\amp, 1);
+
+	Ndef(\bass).stop;
+
+	{
+		90.wait;
+		Ndef(\graySine2).fadeTime = 10;
+		Ndef(\graySine2).xset(\amp, 1);
+
+		Ndef(\graySine).fadeTime = 10;
+		Ndef(\graySine).xset(\amp, 1);
+	}.fork;
 )
 
 (
-~section = 4;
-"run/SceneController2.scd".loadRelative; // returns ~cSceneController
-~sceneController bass2
-= ~cSceneController.value();
-~createQ1Callback.value(pan: 1);
-// Ndef(\graySine4).play; Ndef(\graySine5).play; Ndef(\graySine6).play;
-// Ndef(\graySine4).fadeTime = 30; Ndef(\graySine5).fadeTime = 30; Ndef(\graySine6).fadeTime = 30;
-// Ndef(\graySine4).xset(\vol, 0.5); Ndef(\graySine5).xset(\vol, 0.5); Ndef(\graySine6).xset(\vol, 0.5);
+	// CUE music at hand touches
+	~section = 2;
+	"run/SceneController3.scd".loadRelative;
+	~sceneController = ~cSceneController.value();
+
+	Ndef(\music).set(\amp, 0, \vol, 0.5);
+	Ndef(\music).play;
+Ndef(\music).fadeTime = 30;
+
+	Ndef(\music).xset(\amp, 1);
+
 )
 
-// CUE music at hand touches
-// CUE section 4 at with walls when handseat
+(
+	~section = 3;
+	"run/SceneController3.scd".loadRelative;
+	~sceneController = ~cSceneController.value();
 
 
+	Tdef(\randomCallback, {
+		{
+			~createQ1Callback.value(pan: 1);
+			(20 + 20.0.rand).wait;
+		}.loop;
+	});
+
+	Tdef(\randomCallback).play;
+
+	~wallOn = true;
+
+Ndef(\music).fadeTime = 60;
+Ndef(\music).xset(\dist, 35, \amp, 0.35);
+
+
+)
+
+
+(
+	~section = 4;
+	"run/SceneController3.scd".loadRelative;
+	~sceneController = ~cSceneController.value();
+
+
+)
 
 
 ~resetThump.value();
 ~thumpZoneIDs.values.sum;
 
 ~createQ1Callback.value(pan: 1);
-~createQ2Callback.value(pan: 1);
-~createQ3Callback.value(pan: -1)
-~createQ4Callback.value(pan: 1);
 
 ~createQ1CallbackHOLD.value(pan: 1);~distortionMode = true;
-~distortionMode = false;
 
 
 
@@ -255,3 +275,11 @@ Ndef(\graySine).xset(\vol, 0.5);Ndef(\graySine2).xset(\vol, 0.5);
 // CUE music at hand touches
 // CUE section 4 at with walls when handseat
 
+
+
+
+// START
+// Boops in Q1, Q3, Q4. Q2 has only the wowow (boops no longer becoming wowow), no boops in Q2 with wowow.
+// Bogi enters, now we have proximity, eventually wowow comes in (1.5 minutes). Q1 callback is on.
+// CUE music at hand touches
+// CUE section 4 at with walls when handseat

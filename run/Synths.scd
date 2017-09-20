@@ -330,7 +330,7 @@ Ndef(\graySine3, { | amp=1, freq=2109, q=0.4, x=0.5, y=0.5, z=0.5, vol |
 	});
 
 
-Ndef(\saw, { | section=1, freq=300, x=0.5, y=0.5, z=0.5, amp=1 |
+/*Ndef(\saw, { | section=1, freq=300, x=0.5, y=0.5, z=0.5, amp=1 |
 		var out;
 		//var freq = (0 + (3*12)).midicps;
 		var pulses = Array.newClear(4);
@@ -352,66 +352,66 @@ Ndef(\saw, { | section=1, freq=300, x=0.5, y=0.5, z=0.5, amp=1 |
 		//out = LPF.ar(out, MouseY.kr(200, 1000)) * 0.5;
 
 		SelectX.ar(section, [out, out * LFPulse.ar(8, width: 0.7).unipolar.lag(0.1)])*0.35 * amp;
-});
+});*/
 
-Ndef(\saw2, { | section=1, freq=600, x=0.5, y=0.5, z=0.5, amp=1, vowel=0 |
-	var out;
-	var formants, createVowel, snd;
-		//var freq = (0 + (3*12)).midicps;
-		var pulses = Array.newClear(4);
-
-	formants = Dictionary[
-			\A -> [ [ 660, 1120, 2750, 3000, 3350 ], [ 1, 0.50118723362727, 0.070794578438414, 0.063095734448019, 0.012589254117942 ], [ 0.12121212121212, 0.080357142857143, 0.043636363636364, 0.043333333333333, 0.041791044776119 ] ],
-			\E -> [ [ 440, 1800, 2700, 3000, 3300 ], [ 1, 0.19952623149689, 0.12589254117942, 0.1, 0.1 ], [ 0.15909090909091, 0.044444444444444, 0.037037037037037, 0.04, 0.036363636363636 ] ],
-			\O -> [ [ 430, 820, 2700, 3000, 3300 ], [ 1, 0.31622776601684, 0.050118723362727, 0.079432823472428, 0.019952623149689 ], [ 0.093023255813953, 0.097560975609756, 0.037037037037037, 0.04, 0.036363636363636 ] ],
-			\I -> [ [ 270, 1850, 2900, 3350, 3590 ], [ 1, 0.063095734448019, 0.063095734448019, 0.015848931924611, 0.015848931924611 ], [ 0.14814814814815, 0.048648648648649, 0.03448275862069, 0.035820895522388, 0.033426183844011 ] ],
-			\U -> [ [ 370, 630, 2750, 3000, 3400 ], [ 1, 0.1, 0.070794578438414, 0.031622776601684, 0.019952623149689 ], [ 0.10810810810811, 0.095238095238095, 0.036363636363636, 0.04, 0.035294117647059 ] ]
-		];
-
-		createVowel = { | input, vowel, voiceType = "counterTenor" |
-			//var formant = FormantTable.get((voiceType++vowel).asSymbol);
-			var formant = formants[vowel.asSymbol];
-
-			var out = BBandPass.ar(
-				in: input.at(0),
-				freq: formant[0],
-				bw: formant[1],
-				mul: formant[2]
-			);
-			var out2 = BBandPass.ar(
-				in: input.at(1),
-				freq: formant[0],
-				bw: formant[1],
-				mul: formant[2]
-			);
-
-			[out.flatten(6), out2.flatten(6)];
-		};
-
-
-		freq = freq.lag(0.3);
-		4.do({ | i |
-			//pulses[i] = LFPulse.ar([ freq, freq * MouseX.kr(1, 1.01) ] * (i+1), mul: 0.25);
-			// pulses[i] = Saw.ar([ freq, freq * MouseX.kr(1, 1.01) ] * (i+1), mul: 0.25);
-			pulses[i] = Saw.ar([ freq, freq * (x.abs+1.01)] * (i+1), mul: 0.25)
-			+ Saw.ar([ freq/4, freq/4 * (x.abs+1.01)] * (i+1), mul: 0.25);
-		});
-
-		out = (Mix.new(pulses) * ( freq/6 * LFPulse.ar(8).lag(0.1) )).tanh * 0.5 ;
-
-	out = SelectX.ar(Lag.kr(y.linlin(0,1,0,5), 0.5), [createVowel.value(out, "A"), createVowel.value(out, "E"), createVowel.value(out, "I"), createVowel.value(out, "O"), createVowel.value(out, "U")]);
-
-		// out = out + (SinOsc.ar(freq /4) * (x.abs*0.8));
-		out = FreeVerb2.ar(out[0], out[1]);
-
-		// out = RLPFD.ar(out, MouseY.kr(200, 1000),0.9) * 0.5;
-		// out = RLPFD.ar(out, (y.lag(0.1).abs * 800) + 200, 0.9) * 0.85;
-		out = LPF.ar(out, (y.lag(0.1).abs*800) + 200) * 0.5;
-		// out = LPF.ar(out, MouseY.kr(200, 1000)) * 0.5;
-
-		(SelectX.ar(x-1, [out, out * LFPulse.ar(8, width: 0.7).unipolar.lag(0.1)]) * 5).tanh * 0.5  * amp.lag(3)!2;
-
-});
+	// Ndef(\saw2, { | section=1, freq=600, x=0.5, y=0.5, z=0.5, amp=1, vowel=0 |
+	// 	var out;
+	// 	var formants, createVowel, snd;
+	// 	//var freq = (0 + (3*12)).midicps;
+	// 	var pulses = Array.newClear(4);
+	//
+	// 	formants = Dictionary[
+	// 		\A -> [ [ 660, 1120, 2750, 3000, 3350 ], [ 1, 0.50118723362727, 0.070794578438414, 0.063095734448019, 0.012589254117942 ], [ 0.12121212121212, 0.080357142857143, 0.043636363636364, 0.043333333333333, 0.041791044776119 ] ],
+	// 		\E -> [ [ 440, 1800, 2700, 3000, 3300 ], [ 1, 0.19952623149689, 0.12589254117942, 0.1, 0.1 ], [ 0.15909090909091, 0.044444444444444, 0.037037037037037, 0.04, 0.036363636363636 ] ],
+	// 		\O -> [ [ 430, 820, 2700, 3000, 3300 ], [ 1, 0.31622776601684, 0.050118723362727, 0.079432823472428, 0.019952623149689 ], [ 0.093023255813953, 0.097560975609756, 0.037037037037037, 0.04, 0.036363636363636 ] ],
+	// 		\I -> [ [ 270, 1850, 2900, 3350, 3590 ], [ 1, 0.063095734448019, 0.063095734448019, 0.015848931924611, 0.015848931924611 ], [ 0.14814814814815, 0.048648648648649, 0.03448275862069, 0.035820895522388, 0.033426183844011 ] ],
+	// 		\U -> [ [ 370, 630, 2750, 3000, 3400 ], [ 1, 0.1, 0.070794578438414, 0.031622776601684, 0.019952623149689 ], [ 0.10810810810811, 0.095238095238095, 0.036363636363636, 0.04, 0.035294117647059 ] ]
+	// 	];
+	//
+	// 	createVowel = { | input, vowel, voiceType = "counterTenor" |
+	// 		//var formant = FormantTable.get((voiceType++vowel).asSymbol);
+	// 		var formant = formants[vowel.asSymbol];
+	//
+	// 		var out = BBandPass.ar(
+	// 			in: input.at(0),
+	// 			freq: formant[0],
+	// 			bw: formant[1],
+	// 			mul: formant[2]
+	// 		);
+	// 		var out2 = BBandPass.ar(
+	// 			in: input.at(1),
+	// 			freq: formant[0],
+	// 			bw: formant[1],
+	// 			mul: formant[2]
+	// 		);
+	//
+	// 		[out.flatten(6), out2.flatten(6)];
+	// 	};
+	//
+	//
+	// 	freq = freq.lag(0.3);
+	// 	4.do({ | i |
+	// 		//pulses[i] = LFPulse.ar([ freq, freq * MouseX.kr(1, 1.01) ] * (i+1), mul: 0.25);
+	// 		// pulses[i] = Saw.ar([ freq, freq * MouseX.kr(1, 1.01) ] * (i+1), mul: 0.25);
+	// 		pulses[i] = Saw.ar([ freq, freq * (x.abs+1.01)] * (i+1), mul: 0.25)
+	// 		+ Saw.ar([ freq/4, freq/4 * (x.abs+1.01)] * (i+1), mul: 0.25);
+	// 	});
+	//
+	// 	out = (Mix.new(pulses) * ( freq/6 * LFPulse.ar(8).lag(0.1) )).tanh * 0.5 ;
+	//
+	// 	out = SelectX.ar(Lag.kr(y.linlin(0,1,0,5), 0.5), [createVowel.value(out, "A"), createVowel.value(out, "E"), createVowel.value(out, "I"), createVowel.value(out, "O"), createVowel.value(out, "U")]);
+	//
+	// 	// out = out + (SinOsc.ar(freq /4) * (x.abs*0.8));
+	// 	out = FreeVerb2.ar(out[0], out[1]);
+	//
+	// 	// out = RLPFD.ar(out, MouseY.kr(200, 1000),0.9) * 0.5;
+	// 	// out = RLPFD.ar(out, (y.lag(0.1).abs * 800) + 200, 0.9) * 0.85;
+	// 	out = LPF.ar(out, (y.lag(0.1).abs*800) + 200) * 0.5;
+	// 	// out = LPF.ar(out, MouseY.kr(200, 1000)) * 0.5;
+	//
+	// 	(SelectX.ar(x-1, [out, out * LFPulse.ar(8, width: 0.7).unipolar.lag(0.1)]) * 5).tanh * 0.5  * amp.lag(3)!2;
+	//
+	// });
 
 
 
@@ -458,12 +458,6 @@ Ndef(\clink, { | amp=0, freq=2000 |
 });
 
 
-
-
-
-/*Ndef(\encouraging, { |amp=0|
-	SinOsc.ar(60) * 0.1 * amp !2;
-});*/
 Ndef(\discouraging, { arg freq=75, amp=0, resonantFreq=1760, volume=0;
 	var waveTable = Wavetable.chebyFill(513, [0, 0, 1]);
 	var buf = LocalBuf.newFrom(waveTable);
@@ -495,42 +489,9 @@ Ndef(\reverb2, {
 		FreeVerb.ar(In.ar(~reverbBus, 2), mix: 0.95);
 }).play;
 
-	/*~graySineVol = 0;
-	~airySineVol = 0.15;
-	~metalVol = 0.25;
-	~earthVol = 0.25;*/
 
 	~createGraySineTrig = { | amp=0, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
 		{
-
-			/*
-			// NEW
-			var verb, filtered;
-
-			var env, signal;
-			var rho, theta, b1, b2;
-			var pan=0, sustain=0.05, rq=0.06;
-
-			b1 = 2.0 * 0.97576 * cos(0.161447);
-			b2 = 0.9757.squared.neg;
-			signal = SOS.ar(K2A.ar(t_trigger), 1.0, 0.0, 0.0, b1, b2);
-			signal = Decay2.ar(signal, 0.4, 0.8, signal);
-			signal = Limiter.ar(Resonz.ar(signal, [freq, freq*1.1], rq*0.15), 0.9);
-			env = EnvGen.kr(Env.perc(0.00001, sustain, amp), doneAction:2);
-			filtered = Pan2.ar(signal, pan)*env;
-
-
-			verb = filtered * 0.995 * SelectX.kr(switch, [0.5, 0.5, 0.5, 4]);
-
-			verb = EnvGen.ar(Env.perc(0.01, length/2), gate: t_trigger, doneAction:2) * verb;
-			Out.ar(~reverbBus, verb * 0.6);
-
-			verb * ~graySineVol;*/
-
-
-			// OLD
-			// var noise = WhiteNoise.ar();
-			// var noise = ( SinOsc.ar(900) * EnvGen.ar(Env.perc(0.01, 0.1) ) );
 			var modFreq = SelectX.kr((y.linlin(-1,1,0,1 * 4)).abs.floor % 2, [x.linlin(-1,1, 0, 18).sin * 20 + 0.1, x.linlin(-1,1, 0, 18).cos * 20 + 0.1]);
 			var lag = (modFreq/10).pow(4).clip(0,1);
 
@@ -584,18 +545,6 @@ Ndef(\reverb2, {
 
 
 	~createQ1Callback = { | amp=0, pan=0.25, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
-		/*{
-			var filtered;
-
-			filtered = PlayBuf.ar(1, ~q1CallbackBuffer, doneAction: 2);
-			filtered = Pan2.ar(filtered * ~q1CallbackVol, pan);
-			filtered = CombN.ar(filtered, delaytime: 0.04, decaytime: 0.5);
-
-			Out.ar(~reverbBus, filtered * 0.16);
-
-			filtered * 1;
-		}.play;*/
-
 		Ndef(\q1Callback).set(\amp, 0.1, \pan, pan);
 		Ndef(\q1Callback).fadeTime = 1;
 		Ndef(\pulseTrain0).stop;
@@ -618,27 +567,15 @@ Ndef(\reverb2, {
 	}).play;
 
 	~createQ2Callback = { | amp=0, pan=0.25, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
-		/*{
-			var filtered;
 
-			filtered = PlayBuf.ar(1, ~q2CallbackBuffer, doneAction: 2);
-			filtered = Pan2.ar(filtered * ~q2CallbackVol, pan);
-			filtered = CombN.ar(filtered, delaytime: 0.04, decaytime: 0.5);
-
-			Out.ar(~reverbBus, filtered * 0.16);
-
-			filtered * 1;
-		}.play;*/
 		Ndef(\q2Callback).set(\amp, 0.1, \pan, pan);
 		Ndef(\q2Callback).fadeTime = 1;
 		Ndef(\pulseTrain0).stop;
 		Ndef(\graySine).stop;
 		Ndef(\graySine2).stop;
-		// Ndef(\q2Callback).xset(\amp, 0);
 	};
 
 
-	// Ndef(\q2Callback, {| amp=0, pan=0.25, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
 	Ndef(\q2Callback, { | amp=0, pan=0.25, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
 			var filtered;
 			filtered = PlayBuf.ar(1, ~q2CallbackBuffer, loop: 1);
@@ -651,24 +588,11 @@ Ndef(\reverb2, {
 	}).play;
 
 	~createQ3Callback = { | amp=0, pan=0.25, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
-		/*{
-			var filtered;
-
-			filtered = PlayBuf.ar(1, ~q3CallbackBuffer, doneAction: 2);
-			filtered = Pan2.ar(filtered * ~q3CallbackVol, pan);
-			filtered = CombN.ar(filtered, delaytime: 0.04, decaytime: 0.5);
-
-			Out.ar(~reverbBus, filtered * 0.16);
-
-			filtered * 1;
-		}.play;*/
 		Ndef(\q3Callback).set(\amp, 0.1, \pan, pan);
 		Ndef(\q3Callback).fadeTime = 1;
 		Ndef(\pulseTrain0).stop;
 		Ndef(\graySine).stop;
 		Ndef(\graySine2).stop;
-		// Ndef(\q3Callback).xset(\amp, 0);
-
 	};
 
 	Ndef(\q3Callback, { | amp=0, pan=0.25, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
@@ -685,20 +609,8 @@ Ndef(\reverb2, {
 
 
 	~createQ4Callback = { | amp=0, pan=0.25, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
-		/*{
-			var filtered;
-
-			filtered = PlayBuf.ar(1, ~q4CallbackBuffer, doneAction: 2);
-			filtered = Pan2.ar(filtered * ~q4CallbackVol, pan);
-			filtered = CombN.ar(filtered, delaytime: 0.04, decaytime: 0.5);
-
-			Out.ar(~reverbBus, filtered * 0.16);
-
-			filtered * amp;
-		}.play;*/
 		Ndef(\q4Callback).set(\amp, 0.1, \pan, pan);
 		Ndef(\q4Callback).fadeTime = 1;
-		// Ndef(\q4Callback).xset(\amp, 0);
 		Ndef(\pulseTrain0).stop;
 		Ndef(\graySine).stop;
 		Ndef(\graySine2).stop;
@@ -920,23 +832,16 @@ Ndef(\noiseImpulse, { | amp=0, freq=1900, t_trigger=1 |
 
 
 
-	Ndef(\encouraging, { | x=1,y=1, rate=1, amp=0.85, switch=1, volume=0 |
+	Ndef(\music, { | x=1,y=1, rate=1, amp=0.85, switch=1, volume=0, dist=1 |
 		var buffer=u;
 
-			var out = PlayBuf.ar(buffer.numChannels, bufnum: buffer, rate: rate * 2, trigger: 1, startPos: 0, loop: 1) * amp.pow(3);
+		var out = PlayBuf.ar(buffer.numChannels, bufnum: buffer, rate: rate * 2, trigger: 1, startPos: 0, loop: 1) * amp.pow(3);
 
+		out = (out * dist).max;
 			out * volume.lag(3);
 
 	});
 
-	Ndef(\yoruba, { | x=1,y=1, rate=1, amp=0.85, switch=1, volume=0 |
-		var buffer = ~yorubaBuffer;
-
-			var out = PlayBuf.ar(buffer.numChannels, bufnum: buffer, rate: rate * 2, trigger: 1, startPos: 0, loop: 1) * amp.pow(3);
-
-			out * volume.lag(3);
-
-	});
 
 dict = Dictionary[
 	\play -> {

@@ -87,7 +87,7 @@ computeProximityN2D = utils[\computeProximityN2D];
 
 
 
-"SceneController2.scd".loadRelative; // returns ~cSceneController
+"SceneController3.scd".loadRelative; // returns ~cSceneController
 ~sceneController = ~cSceneController.value();
 
 //Set the synths for the initial scene
