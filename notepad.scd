@@ -1,10 +1,24 @@
 (
+Ndef(\grayNoise, { | amp=0, cutoff=200 |
+	var out = GrayNoise.ar() * amp;
 
-x = {
-
-	}.play;
+	LPF.ar(out, cutoff);
+});
 )
 
+
+Ndef(\bass2, { | amp=0, freq=2000 |
+		var reverb = FreeVerb.ar(_, mix: 0.5, room: 0.8);
+		var lpf = LPF.ar(_, 180);
+		var bpf = BPF.ar(_, 40, 0.5);
+		var rumble = bpf.value(GrayNoise.ar());
+
+		var hum = LFTri.ar([50, 54]) * (0.7 + Pulse.ar(0.2, width: 0.01).unipolar.lag(0.5) * 0.2);
+
+		var out = reverb.value( lpf.value(rumble + hum) );
+
+		HPF.ar(out, 30).tanh * 0.9 * amp.lag(5);
+	});
 192.168.48.97.
 
 
@@ -206,16 +220,20 @@ Ndef(\graySine).xset(\vol, 0.5);Ndef(\graySine2).xset(\vol, 0.5);
 (
 ~section = 4;
 "run/SceneController2.scd".loadRelative; // returns ~cSceneController
-~sceneController = ~cSceneController.value();
+~sceneController bass2
+= ~cSceneController.value();
 ~createQ1Callback.value(pan: 1);
 // Ndef(\graySine4).play; Ndef(\graySine5).play; Ndef(\graySine6).play;
 // Ndef(\graySine4).fadeTime = 30; Ndef(\graySine5).fadeTime = 30; Ndef(\graySine6).fadeTime = 30;
 // Ndef(\graySine4).xset(\vol, 0.5); Ndef(\graySine5).xset(\vol, 0.5); Ndef(\graySine6).xset(\vol, 0.5);
 )
 
-(
+// CUE music at hand touches
+// CUE section 4 at with walls when handseat
 
-)
+
+
+
 ~resetThump.value();
 ~thumpZoneIDs.values.sum;
 
@@ -232,4 +250,8 @@ Ndef(\graySine).xset(\vol, 0.5);Ndef(\graySine2).xset(\vol, 0.5);
 // Only proximity no thump
 // 'bout a minute 1/2 single wowow creeps in
 // Just the breath callback is on
+
+//
+// CUE music at hand touches
+// CUE section 4 at with walls when handseat
 

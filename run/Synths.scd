@@ -447,7 +447,7 @@ Ndef(\sawPad, { arg freq=75, amp=0, resonantFreq=1760;
 
 Ndef(\clink, { | amp=0, freq=2000 |
 	var noise = WhiteNoise.ar() * LFPulse.ar(2, width: 0.1);
-	var delay = AllpassC.ar(noise, decaytime: 2.2);
+	var delay = AllpassC.ar(noise, decaytime: 2.1);
 
 	delay = HPF.ar(delay, [ 10000, 10100 ]);
 
@@ -612,7 +612,7 @@ Ndef(\reverb2, {
 			filtered = Pan2.ar(filtered * ~q1CallbackVol, pan);
 			filtered = CombN.ar(filtered, delaytime: 0.04, decaytime: 0.5) * amp;
 
-			Out.ar(~reverbBus, filtered * 0.16);
+			Out.ar(~reverbBus, filtered * 0.16 * 0);
 
 			filtered;
 	}).play;

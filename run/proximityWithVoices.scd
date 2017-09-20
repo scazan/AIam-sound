@@ -23,7 +23,7 @@ s.waitForBoot({
 	~waterVol = 0.25;
 
 	// Callback volumes
-	~q1CallbackVol = 0.4;
+	~q1CallbackVol = 0.04;
 	~q2CallbackVol = 0.01;
 	~q3CallbackVol = 0.01;
 	~q4CallbackVol = 0.01;
@@ -79,3 +79,13 @@ Explosion in dance is cause for drone to cut out and the samples in motion comes
 // Add corners that cause a sound when you are lost. This should be panned towards the corner.
 // Mock up sound that is triggered when you want the dancers to move towards that area (panned)
 // When the dancers move towards that space the volume goes up towards the edge as if to punish (sort of)
+
+~graySineVol = 0.0;
+	~entranceScanVol = 0;
+	~airySineVol = 0.0;
+	~metalVol = 0.0;
+	~earthVol = 0.00;
+	~fireVol = 0.0;
+	~waterVol = 0;
+
+
