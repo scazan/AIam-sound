@@ -50,6 +50,31 @@ var getCameraID = { | actorID |
 	cameraID;
 };
 
+var computeWorldXY = { | x, y, cameraID |
+	var xWorld = 0,
+		yWorld = 0;
+
+	switch(cameraID,
+		0, {
+			xWorld = x - 1;
+			yWorld = y + 1;
+		},
+		1, {
+			xWorld = x + 1;
+			yWorld = y + 1;
+		},
+		2, {
+			xWorld = x - 1;
+			yWorld = y - 1;
+		},
+		3, {
+			xWorld = x + 1;
+			yWorld = y - 1;
+		}
+	);
+
+	[xWorld, yWorld];
+};
 
 // Distance Calculations
 var utils, computeProximity2XZ, computeProximityN2D;
@@ -91,25 +116,26 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 			id = msg[1].asInteger(),
 		x = msg[3].asFloat / 1430,
 			y = msg[4].asFloat / 900,
-			z = msg[5].asFloat / 7000;
+			z = msg[5].asFloat / 7000, 
+			cameraID = 0;
 
+		cameraID = getCameraID.value(id);
 
 		//[msg, state, state == "lost"].postln;
 		case(
 			{state == "new"}, {
-				var inactiveSynths, cameraID = 0;
+				var inactiveSynths;
 				var existingSynths = actors.select({ | synth |
 					(synth[\id] == id) && (synth[\active] == true);
 				});
 
-				cameraID = getCameraID.value(id);
 
 				if(existingSynths.size == 0, {
 					inactiveSynths = actors.select({ | synth |
 						synth[\active] == false;
 					});
 
-					}, {
+				}, {
 						// If there is an "active" synth.
 						inactiveSynths = existingSynths; // Assigning like this as a shortcut to allow us to use the same logic below
 				});
@@ -119,6 +145,9 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 				if(inactiveSynths.size > 0, {
 					// grab the first "inactive synth" available
 					var inactiveSynth = inactiveSynths[0];
+					var worldXY = [0,0];
+
+					worldXY = computeWorldXY.value(x,y,cameraID);
 
 					// Set it to be active with this id (if this synth was already active it sets it again)
 					inactiveSynth[\trackingID] = id;
@@ -128,9 +157,10 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 					inactiveSynth[\position][\x] = x;
 					inactiveSynth[\position][\y] = y;
 					inactiveSynth[\position][\z] = z;
-				});
 
-				[x].postln;
+					inactiveSynth[\positionWorld][\x] = worldXY[0];
+					inactiveSynth[\positionWorld][\y] = worldXY[1];
+				});
 
 
 				~sceneController[\getCameraProcessor].value(cameraID)[\new].value(id, x, y, z);
@@ -251,6 +281,11 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 			var energiesMotion = [0,0];
 			var cameraID = 0;
 
+			var worldXY = [0,0];
+
+
+			cameraID = getCameraID.value(id);
+			worldXY = computeWorldXY.value(x,y,cameraID);
 
 			activeActor[\lastPosition][\x] = activeActor[\position][\x].asFloat;
 			activeActor[\lastPosition][\y] = activeActor[\position][\y].asFloat;
@@ -260,23 +295,20 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 			activeActor[\position][\y] = y;
 			activeActor[\position][\z] = z;
 
-			// [x,y,z, activeActor].postln;
-			//z = (z-0.5).abs / (1-0.5);
+			activeActor[\positionWorld][\x] = worldXY[0];
+			activeActor[\positionWorld][\y] = worldXY[1];
 
 
 			// Calculate the proximities
 			// (we need at least two actors to judge a distance)
 			if(allActiveActors.size >= 2, {
-				actorProximity = computeProximityN2D.value(allActiveActors.collect({ | item | [item[\position][\x], item[\position][\y] ] ; }));
+				actorProximity = computeProximityN2D.value(allActiveActors.collect({ | item | [item[\positionWorld][\x], item[\positionWorld][\y] ] ; }));
 			});
-
-
 
 			// UPDATES ///////////////////////////////////////
 			// Update any synths with new info
 			~sceneController[\getCameraProcessor].value(cameraID)[\proximity].value(actorProximity);
 
-			cameraID = getCameraID.value(id);
 
 			// PROXIMITY
 			~sceneController[\getCameraProcessor].value(cameraID)[\proximity].value(actorProximity);
