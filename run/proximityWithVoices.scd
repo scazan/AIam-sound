@@ -1,4 +1,4 @@
-s.ouptions.memSize = 1024 * 100; s.boot;
+s.options.memSize = 1024 * 100; s.boot;
 "Buffers.scd".loadRelative;
 
 (
