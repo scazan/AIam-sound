@@ -99,13 +99,13 @@
 				var x = posVector[\x],
 					y = posVector[\y];
 
-				if( ((x >= 0.75) && (y >= 0.75)), {
-					// THUMP ZONE
-					Ndef(\bass).set(\amp, 0.4);
+				/*if( ((x >= 0.75) && (y >= 0.75)), {*/
+					/*// THUMP ZONE*/
+					/*Ndef(\bass).set(\amp, 0.4);*/
 
-					thumpZoneIDs[actor[\id]] = 1;
-					// thumpZone = true;
-				}, {
+					/*thumpZoneIDs[actor[\id]] = 1;*/
+					/*// thumpZone = true;*/
+				/*}, {*/
 
 					thumpZoneIDs[ actor[\id] ] = 0;
 
@@ -116,7 +116,7 @@
 							Ndef(synths[0][~section][actorIndex % (synths[0][~section].size)]).set(\freq, ((  (x.abs - 1).abs.pow(3) * 8000) + 90), \pan, -1 );
 						});
 					});
-				});
+				/*});*/
 
 			},
 			\energy -> { | id, vector1, vector2, energies, motion |
@@ -141,12 +141,12 @@
 
 
 						// QUADRANTS
-						if((x >= 0.75) && (y <= -0.25), {
-							// THUMP ZONE
-							if(~section == 1, {
-								Ndef(synths[0][~section][id % (synths[0][~section].size)]).set(\amp, 0);
-							});
-						}, {
+						/*if((x >= 0.75) && (y <= -0.25), {*/
+							/*// THUMP ZONE*/
+							/*if(~section == 1, {*/
+								/*Ndef(synths[0][~section][id % (synths[0][~section].size)]).set(\amp, 0);*/
+							/*});*/
+						/*}, {*/
 							if(thumpZoneIDs.values.sum < 1, {
 
 								if( (~section == 4), {
@@ -160,7 +160,7 @@
 								});
 
 							});
-						});
+						/*});*/
 						 // END QUADRANTS
 
 						motion = true;
@@ -247,11 +247,11 @@
 					y = actor[\position][\y];
 
 
-				if((x >= 0.75) && (y <= -0.25), {
+				/*if((x >= 0.75) && (y <= -0.25), {*/
 					// THUMP ZONE
-					Ndef(\bass).set(\amp, 0.4);
-					thumpZoneIDs[ actor[\id] ] = 1;
-				}, {
+					/*Ndef(\bass).set(\amp, 0.4);*/
+					/*thumpZoneIDs[ actor[\id] ] = 1;*/
+				/*}, {*/
 						thumpZoneIDs[ actor[\id] ] = 0;
 
 					if( (~section == 0) || (~section == 1), {
@@ -261,7 +261,7 @@
 					if(thumpZoneIDs.values.sum < 1, {
 						/*Ndef(\bass).set(\amp, 0);*/
 					});
-				});
+				/*});*/
 
 
 			},
@@ -285,12 +285,12 @@
 					if(motion == false, {
 
 						// THUMP ZONE
-						if((x <= -0.25) && (y >= 0.75), {
-							if(~section == 0, {
-								//If in the thumpZone, turn off the synth
-								/*Ndef(synths[1][~section][id % (synths[1][~section].size)]).set(\amp, 0.0);*/
-							});
-						}, {
+						/*if((x <= -0.25) && (y >= 0.75), {*/
+							/*if(~section == 0, {*/
+								/*//If in the thumpZone, turn off the synth*/
+								/*[>Ndef(synths[1][~section][id % (synths[1][~section].size)]).set(\amp, 0.0);<]*/
+							/*});*/
+						/*}, {*/
 							if(thumpZoneIDs.values.sum < 1 , {
 
 								if( (~section == 0) || (~section == 4), {
@@ -299,7 +299,7 @@
 								});
 
 							});
-						});
+						/*});*/
 
 						motion = true;
 
@@ -316,16 +316,16 @@
 						if(motion == true, {
 
 							// IF IN THE THUMP ZONE and not moving
-							if((x <= -0.25) && (y <= -0.25), {
-								if( (~section == 0) || (~section == 1), {
-									Ndef(synths[1][~section][id % (synths[1][~section].size)]).set(\amp, 0.3);
-								});
-							}, {
+							/*if((x <= -0.25) && (y <= -0.25), {*/
+								/*if( (~section == 0) || (~section == 1), {*/
+									/*Ndef(synths[1][~section][id % (synths[1][~section].size)]).set(\amp, 0.3);*/
+								/*});*/
+							/*}, {*/
 								if( (~section == 0) || (~section == 1), {
 									Ndef(synths[1][~section][id % (synths[1][~section].size)]).set(\amp, 0.3);
 								});
 
-							});
+							/*});*/
 
 							motion = false;
 
@@ -389,12 +389,12 @@
 				var x = actor[\position][\x],
 					y = actor[\position][\y];
 
-				if( (x <= -0.25) && (y >= 0.75), {
-					// THUMP ZONE
-					["THUMP"].postln;
-					Ndef(\bass).set(\amp, 0.4);
-					thumpZoneIDs[ actor[\id] ] = 1;
-				}, {
+				/*if( (x <= -0.25) && (y >= 0.75), {*/
+					/*// THUMP ZONE*/
+					/*["THUMP"].postln;*/
+					/*Ndef(\bass).set(\amp, 0.4);*/
+					/*thumpZoneIDs[ actor[\id] ] = 1;*/
+				/*}, {*/
 					var actorY = (y + 1) / 2,
 						actorYInverse =  ((y - 1) / 2).abs;
 
@@ -409,7 +409,7 @@
 						});
 
 					});
-				});
+				/*});*/
 
 			},
 			\energy -> { | id, vector1, vector2, energies, motion |
@@ -430,8 +430,8 @@
 							y = vector1[2];
 
 						// THUMP ZONE
-						if((x >= 0.75) && (y <= -0.25), {
-						}, {
+						/*if((x >= 0.75) && (y <= -0.25), {*/
+						/*}, {*/
 							if(thumpZoneIDs.values.sum < 1, {
 								if( (~section == 1), {
 								// If we are moving, turn up the synth
@@ -439,7 +439,7 @@
 								});
 
 							});
-						});
+						/*});*/
 
 
 						motion = true;
@@ -451,16 +451,17 @@
 
 					if(motion == true, {
 
-						if((x >= 0.75) && (y <= -0.25), {
-							if(  (~section == 1), {
-								Ndef(synths[2][~section][id % (synths[2][~section].size)]).set(\amp, 0.3);
-							});
-						}, {
+						// THUMP ZONE
+						/*if((x >= 0.75) && (y <= -0.25), {*/
+							/*if(  (~section == 1), {*/
+								/*Ndef(synths[2][~section][id % (synths[2][~section].size)]).set(\amp, 0.3);*/
+							/*});*/
+						/*}, {*/
 							if( (~section == 1), {
 								// If we are not moving and not in thump zone, turn down the synth
 								Ndef(synths[2][~section][id % (synths[2][~section].size)]).set(\amp, 0.3);
 							});
-						});
+						/*});*/
 
 						motion = false;
 
@@ -523,12 +524,12 @@
 					y = actor[\position][\y];
 
 
-				if((x >= 0.75) && (y >= 0.75), {
-					// THUMP ZONE
-					Ndef(\bass).set(\amp, 0.4);
+				/*if((x >= 0.75) && (y >= 0.75), {*/
+					/*// THUMP ZONE*/
+					/*Ndef(\bass).set(\amp, 0.4);*/
 
-					thumpZoneIDs[ actor[\id] ] = 1;
-				}, {
+					/*thumpZoneIDs[ actor[\id] ] = 1;*/
+				/*}, {*/
 					thumpZoneIDs[ actor[\id] ] = 0;
 
 					if(thumpZoneIDs.values.sum < 1, {
@@ -540,7 +541,7 @@
 
 					});
 
-				});
+				/*});*/
 			},
 			\energy -> { | id, vector1, vector2, energies, motion |
 				var moving = false;
@@ -566,11 +567,11 @@
 						});
 
 						// THUMP ZONE
-						if((x >= 0.75) && (y >= 0.75), {
-							if( (~section == 2), {
-								Ndef(synths[3][~section][id % (synths[3][~section].size)]).set(\amp, 0);
-							});
-						}, {
+						/*if((x >= 0.75) && (y >= 0.75), {*/
+							/*if( (~section == 2), {*/
+								/*Ndef(synths[3][~section][id % (synths[3][~section].size)]).set(\amp, 0);*/
+							/*});*/
+						/*}, {*/
 
 							if(thumpZoneIDs.values.sum < 1 , {
 								if((~section == 2), {
@@ -583,7 +584,7 @@
 								});
 
 							});
-						});
+						/*});*/
 
 						motion = true;
 
@@ -596,12 +597,12 @@
 
 							if( (~section == 2), {
 								// Thump Zone
-								if((x >= 0.75) && (y <= -0.25), {
-									Ndef(synths[3][~section][id % (synths[3][~section].size)]).set(\amp, 0.3);
-								}, {
+								/*if((x >= 0.75) && (y <= -0.25), {*/
+									/*Ndef(synths[3][~section][id % (synths[3][~section].size)]).set(\amp, 0.3);*/
+								/*}, {*/
 									// IF NOT MOVING turn down synth
 									Ndef(synths[3][~section][id % (synths[3][~section].size)]).set(\amp, 0.3);
-								});
+								/*});*/
 							});
 
 							motion = false;

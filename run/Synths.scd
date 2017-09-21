@@ -81,130 +81,6 @@
 	});
 
 
-Ndef(\graySine3, { | amp=1, freq=2109, q=0.4, x=0.5, y=0.5, z=0.5, vol |
-		var verb;
-		var noise = WhiteNoise.ar();
-		// var modFreq = ( x.linlin(-1,1, 0, 4).sin * 20).abs + 0.1;
-		var modFreq = SelectX.kr(y.linlin(-1,1,0,1 * 4).abs.floor % 2, [x.linlin(-1,1, 0, 18).sin * 20 + 0.1, x.linlin(-1,1, 0, 18).cos * 20 + 0.1]);
-		var lag = (modFreq/2).pow(4).clip(0,1);
-
-		var filtered;
-		var freqs = [freq, (freq.cpsmidi + 1).midicps, (freq.cpsmidi + 7).midicps, (freq.cpsmidi - 2).midicps];
-
-		// freq = SelectX.kr(y.linlin(-1,1,0,1 * freqs.size).abs.floor, freqs);
-		freq = SelectX.kr(y.linlin(-1,1,0,1 * freqs.size).abs.floor, freqs).lag(0.0082);
-
-		freq = freq/2;
-		// freq = freq + (x.abs * 100);
-
-
-		filtered = BPF.ar(noise,
-			//freq: [freq, freq * 1.1] + LFPulse.ar(modFreq, mul: 240).unipolar.lag(0.),
-			freq: [freq * 0.7, freq * 0.61] + LFPulse.ar(modFreq.clip(5, 30), mul: [freq/4, freq/2], width: 0.02).unipolar,
-			// .lag(lag.abs),
-			rq: q * 0.001
-		);
-
-		filtered = (filtered*2).tanh * 1;
-		filtered = LPF.ar(filtered, freq: 9500);
-
-
-		verb = FreeVerb.ar( filtered * AmpComp.kr(freq, amp.lag(3)),
-			mix: 0.6,
-			room: 0.5,
-			damp: 0.1
-		) ;
-
-
-		verb = verb * 0.995;
-
-		verb * 9 * 0.99 * 8;
-		//* z.abs;
-	});
-
-	Ndef(\graySine6, { | amp=1, freq=2109, q=0.4, x=0.5, y=0.5, z=0.5 |
-		var verb;
-		var noise = WhiteNoise.ar();
-		// var modFreq = ( x.linlin(-1,1, 0, 4).sin * 20).abs + 0.1;
-		var modFreq = SelectX.kr(y.linlin(-1,1,0,1 * 4).abs.floor % 2, [x.linlin(-1,1, 0, 18).sin * 20 + 0.1, x.linlin(-1,1, 0, 18).cos * 20 + 0.1]);
-		var lag = (modFreq/2).pow(4).clip(0,1);
-
-		var filtered;
-		var freqs = [freq, (freq.cpsmidi + 1).midicps, (freq.cpsmidi + 7).midicps, (freq.cpsmidi - 2).midicps];
-
-		// freq = SelectX.kr(y.linlin(-1,1,0,1 * freqs.size).abs.floor, freqs);
-		freq = SelectX.kr(y.linlin(-1,1,0,1 * freqs.size).abs.floor, freqs).lag(0.0082);
-
-		freq = freq/2;
-		// freq = freq + (x.abs * 100);
-
-
-		filtered = BPF.ar(noise,
-			//freq: [freq, freq * 1.1] + LFPulse.ar(modFreq, mul: 240).unipolar.lag(0.),
-			freq: [freq * 0.7, freq * 0.61] + LFPulse.ar(modFreq.clip(5, 30), mul: [freq/4, freq/2], width: 0.02).unipolar,
-			// .lag(lag.abs),
-			rq: q * 0.001
-		);
-
-		filtered = (filtered*2).tanh * 1;
-		filtered = LPF.ar(filtered, freq: 9500);
-
-
-		verb = FreeVerb.ar( filtered * AmpComp.kr(freq, amp.lag(3)),
-			mix: 0.6,
-			room: 0.5,
-			damp: 0.1
-		) ;
-
-
-		verb = verb * 0.995;
-
-		verb * 9 * 0.99 * 8;
-		//* z.abs;
-	});
-
-
-	Ndef(\graySine4, { | amp=1, freq=2109, q=0.4, x=0.5, y=0.5, z=0.5 |
-		var verb;
-		var noise = WhiteNoise.ar();
-		// var modFreq = ( x.linlin(-1,1, 0, 4).sin * 20).abs + 0.1;
-		var modFreq = SelectX.kr(y.linlin(-1,1,0,1 * 4).abs.floor % 2, [x.linlin(-1,1, 0, 18).sin * 20 + 0.1, x.linlin(-1,1, 0, 18).cos * 20 + 0.1]);
-		var lag = (modFreq/2).pow(4).clip(0,1);
-
-		var filtered;
-		var freqs = [freq, (freq.cpsmidi + 1).midicps, (freq.cpsmidi + 7).midicps, (freq.cpsmidi - 2).midicps];
-
-		// freq = SelectX.kr(y.linlin(-1,1,0,1 * freqs.size).abs.floor, freqs);
-		freq = SelectX.kr(y.linlin(-1,1,0,1 * freqs.size).abs.floor, freqs).lag(0.0082);
-
-		freq = freq/2;
-		// freq = freq + (x.abs * 100);
-
-
-		filtered = BPF.ar(noise,
-			//freq: [freq, freq * 1.1] + LFPulse.ar(modFreq, mul: 240).unipolar.lag(0.),
-			freq: [freq * 0.7, freq * 0.61] + LFPulse.ar(modFreq.clip(5, 30), mul: [freq/4, freq/2], width: 0.02).unipolar,
-			// .lag(lag.abs),
-			rq: q * 0.001
-		);
-
-		filtered = (filtered*2).tanh * 1;
-		filtered = LPF.ar(filtered, freq: 9500);
-
-
-		verb = FreeVerb.ar( filtered * AmpComp.kr(freq, amp.lag(3)),
-			mix: 0.6,
-			room: 0.5,
-			damp: 0.1
-		) ;
-
-
-		verb = verb * 0.995;
-
-		verb * 9 * 0.99 * 8;
-		//* z.abs;
-	});
-
 	Ndef(\graySine5, { | amp=1, freq=2109, q=0.4, x=0.5, y=0.5, z=0.5 |
 		var verb;
 		var noise = WhiteNoise.ar();
@@ -243,7 +119,7 @@ Ndef(\graySine3, { | amp=1, freq=2109, q=0.4, x=0.5, y=0.5, z=0.5, vol |
 		verb = verb * 0.995;
 
 		verb * 9 * 0.99 * 8;
-		//* z.abs;
+		// z.abs;
 	});
 
 	//Scene 2
@@ -526,21 +402,7 @@ Ndef(\reverb2, {
 	};
 
 
-	~createAiryTrig = { | amp=0, pan=0.25, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
 
-		{
-			var filtered;
-
-			filtered = PlayBuf.ar(1, ~breathBuffers.choose, doneAction: 2);
-			filtered = Pan2.ar(filtered * ~airySineVol, pan);
-			filtered = CombN.ar(filtered, delaytime: 0.04, decaytime: 0.5);
-
-			Out.ar(~reverbBus, filtered * 0.16);
-
-			filtered * amp;
-		}.play;
-
-	};
 
 
 
@@ -566,136 +428,7 @@ Ndef(\reverb2, {
 			filtered;
 	}).play;
 
-	~createQ2Callback = { | amp=0, pan=0.25, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
 
-		Ndef(\q2Callback).set(\amp, 0.1, \pan, pan);
-		Ndef(\q2Callback).fadeTime = 1;
-		Ndef(\pulseTrain0).stop;
-		Ndef(\graySine).stop;
-		Ndef(\graySine2).stop;
-	};
-
-
-	Ndef(\q2Callback, { | amp=0, pan=0.25, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
-			var filtered;
-			filtered = PlayBuf.ar(1, ~q2CallbackBuffer, loop: 1);
-		filtered = Pan2.ar(filtered * ~q2CallbackVol, pan);
-			filtered = CombN.ar(filtered, delaytime: 0.04, decaytime: 0.5) * amp;
-
-			Out.ar(~reverbBus, filtered * 0.16);
-
-			filtered * 3;
-	}).play;
-
-	~createQ3Callback = { | amp=0, pan=0.25, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
-		Ndef(\q3Callback).set(\amp, 0.1, \pan, pan);
-		Ndef(\q3Callback).fadeTime = 1;
-		Ndef(\pulseTrain0).stop;
-		Ndef(\graySine).stop;
-		Ndef(\graySine2).stop;
-	};
-
-	Ndef(\q3Callback, { | amp=0, pan=0.25, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
-			var filtered;
-
-			filtered = PlayBuf.ar(1, ~q3CallbackBuffer, loop: 1);
-			filtered = Pan2.ar(filtered * ~q3CallbackVol, pan);
-			filtered = CombN.ar(filtered, delaytime: 0.04, decaytime: 0.5);
-
-			Out.ar(~reverbBus, filtered * 0.16);
-
-			filtered * amp;
-	}).play;
-
-
-	~createQ4Callback = { | amp=0, pan=0.25, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
-		Ndef(\q4Callback).set(\amp, 0.1, \pan, pan);
-		Ndef(\q4Callback).fadeTime = 1;
-		Ndef(\pulseTrain0).stop;
-		Ndef(\graySine).stop;
-		Ndef(\graySine2).stop;
-
-	};
-
-	Ndef(\q4Callback, { | amp=0, pan=0.25, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
-			var filtered;
-
-			filtered = PlayBuf.ar(1, ~q4CallbackBuffer, doneAction: 2);
-			filtered = Pan2.ar(filtered * ~q4CallbackVol, pan);
-			filtered = CombN.ar(filtered, delaytime: 0.04, decaytime: 0.5) * amp;
-
-			Out.ar(~reverbBus, filtered * 1);
-
-			filtered;
-	}).play;
-
-	~createFireTrig = { | amp=0, pan=0.25, freq=1, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
-
-		{
-			var filtered;
-
-			filtered = PlayBuf.ar(1, ~fireBuffers.choose, rate: freq, doneAction: 2);
-			filtered = Pan2.ar(filtered * ~fireVol, pan);
-			filtered = CombN.ar(filtered, delaytime: 0.04);
-
-			Out.ar(~reverbBus, filtered * 0.16);
-
-			filtered * amp;
-		}.play;
-
-	};
-
-	~createMetalTrig = { | amp=0, pan=0.25, freq=1, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
-
-		{
-			var filtered;
-
-			filtered = PlayBuf.ar(1, ~metalBuffers.choose, rate: freq, doneAction: 2);
-			filtered = Pan2.ar(filtered * ~metalVol, pan);
-			filtered = CombN.ar(filtered, delaytime: 0.01);
-
-			Out.ar(~reverbBus, filtered * 0.16);
-
-			filtered * amp;
-		}.play;
-
-	};
-
-
-	~createWaterTrig = { | amp=0, pan=0.25, freq=900, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
-		var winenv, grainEnv;
-		winenv = Env([0, 1, 0], [0.5, 0.5], [-8, 8]);
-		grainEnv = Buffer.sendCollection(s, winenv.discretize, 1);
-
-		{
-			var filtered;
-
-			filtered = GrainSin.ar(2, Impulse.kr(9), 0.01, freq: freq, envbufnum: grainEnv);
-			filtered = filtered * EnvGen.ar(Env.perc(0.01, 0.4), doneAction:2);
-
-			Out.ar(~reverbBus, filtered * 0.16);
-
-			filtered * amp * ~waterVol;
-		}.play;
-
-	};
-
-
-	~createEarthTrig = { | amp=0, pan=0.25, freq=1, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
-
-		{
-			var filtered;
-
-			filtered = PlayBuf.ar(1, ~earthBuffers.choose, rate: freq, doneAction: 2);
-			filtered = Pan2.ar(filtered * ~earthVol, pan);
-			filtered = CombN.ar(filtered, delaytime: 0.04);
-
-			Out.ar(~reverbBus, filtered * 0.16);
-
-			filtered * amp;
-		}.play;
-
-	};
 
 Ndef(\graySineTrig, { | amp=0, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
 	var verb, filtered;
@@ -747,17 +480,6 @@ var env, signal;
 
 
 
-/*Ndef(\noiseImpulse, { | amp=0, freq=9000, t_trigger=1 |
-	var out;
-	out = BPF.ar(GrayNoise.ar(),[ freq, freq*1.01 ],0.2);
-
-	out = out + (BPF.ar(GrayNoise.ar(),[ freq*0.25, freq*0.21 ],0.2) * 0.35);
-
-	out = EnvGen.ar(Env.new([0,1,0],[0.00001, 0.6, 0.000001]), gate: t_trigger) * out;
-
-	( out*2 ).max * amp * 1;
-});*/
-
 Ndef(\noiseImpulse, { | amp=0, freq=1900, t_trigger=1 |
 	var out;
 	out = BPF.ar(GrayNoise.ar(),[ freq, freq*1.01 ],0.2);
@@ -808,10 +530,6 @@ Ndef(\noiseImpulse, { | amp=0, freq=1900, t_trigger=1 |
 		Tdef(\vocal).play;
 		Tdef(\vocal2).play;
 
-
-	// , action: { |buffer|
-	// "".postln;
-	// "Loaded: ".post;
 
 	Ndef(\stutter0, { | x=1,y=1, rate=0.26, amp=0.85, switch=1 |
 		var buffer=c;
