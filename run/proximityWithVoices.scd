@@ -1,6 +1,7 @@
-s.options.memSize = 1024 * 100; s.boot;
+s.ouptions.memSize = 1024 * 100; s.boot;
 "Buffers.scd".loadRelative;
 
+(
 s.waitForBoot({
 	var tasks, synthDefs, main;
 
@@ -46,6 +47,7 @@ s.waitForBoot({
 	NdefMixer.new(s);
 
 });
+)
 
 //Second section of part 1 lotsa contact?
 

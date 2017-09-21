@@ -5,13 +5,15 @@ var numActors = 3;
 
 // Actor class
 var actor = { | index |
-	var position = Dictionary[\x -> 0, \y -> 0, \z -> 0 ];
+	var position = Dictionary[\x -> 0, \y -> 0, \z -> 0 ],
+	positionWorld = Dictionary[\x -> 0, \y -> 0, \z -> 0 ];
 
 
 	var dict = Dictionary[
 		\id -> 0,
 		\active -> false,
 		\position -> position,
+		\positionWorld -> positionWorld,
 		\lastPosition ->  Dictionary[\x -> 0, \y -> 0, \z -> 0 ],
 		\energies -> Array.fill(12, 0),
 		\motion -> false,
@@ -116,7 +118,7 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 			id = msg[1].asInteger(),
 		x = msg[3].asFloat / 1430,
 			y = msg[4].asFloat / 900,
-			z = msg[5].asFloat / 7000, 
+			z = msg[5].asFloat / 7000,
 			cameraID = 0;
 
 		cameraID = getCameraID.value(id);

@@ -194,7 +194,7 @@ Ndef(\noiseImpulse, { | amp=0, freq=1900, t_trigger=1 |
 	~sceneController = ~cSceneController.value();
 
 	Ndef(\graySine2).fadeTime = 10;
-	Ndef(\graySine2).xset(\amp, 0);
+	Ndef(\graySine2).xset(\vol, 0);
 
 	Ndef(\pulseTrain0).fadeTime = 2;
 	Ndef(\pulseTrain0).xset(\amp, 1);
@@ -204,10 +204,10 @@ Ndef(\noiseImpulse, { | amp=0, freq=1900, t_trigger=1 |
 	{
 		90.wait;
 		Ndef(\graySine2).fadeTime = 10;
-		Ndef(\graySine2).xset(\amp, 1);
+		Ndef(\graySine2).xset(\vol, 1);
 
 		Ndef(\graySine).fadeTime = 10;
-		Ndef(\graySine).xset(\amp, 1);
+		Ndef(\graySine).xset(\vol, 1);
 	}.fork;
 )
 
@@ -217,7 +217,13 @@ Ndef(\noiseImpulse, { | amp=0, freq=1900, t_trigger=1 |
 	"run/SceneController3.scd".loadRelative;
 	~sceneController = ~cSceneController.value();
 
-	Ndef(\music).set(\amp, 0, \vol, 0.5);
+Ndef(\graySine2).fadeTime = 10;
+		Ndef(\graySine2).xset(\vol, 0);
+
+		Ndef(\graySine).fadeTime = 10;
+		Ndef(\graySine).xset(\vol, 0);
+
+	Ndef(\music).set(\amp, 0, \vol, 0.5, \volume, 1);
 	Ndef(\music).play;
 Ndef(\music).fadeTime = 30;
 
@@ -243,8 +249,9 @@ Ndef(\music).fadeTime = 30;
 	~wallOn = true;
 
 Ndef(\music).fadeTime = 60;
-Ndef(\music).xset(\dist, 35, \amp, 0.35);
-
+Ndef(\music).xset(\dist, 35, \amp, 0.45);
+Ndef(\pad).fadeTime = 60;
+Ndef(\pad).xset(\dist, 35, \amp, 0.12);
 
 )
 
