@@ -16,19 +16,12 @@ s.waitForBoot({
 
 	~graySineVol = 0.05;
 	~entranceScanVol = 0.1;
-/*	~airySineVol = 0.02;
-	~metalVol = 0.01;
-	~earthVol = 0.02;
-	~fireVol = 0.02;
-	~waterVol = 0.25;*/
 
 	// Callback volumes
 	~q1CallbackVol = 0.04;
-/*	~q2CallbackVol = 0.01;
-	~q3CallbackVol = 0.01;
-	~q4CallbackVol = 0.01;*/
 
 	~wallOn = false;
+	~disableCallbackElimination = false;
 
 	// Load Synths
 	"Synths.scd".loadRelative; // returns ~cSynths

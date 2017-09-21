@@ -81,7 +81,7 @@
 	});
 
 
-	Ndef(\graySine5, { | amp=1, freq=2109, q=0.4, x=0.5, y=0.5, z=0.5 |
+	Ndef(\q1Callback, { | amp=1, freq=2109, q=0.4, x=0.5, y=0.05, z=0.5, pan=1 |
 		var verb;
 		var noise = WhiteNoise.ar();
 		// var modFreq = ( x.linlin(-1,1, 0, 4).sin * 20).abs + 0.1;
@@ -113,18 +113,19 @@
 			mix: 0.6,
 			room: 0.5,
 			damp: 0.1
-		) ;
+		);
 
 
 		verb = verb * 0.995;
 
-		verb * 9 * 0.99 * 8;
+		Pan2.ar(verb * 9 * 0.99 * 8, pan);
 		// z.abs;
 	});
 
 	//Scene 2
 	Ndef(\pad, { | amp=0.25, freq = 50.48, mod = 0.3, dist=0 |
-		var out = LFPulse.ar(freq) + (LFPulse.ar(freq / 0.75) * LFPulse.ar(20.2, mul: SinOsc.kr(0.1, mul:0.5), add: 0.4)) ;
+		var out = LFPulse.ar(freq) + (LFPulse.ar(freq / 0.75) * LFPulse.ar(20.2, mul: SinOsc.kr(0.1, mul:0.5), add: 0.4));
+
 		out = LFNoise1.ar(0.5, mul: 0.4, add: 0.6) * out;
 		out = LPF.ar(out, 300).tanh;
 
@@ -409,6 +410,7 @@ Ndef(\reverb2, {
 	~createQ1Callback = { | amp=0, pan=0.25, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
 		Ndef(\q1Callback).set(\amp, 0.1, \pan, pan);
 		Ndef(\q1Callback).fadeTime = 1;
+
 		Ndef(\pulseTrain0).stop;
 		Ndef(\graySine).stop;
 		Ndef(\graySine2).stop;
@@ -416,7 +418,7 @@ Ndef(\reverb2, {
 
 	};
 
-	Ndef(\q1Callback, { | amp=0, pan=0.25, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
+	/*Ndef(\q1Callback, { | amp=0, pan=0.25, freq=703, q=0.4, x=0.5, y=0.5, z=0.5, length=0.5, t_trigger=1, switch=0 |
 			var filtered;
 
 			filtered = PlayBuf.ar(1, ~q1CallbackBuffer, loop: 1);
@@ -426,7 +428,7 @@ Ndef(\reverb2, {
 			Out.ar(~reverbBus, filtered * 0.16 * 0);
 
 			filtered;
-	}).play;
+	}).play;*/
 
 
 

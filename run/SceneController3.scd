@@ -112,9 +112,9 @@
 					if(thumpZoneIDs.values.sum < 1, {
 						Ndef(\bass).set(\amp, 0);
 
-						if( (~section == 2), {
+						/*if( (~section == 2), {
 							Ndef(synths[0][~section][actorIndex % (synths[0][~section].size)]).set(\freq, ((  (x.abs - 1).abs.pow(3) * 8000) + 90), \pan, -1 );
-						});
+						});*/
 					});
 				/*});*/
 
@@ -201,7 +201,7 @@
 					~createEntranceScan.value(amp: 0.26 + 0.2, freq: 2700 + (200.0.rand), length: 0.08 + 0.1.rand, pan: 0);
 				});
 
-				if( (~section == 1) || (~section == 2) || (~section == 2), {
+				if( (~section == 1) || (~section == 2), {
 					["turning off Q1"].postln;
 					Ndef(\q1Callback).set(\amp, 0);
 					Ndef(\pulseTrain0).play;
@@ -295,7 +295,7 @@
 
 								if( (~section == 0) || (~section == 4), {
 									// IF WE ARE MOVING then turn up the synth
-									Ndef(synths[1][~section][id % (synths[1][~section].size)]).set(\amp, 0.4);
+									Ndef(synths[1][~section][id % (synths[1][~section].size)]).set(\amp, 0.4, \vol, 1);
 								});
 
 							});
@@ -363,10 +363,10 @@
 			},
 			\lost -> { | id, x, y, z |
 
-				if(x <= -0.9, {
+				/*if(x <= -0.9, {
 					//BEEP
 					~createEntranceScan.value(amp: 0.26 + 0.2, freq: 2700 + (200.0.rand), length: 0.08 + 0.1.rand, pan: 0);
-				});
+				});*/
 
 				/*if((x >= 0.75) && (y <= -0.25), {*/
 					// THUMP ZONE
@@ -381,6 +381,11 @@
 						/*~createQ2Callback.value(pan: 1);*/
 					/*});*/
 				/*});*/
+
+				if( (~section == 0) || (~section == 4), {
+					// IF WE ARE MOVING then turn up the synth
+					Ndef(synths[1][~section][id % (synths[1][~section].size)]).set(\amp, 0.0, \vol, 1);
+				});
 
 			}
 		],
@@ -561,10 +566,10 @@
 
 						var x = vector1[0],
 						y = vector1[2];
-
+/*
 						if( (~section == 2), {
 							Ndef(synths[3][~section][id % (synths[3][~section].size)]).set(\amp, 0.4);
-						});
+						});*/
 
 						// THUMP ZONE
 						/*if((x >= 0.75) && (y >= 0.75), {*/
@@ -574,10 +579,10 @@
 						/*}, {*/
 
 							if(thumpZoneIDs.values.sum < 1 , {
-								if((~section == 2), {
+								/*if((~section == 2), {
 									// IF NOT IN THUMP ZONE AND MOVING, turn up synth
 									Ndef(synths[3][~section][id % (synths[3][~section].size)]).set(\amp, 0.4);
-								});
+								});*/
 
 								if( (~section == 0), {
 									~createGraySineTrig.value(amp: 3, freq: 603, switch: 3, length: 1.3, t_trigger: 1);
@@ -595,15 +600,15 @@
 
 						if(motion == true, {
 
-							if( (~section == 2), {
+							// if( (~section == 2), {
 								// Thump Zone
 								/*if((x >= 0.75) && (y <= -0.25), {*/
 									/*Ndef(synths[3][~section][id % (synths[3][~section].size)]).set(\amp, 0.3);*/
 								/*}, {*/
 									// IF NOT MOVING turn down synth
-									Ndef(synths[3][~section][id % (synths[3][~section].size)]).set(\amp, 0.3);
+							// Ndef(synths[3][~section][id % (synths[3][~section].size)]).set(\amp, 0.3);
 								/*});*/
-							});
+							// });
 
 							motion = false;
 
@@ -644,9 +649,9 @@
 			},
 			\lost -> { | id, x, y, z |
 
-				if( (~section == 2), {
+				/*if( (~section == 2), {
 					Ndef(synths[3][~section][id % (synths[3][~section].size)]).set(\amp, 0);
-				});
+				});*/
 
 				/*if((x >= 0.75) && (y >= 0.75), {*/
 					// THUMP ZONE

@@ -183,26 +183,6 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 					synth[\active] = false;
 				});
 
-
-				if(~quadrant2, {
-					{
-						var freq = 490, sin1, sin2, noise, out;
-
-						freq = [290, 490, 900].choose/2;
-						freq = Line.kr([ freq, freq*1.1 ], freq-30, 0.3);
-
-						noise = DelayN.ar(BPF.ar(GrayNoise.ar(), 6000 + 1000.0.rand, 0.01), 0.5);
-						noise = GrayNoise.ar() * EnvGen.ar(Env.perc(0.01, 0.01));
-						noise = SinOsc.ar(80, mul: 2).max * EnvGen.ar(Env.perc(0.01, 0.01));
-						noise = LPF.ar(noise, 690);
-						sin1 = SinOsc.ar(freq) * EnvGen.ar(Env.perc(0.1, 0.2));
-						sin2 = SinOsc.ar(freq * 2) * EnvGen.ar(Env.perc(0.1, 7), doneAction:2) * 0.5;
-						out = (((sin1) * 3) + ( noise * 3 )).max;
-						out = FreeVerb.ar(out, mix: 0.68);
-						Out.ar(0, out * ~dirgeVol);
-
-					}.play;
-				});
 				///////////////////////
 
 

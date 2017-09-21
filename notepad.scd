@@ -192,7 +192,7 @@ Ndef(\noiseImpulse, { | amp=0, freq=1900, t_trigger=1 |
 	~section = 1;
 	"run/SceneController3.scd".loadRelative;
 	~sceneController = ~cSceneController.value();
-
+Ndef(\q1Callback).play;
 	Ndef(\graySine2).fadeTime = 10;
 	Ndef(\graySine2).xset(\vol, 0);
 
@@ -236,19 +236,25 @@ Ndef(\music).fadeTime = 30;
 	"run/SceneController3.scd".loadRelative;
 	~sceneController = ~cSceneController.value();
 
+~createQ1Callback.value(pan: 1);
 
-	Tdef(\randomCallback, {
-		{
-			~createQ1Callback.value(pan: 1);
-			(20 + 20.0.rand).wait;
-		}.loop;
-	});
+//
+// Tdef(\randomCallback, {
+// 	{
+// 		~createQ1Callback.value(pan: 1);
+// 		(20 + 20.0.rand).wait;
+// 	}.loop;
+// });
 
-	Tdef(\randomCallback).play;
+// Tdef(\randomCallback).play;
 
 	~wallOn = true;
 
-Ndef(\music).fadeTime = 60;
+Ndef(\proximity).set(\amp, 0);
+Ndef(\noiseImpulse).play;
+Ndef(\music).set(\amp, 0, \vol, 0.5, \volume, 1);
+	Ndef(\music).play;
+Ndef(\music).fadeTime = 120;
 Ndef(\music).xset(\dist, 35, \amp, 0.45);
 Ndef(\pad).fadeTime = 60;
 Ndef(\pad).xset(\dist, 35, \amp, 0.12);
@@ -260,6 +266,8 @@ Ndef(\pad).xset(\dist, 35, \amp, 0.12);
 	~section = 4;
 	"run/SceneController3.scd".loadRelative;
 	~sceneController = ~cSceneController.value();
+
+Tdef(\randomCallback).stop;
 
 
 )
