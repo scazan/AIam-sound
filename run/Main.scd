@@ -287,6 +287,7 @@ actors = Array.fill(numActors, {|i| actor.value(i)});
 				actorProximity = computeProximityN2D.value(allActiveActors.collect({ | item | [item[\positionWorld][\x], item[\positionWorld][\y] ] ; }));
 			});
 
+			// [actorProximity].postln;
 			// UPDATES ///////////////////////////////////////
 			// Update any synths with new info
 			~sceneController[\getCameraProcessor].value(cameraID)[\proximity].value(actorProximity);

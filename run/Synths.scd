@@ -66,7 +66,7 @@
 		freq = freq/2;
 
 
-		filtered = SinOsc.ar(freq);
+		filtered = SinOsc.ar( freq.lag(0.2) );
 		filtered = (filtered * dist).max;
 		verb = FreeVerb.ar( filtered * AmpComp.kr(freq, amp.lag(3)),
 			mix: 0.6,
@@ -81,7 +81,7 @@
 	});
 
 
-	Ndef(\q1Callback, { | amp=1, freq=2109, q=0.4, x=0.5, y=0.05, z=0.5, pan=1 |
+	Ndef(\q1Callback, { | amp=0, freq=2109, q=0.4, x=0.5, y=0.05, z=0.5, pan=1 |
 		var verb;
 		var noise = WhiteNoise.ar();
 		// var modFreq = ( x.linlin(-1,1, 0, 4).sin * 20).abs + 0.1;

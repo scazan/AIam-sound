@@ -1,4 +1,5 @@
 s.options.memSize = 1024 * 100; s.boot;
+
 "Buffers.scd".loadRelative;
 
 (
@@ -11,7 +12,7 @@ s.waitForBoot({
 
 	~dirgeVol = 0.05;
 	~energyThreshold = 1.05;
-	~proximityDistance = 0.9;
+	~proximityDistance = 0.5;
 	//~energyThreshold = 0.47;
 
 	~graySineVol = 0.05;

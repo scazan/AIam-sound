@@ -192,46 +192,55 @@ Ndef(\noiseImpulse, { | amp=0, freq=1900, t_trigger=1 |
 	~section = 1;
 	"run/SceneController3.scd".loadRelative;
 	~sceneController = ~cSceneController.value();
+Ndef(\q1Callback).set(\amp, 0);
 Ndef(\q1Callback).play;
-	Ndef(\graySine2).fadeTime = 10;
+	Ndef(\graySine2).fadeTime = 0.6;
 	Ndef(\graySine2).xset(\vol, 0);
 
-	Ndef(\pulseTrain0).fadeTime = 2;
+Ndef(\pulseTrain0).play;
+	Ndef(\pulseTrain0).fadeTime = 1;
 	Ndef(\pulseTrain0).xset(\amp, 1);
 
 	Ndef(\bass).stop;
 
-	{
-		90.wait;
-		Ndef(\graySine2).fadeTime = 10;
-		Ndef(\graySine2).xset(\vol, 1);
 
-		Ndef(\graySine).fadeTime = 10;
-		Ndef(\graySine).xset(\vol, 1);
-	}.fork;
 )
+// One silent entrance and exit.
+
+// Second exit and entrance wowow comes in
+{
+	// wowow comes in only after entrance and exit
+	// 90.wait;
+		Ndef(\graySine2).fadeTime = 1;
+		Ndef(\graySine2).set(\vol, 1);
+
+		Ndef(\graySine).fadeTime = 1;
+		Ndef(\graySine).set(\vol, 1);
+	}.fork;
+
 
 (
-	// CUE music at hand touches
+	// CUE music at third exit and entrance
 	~section = 2;
 	"run/SceneController3.scd".loadRelative;
 	~sceneController = ~cSceneController.value();
 
-Ndef(\graySine2).fadeTime = 10;
-		Ndef(\graySine2).xset(\vol, 0);
+Ndef(\graySine2).fadeTime = 1;
+Ndef(\graySine2).xset(\vol, 0);
 
-		Ndef(\graySine).fadeTime = 10;
-		Ndef(\graySine).xset(\vol, 0);
+		Ndef(\graySine).fadeTime = 1;
+Ndef(\graySine).xset(\vol, 0);
 
-	Ndef(\music).set(\amp, 0, \vol, 0.5, \volume, 1);
+// Also why do the synths get activated when one runs across Q1 and callback is activated?
+	Ndef(\music).set(\amp, 0, \vol, 0.5, \volume, 1); // Why is this not taking?
 	Ndef(\music).play;
-Ndef(\music).fadeTime = 30;
+Ndef(\music).fadeTime = 1;
 
-	Ndef(\music).xset(\amp, 1);
+	Ndef(\music).set(\amp, 1);
 
 )
 
-(
+(// HANDSEAT
 	~section = 3;
 	"run/SceneController3.scd".loadRelative;
 	~sceneController = ~cSceneController.value();
@@ -248,7 +257,10 @@ Ndef(\music).fadeTime = 30;
 
 // Tdef(\randomCallback).play;
 
+{
+	3.0.wait;
 	~wallOn = true;
+}.fork;
 
 Ndef(\proximity).set(\amp, 0);
 Ndef(\noiseImpulse).play;
