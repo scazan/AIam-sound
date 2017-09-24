@@ -319,7 +319,7 @@ Ndef(\bass3, { | freq=200, amp=0.0, dist=1 |
 
 	out = out + ((SinOsc.ar(freq *2) * Lag.kr( dist, 0.7 )/2) * LFPulse.ar(4).unipolar);
 	out = out + ( LFPulse.ar(2.5).unipolar * 0.3);
-	out = out + ((SinOsc.ar(freq *1.5) * Lag.kr( dist, 0.7 )/2) * LFPulse.ar(2.5).unipolar);
+	//out = out + ((SinOsc.ar(freq *1.5) * Lag.kr( dist, 0.7 )/2) * LFPulse.ar(2.5).unipolar);
 
 	out = out + (LPF.ar(SinOsc.ar(freq / 4) * LFPulse.ar(2.0/8, width: 0.25).unipolar, 70) * 0.25);
 
@@ -334,8 +334,33 @@ Ndef(\bass3).stop;
 Ndef(\stop).play
 
 Ndef(\bass3).fadeTime = 4;
-Ndef(\bass3).set(\amp, 0, 100);
-Ndef(\bass3).set(\amp, 1, \freq, 200);
+Ndef(\bass3).set(\amp, 0, \freq, 100);
+Ndef(\bass3).set(\amp, 1, \freq, 400);
 
 NdefMixer.new(s);
-c
+
+
+(
+// Latest good one
+Ndef(\bass3, { | freq=60, amp=0.0, dist=1 |
+	var out;
+	var seq = Dseq([freq, freq/2, freq, freq*1.5],inf);
+
+	freq = Demand.kr(Impulse.kr(0.1), 0, seq).lag(0.25);
+
+	out = LFPulse.ar(freq) + (LFPulse.ar(freq / 0.75) * LFPulse.ar(20.2, mul: SinOsc.kr(0.1, mul:0.5), add: 0.4)) ;
+	out = LFNoise1.ar(0.5, mul: 0.4, add: 0.6) * out;
+	out = LPF.ar(out, 300).tanh;
+
+		out = out + ((SinOsc.ar(freq *2) * Lag.kr( dist, 0.7 )/2) * LFPulse.ar(4).unipolar);
+		out = out + ((SinOsc.ar(freq *1.5) * Lag.kr( dist, 0.7 )/2) * LFPulse.ar(2.5).unipolar);
+
+		out = out + (LPF.ar(SinOsc.ar(freq / 4) * LFPulse.ar(2.0/8, width: 0.25).unipolar, 70) * 0.25);
+	out = out + (SinOsc.ar(freq / 3) * SinOsc.ar(0.1).unipolar * 0.75);
+
+	// var out = (LFTri.ar([freq, freq * 1.1]) * 3).tanh * amp.lag(1.2)/2;
+[out, out];
+	//FreeVerb.ar([out,out] * amp * 0.1, mix: 1);
+
+});
+)

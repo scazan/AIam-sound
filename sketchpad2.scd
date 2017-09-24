@@ -164,4 +164,72 @@ top right
 // MAke thump work for multiple people
 // Fix max-blob size to allow for two people
 
+s.boot;
+s.meter;
+NdefMixer.new(s);
+~jesus = Buffer.read(s, "/home/scott/MobileScores/Jesus/celloSolid.aiff");
+~noise2 = 0.2;
+~line = 1;
+~grainPointer = 136666;
+(
+Ndef(\graySine2, {arg vol=0.6, amp=0, pointer=0, freq=1000, rateRand=0.2, overlaps=3, grainSize=0.15;
+	var out;
+	var rate, rate2, verb;
+	var sine = LFTri.ar( freq.lag(0.1) + SinOsc.kr(190, mul: 150).unipolar ) * 0.3 * AmpCompA.kr(freq, amp);
 
+	rate = (freq.lag(0.2) - 90 / 8000);
+	rate = rate * 5;
+	rate2 = rate * 1.01;
+
+	out = (Warp1.ar(1, ~jesus, ~grainPointer, [rate, rate2], grainSize  + (Gendy1.ar()*rateRand), -1, overlaps, 0.15, 2) * vol).clip(-1, 1) * 1;
+	out = out + PlayBuf.ar(2, ~jesus, [ rate,  rate2], loop: 1) * 2;
+	out = out + sine * amp.lag(3);
+
+	verb = FreeVerb.ar( out,
+			mix: 0.16,
+			room: 0.5,
+			damp: 0.1
+		);
+
+	verb;
+});
+)
+
+(
+	Ndef(\graySine2, { | amp=1,  freq=200, q=0.4, x=0.5, y=0.5, z=0.5, vol=0, dist=1 |
+	// var freq = ((  (MouseX.kr(-1,1).abs - 1).abs.pow(3) * 8000) + 90);
+		var verb;
+		var noise = WhiteNoise.ar();
+		// var modFreq = ( x.linlin(-1,1, 0, 4).sin * 20).abs + 0.1;
+		var modFreq = SelectX.kr(y.linlin(-1,1,0,1 * 4).abs.floor % 2, [x.linlin(-1,1, 0, 18).sin * 20 + 0.1, x.linlin(-1,1, 0, 18).cos * 20 + 0.1]);
+		var lag = (modFreq/2).pow(4).clip(0,1);
+
+		var filtered;
+		var freqs = [freq, (freq.cpsmidi + 1).midicps, (freq.cpsmidi + 7).midicps, (freq.cpsmidi - 2).midicps];
+
+		// freq = SelectX.kr(y.linlin(-1,1,0,1 * freqs.size).abs.floor, freqs);
+		freq = SelectX.kr(y.linlin(-1,1,0,1 * freqs.size).abs.floor, freqs).lag(0.0082);
+
+		freq = freq/2;
+
+
+		filtered = SinOsc.ar( freq.lag(0.2) );
+		filtered = (filtered * dist).max;
+		verb = FreeVerb.ar( filtered * AmpComp.kr(freq, amp.lag(3)),
+			mix: 0.6,
+			room: 0.5,
+			damp: 0.1
+		) ;
+
+
+		verb = verb * 0.995;
+
+		verb!2 * 1 * vol;
+
+		filtered!2;
+	});
+
+)
+
+Ndef(\graySine2).play;
+Ndef(\graySine2).set(\vol, 0.6, \amp, 0.5);
