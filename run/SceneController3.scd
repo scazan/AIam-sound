@@ -233,6 +233,15 @@
 					Ndef(\graySine).play;
 					Ndef(\graySine2).play;
 				});
+
+				if( (~wallOn == true), {
+					"WALL".postln;
+					if( (y>=0.9) || (x >= 0.9) || (x <= -0.21) || (y <= -0.21), {
+						// WALL
+						"WALL".postln;
+						Ndef(\noiseImpulse).set(\amp, 0.6, \t_trigger, 1);
+					});
+				});
 			},
 			\lost -> { | id, x, y, z |
 
@@ -256,14 +265,6 @@
 				});
 
 
-				if( (~wallOn == true), {
-					"WALL".postln;
-					if( (y>=0.9) || (x >= 0.9) || (x <= -0.21) || (y <= -0.21), {
-						// WALL
-						"WALL".postln;
-						Ndef(\noiseImpulse).set(\amp, 0.6, \t_trigger, 1);
-					});
-				});
 			}
 		],
 		Dictionary[ // Q2: TOP RIGHT ////////////////////////////////////////////////////////////////////////////////////
