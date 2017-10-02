@@ -397,7 +397,7 @@ Ndef(\reverb2, {
 			verb = EnvGen.ar(Env.perc(0.01, length/2), gate: t_trigger, doneAction: 2) * verb;
 			Out.ar(~reverbBus, verb * 0.6);
 
-			verb * 3;
+			verb * 8;
 
 		}.play;
 	};

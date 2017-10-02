@@ -194,8 +194,8 @@ Ndef(\noiseImpulse, { | amp=0, freq=1900, t_trigger=1 |
 	~sceneController = ~cSceneController.value();
 Ndef(\q1Callback).set(\amp, 0);
 Ndef(\q1Callback).play;
-	Ndef(\graySine2).fadeTime = 0.6;
-	Ndef(\graySine2).xset(\vol, 0);
+Ndef(\graySine2).fadeTime = 0.6;
+Ndef(\graySine2).xset(\vol, 0);
 
 Ndef(\pulseTrain0).play;
 	Ndef(\pulseTrain0).fadeTime = 1;

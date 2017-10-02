@@ -618,6 +618,7 @@
 									Ndef(synths[3][~section][id % (synths[3][~section].size)]).set(\amp, 0.4);
 								});*/
 
+							"moving".postln;
 								if( (~section == 0), {
 									~createGraySineTrig.value(amp: 3, freq: 603, switch: 3, length: 1.3, t_trigger: 1);
 								});
