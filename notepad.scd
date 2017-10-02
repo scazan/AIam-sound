@@ -185,6 +185,7 @@ Ndef(\noiseImpulse, { | amp=0, freq=1900, t_trigger=1 |
 	Ndef(\beep).play;
 
 	Ndef(\bass).stop;
+
 )
 
 (
@@ -216,7 +217,7 @@ Ndef(\pulseTrain0).play;
 
 		Ndef(\graySine).fadeTime = 1;
 		Ndef(\graySine).set(\vol, 1);
-	}.fork;
+}.fork;
 
 
 (

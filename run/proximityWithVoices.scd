@@ -11,7 +11,7 @@ s.waitForBoot({
 	~section = 0;
 
 	~dirgeVol = 0.05;
-	~energyThreshold = 1.05;
+	~energyThreshold = 1.15;
 	~proximityDistance = 0.5;
 	//~energyThreshold = 0.47;
 

@@ -167,7 +167,7 @@ top right
 s.boot;
 s.meter;
 NdefMixer.new(s);
-~jesus = Buffer.read(s, "/home/scott/MobileScores/Jesus/celloSolid.aiff");
+~jesus = Buffer.read(s, "/Users/aiam/projects/AIam-sound/samples/celloSolid.aiff");
 ~noise2 = 0.2;
 ~line = 1;
 ~grainPointer = 136666;
