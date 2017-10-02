@@ -15,7 +15,7 @@ s.waitForBoot({
 	~proximityDistance = 0.5;
 	//~energyThreshold = 0.47;
 
-	~graySineVol = 0.05;
+	~graySineVol = 0.95;
 	~entranceScanVol = 0.1;
 
 	// Callback volumes
