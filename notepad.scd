@@ -185,7 +185,6 @@ Ndef(\noiseImpulse, { | amp=0, freq=1900, t_trigger=1 |
 	Ndef(\beep).play;
 
 	Ndef(\bass).stop;
-
 )
 
 (
@@ -206,7 +205,7 @@ Ndef(\pulseTrain0).play;
 
 
 )
-// One silent entrance and exit.
+
 
 // Second exit and entrance wowow comes in
 {
@@ -217,7 +216,7 @@ Ndef(\pulseTrain0).play;
 
 		Ndef(\graySine).fadeTime = 1;
 		Ndef(\graySine).set(\vol, 1);
-}.fork;
+	}.fork;
 
 
 (
@@ -234,10 +233,10 @@ Ndef(\graySine).xset(\vol, 0);
 
 // Also why do the synths get activated when one runs across Q1 and callback is activated?
 	Ndef(\music).set(\amp, 0, \vol, 0.5, \volume, 1); // Why is this not taking?
-	Ndef(\music).play;
-Ndef(\music).fadeTime = 1;
+// Ndef(\music).play;
+// Ndef(\music).fadeTime = 1;
 
-	Ndef(\music).set(\amp, 1);
+// Ndef(\music).set(\amp, 1);
 
 )
 
