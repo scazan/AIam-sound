@@ -206,18 +206,18 @@ Ndef(\pulseTrain0).play;
 
 
 )
-// One silent entrance and exit.
 
-// Second exit and entrance wowow comes in
-{
-	// wowow comes in only after entrance and exit
-	// 90.wait;
-		Ndef(\graySine2).fadeTime = 1;
-		Ndef(\graySine2).set(\vol, 1);
 
-		Ndef(\graySine).fadeTime = 1;
-		Ndef(\graySine).set(\vol, 1);
-}.fork;
+
+// {
+// 	// wowow comes in only after entrance and exit
+// 	// 90.wait;
+// 	Ndef(\graySine2).fadeTime = 1;
+// 	Ndef(\graySine2).set(\vol, 1);
+//
+// 	Ndef(\graySine).fadeTime = 1;
+// 	Ndef(\graySine).set(\vol, 1);
+// }.fork;
 
 
 (
@@ -237,7 +237,8 @@ Ndef(\graySine).xset(\vol, 0);
 	Ndef(\music).play;
 Ndef(\music).fadeTime = 1;
 
-	Ndef(\music).set(\amp, 1);
+	Ndef(\music).xset(\amp, 1);
+~wallOn = false;
 
 )
 
@@ -258,22 +259,29 @@ Ndef(\music).fadeTime = 1;
 
 // Tdef(\randomCallback).play;
 
+
+// Make the wall a randomly triggered sound, increasing the rhythm of the wall hits
 {
-	3.0.wait;
+	9.0.wait;
 	~wallOn = true;
 }.fork;
 
 Ndef(\proximity).set(\amp, 0);
 Ndef(\noiseImpulse).play;
-Ndef(\music).set(\amp, 0, \vol, 0.5, \volume, 1);
-	Ndef(\music).play;
-Ndef(\music).fadeTime = 120;
-Ndef(\music).xset(\dist, 35, \amp, 0.45);
+// Ndef(\music).set(\amp, 0, \vol, 0.5, \volume, 1);
+// Ndef(\music).play;
+// Ndef(\music).fadeTime = 120;
+// Ndef(\music).xset(\dist, 35, \amp, 0.45);
 Ndef(\pad).fadeTime = 60;
 Ndef(\pad).xset(\dist, 35, \amp, 0.12);
 
+Ndef(\music).set(\amp, 0);
 )
 
+Ndef(\noiseImpulse).set(\amp, 0.6, \t_trigger, 1);
+
+// Wait for Valencia to come in and then remove the high sound
+Ndef(\q1Callback).xset(\amp, 0);
 
 (
 	~section = 4;

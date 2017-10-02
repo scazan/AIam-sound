@@ -266,6 +266,13 @@
 					});
 				});
 
+				if( (~wallOn == true), {
+				if( (y>=0.9) || (x >= 0.9) || (x <= -0.21) || (y <= -0.21), {
+						// WALL
+						"WALL".postln;
+						Ndef(\noiseImpulse).set(\amp, 0.6, \t_trigger, 1);
+					});
+				});
 
 			}
 		],
@@ -379,7 +386,7 @@
 
 				if(x >= 0.9, {
 					//BEEP
-					~createEntranceScan.value(amp: 0.26 + 0.2, freq: 2700 + (200.0.rand), length: 0.08 + 0.1.rand, pan: 0);
+					~createEntranceScan.value(amp: 0.26 + 0.8, freq: 2700 + (200.0.rand), length: 0.08 + 0.1.rand, pan: 0);
 				});
 
 
@@ -410,8 +417,7 @@
 					/*});*/
 				/*});*/
 
-				if( (~section == 0) || (~section == 4) || (~section == 2), {
-					// IF WE ARE MOVING then turn up the synth
+				if( (~section == 0) && ((x > 0.9)  || (y > 0.9) || (x < -0.9) || (y < -0.9) ) , {
 					Ndef(synths[1][~section][id % (synths[1][~section].size)]).set(\amp, 0.0, \vol, 1);
 				});
 
@@ -519,7 +525,7 @@
 
 				if(x <= -0.7, {
 					//bEEP
-					~createEntranceScan.value(amp: 0.26 + 0.2, freq: 2700 + (200.0.rand), length: 0.08 + 0.1.rand, pan: 0);
+					~createEntranceScan.value(amp: 0.26 + 0.8, freq: 2700 + (200.0.rand), length: 0.08 + 0.1.rand, pan: 0);
 				});
 
 				/*Ndef(\q3Callback).xset(\amp, 0);
@@ -675,7 +681,7 @@
 
 				if(x >= 0.9, {
 					//bEEP
-					~createEntranceScan.value(amp: 0.26 + 0.2, freq: 2700 + (200.0.rand), length: 0.08 + 0.1.rand, pan: 0);
+					~createEntranceScan.value(amp: 0.26 + 0.8, freq: 2700 + (200.0.rand), length: 0.08 + 0.1.rand, pan: 0);
 				});
 
 				/*Ndef(\q4Callback).set(\amp, 0);

@@ -374,7 +374,7 @@ Ndef(\reverb2, {
 
 			var filtered, verb;
 			// var freqs = [freq, (freq.cpsmidi + 3).midicps, (freq.cpsmidi + 7).midicps, (freq.cpsmidi - 5).midicps];
-			var freqs = [freq, freq * 1.3, freq * 2.1, freq * 0.5];
+			var freqs = [freq, freq * 1.3, freq * 2.1, freq * 0.5] + 50.0.rand;
 
 			freq = SelectX.kr(switch, freqs).lag(0.00012);
 
@@ -397,7 +397,7 @@ Ndef(\reverb2, {
 			verb = EnvGen.ar(Env.perc(0.01, length/2), gate: t_trigger, doneAction: 2) * verb;
 			Out.ar(~reverbBus, verb * 0.6);
 
-			verb * 3;
+			verb * 6;
 
 		}.play;
 	};
