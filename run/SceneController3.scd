@@ -22,6 +22,10 @@
 				\graySine
 			],
 			[ // 3
+				\graySine2,
+				\graySine,
+				\graySine2,
+				\graySine
 			],
 			[ // 4
 			]
@@ -40,13 +44,17 @@
 				\graySine2,
 				\graySine
 			],
-			[ // 1
+			[ // 2
 				\graySine2,
 				\graySine,
 				\graySine2,
 				\graySine
 			],
 			[ // 3
+				\graySine2,
+				\graySine,
+				\graySine2,
+				\graySine
 			],
 			[ // 4
 			]
@@ -67,6 +75,10 @@
 				\graySine
 			],
 			[ // 3
+				\graySine2,
+				\graySine,
+				\graySine2,
+				\graySine
 			],
 			[ // 4
 			]
@@ -87,6 +99,10 @@
 				\graySine
 			],
 			[ // 3
+				\graySine2,
+				\graySine,
+				\graySine2,
+				\graySine
 			],
 			[ // 4
 			]
@@ -107,6 +123,10 @@
 				\graySine
 			],
 			[ // 3
+				\graySine2,
+				\graySine,
+				\graySine2,
+				\graySine
 			],
 			[ // 4
 			]
@@ -137,7 +157,7 @@
 					if(thumpZoneIDs.values.sum < 1, {
 						Ndef(\bass).set(\amp, 0);
 
-						if( (~section == 2), {
+						if( (~section == 2) || (~section == 1) || (~section == 3), {
 							Ndef(synths[0][~section][actorIndex % (synths[0][~section].size)]).set(\freq, ((  (x.abs - 1).abs.pow(6) * 8000) + 90), \pan, -1 );
 						});
 					});
@@ -175,14 +195,14 @@
 						/*}, {*/
 							if(thumpZoneIDs.values.sum < 1, {
 
-								if( (~section == 4) || (~section == 2), {
+								if( (~section == 4) || (~section == 2) || (~section == 1) || (~section == 3), {
 									// If we are moving, turn up the synth
 										Ndef(synths[0][~section][id % (synths[0][~section].size)]).set(\amp, 0.4);
 								});
 
 							if( (~section == 0), {
 									// If we are moving, trigger a BOOP
-									~createGraySineTrig.value(amp: 2, freq: 1703, switch: 3, length: 0.25, t_trigger: 1);
+									~createGraySineTrig.value(amp: 2, freq: 1703 + 600.rand, switch: 3, length: 0.25, t_trigger: 1);
 								});
 
 							});
@@ -195,7 +215,7 @@
 				}, {
 					// IF WE ARE NOT MOVING
 					if(motion == true, {
-							if( (~section == 2), {
+							if( (~section == 2) || (~section == 1) || (~section == 3), {
 							// If we are not moving, turn down the volume on the synth
 								Ndef(synths[0][~section][id % (synths[0][~section].size)]).set(\amp, 0.2);
 						});
@@ -289,7 +309,7 @@
 				/*}, {*/
 						thumpZoneIDs[ actor[\id] ] = 0;
 
-					if( (~section == 0) || (~section == 2), {
+					if( (~section == 0) || (~section == 2) || (~section == 1) || (~section == 3), {
 						Ndef(synths[1][~section][actorIndex % (synths[1][~section].size)]).set(\freq, (((x.abs - 1).abs.pow(6) * 8000) + 90), \pan, -1 );
 					});
 
@@ -328,7 +348,7 @@
 						/*}, {*/
 							if(thumpZoneIDs.values.sum < 1 , {
 
-								if( (~section == 0) || (~section == 4) || (~section == 2), {
+								if( (~section == 0) || (~section == 4) || (~section == 2) || (~section == 1) || (~section == 3), {
 									// IF WE ARE MOVING then turn up the synth
 									Ndef(synths[1][~section][id % (synths[1][~section].size)]).set(\amp, 0.4, \vol, 1);
 								});
@@ -343,7 +363,7 @@
 						var x = vector1[0],
 							y = vector1[2];
 
-						if( (~section == 0) || (~section == 2), {
+					if( (~section == 0) || (~section == 2) || (~section == 1) || (~section == 3), {
 							// If we are not moving, turn down the synth
 							Ndef(synths[1][~section][id % (synths[1][~section].size)]).set(\amp, 0.3);
 						});
@@ -356,7 +376,7 @@
 									/*Ndef(synths[1][~section][id % (synths[1][~section].size)]).set(\amp, 0.3);*/
 								/*});*/
 							/*}, {*/
-								if( (~section == 0) || (~section == 2), {
+								if( (~section == 0) || (~section == 2) || (~section == 1) || (~section == 3), {
 									Ndef(synths[1][~section][id % (synths[1][~section].size)]).set(\amp, 0.3);
 								});
 
@@ -417,7 +437,7 @@
 					/*});*/
 				/*});*/
 
-				if( (~section == 0) && ((x > 0.9)  || (y > 0.9) || (x < -0.9) || (y < -0.9) ) , {
+				if( ((~section == 0) || (~section == 1)  || (~section == 3))&& ((x > 0.9)  || (y > 0.9) || (x < -0.9) || (y < -0.9) ) , {
 					Ndef(synths[1][~section][id % (synths[1][~section].size)]).set(\amp, 0.0, \vol, 1);
 				});
 
@@ -443,7 +463,7 @@
 					if(thumpZoneIDs.values.sum < 1 , {
 						Ndef(\bass).set(\amp, 0);
 
-						if( (~section == 2), {
+						if( (~section == 2) || (~section == 1) || (~section == 3), {
 							Ndef(synths[2][~section][actorIndex % (synths[2][~section].size)]).set(\freq, ((  (x.abs - 1).abs.pow(6) * 8000) + 90) );
 						});
 
@@ -472,7 +492,7 @@
 						/*if((x >= 0.75) && (y <= -0.25), {*/
 						/*}, {*/
 							if(thumpZoneIDs.values.sum < 1, {
-								if( (~section == 2), {
+								if( (~section == 2) || (~section == 1) || (~section == 3), {
 								// If we are moving, turn up the synth
 									Ndef(synths[2][~section][id % (synths[2][~section].size)]).set(\amp, 0.4);
 								});
@@ -496,7 +516,7 @@
 								/*Ndef(synths[2][~section][id % (synths[2][~section].size)]).set(\amp, 0.3);*/
 							/*});*/
 						/*}, {*/
-							if(  (~section == 2), {
+							if(  (~section == 2) || (~section == 1) || (~section == 3), {
 								// If we are not moving and not in thump zone, turn down the synth
 								Ndef(synths[2][~section][id % (synths[2][~section].size)]).set(\amp, 0.3);
 							});
@@ -582,7 +602,7 @@
 					if(thumpZoneIDs.values.sum < 1, {
 						Ndef(\bass).set(\amp, 0);
 
-						if(  (~section == 2), {
+						if(  (~section == 2) || (~section == 1) || (~section == 3), {
 							Ndef(synths[3][~section][actorIndex % (synths[3][~section].size)]).set(\freq, ((   (x.abs - 1).abs.pow(6) * 8000) + 90) );
 						});
 
@@ -628,7 +648,7 @@
 
 							"moving".postln;
 								if( (~section == 0), {
-									~createGraySineTrig.value(amp: 3, freq: 603, switch: 3, length: 1.3, t_trigger: 1);
+									~createGraySineTrig.value(amp: 3, freq: 603 + 600.rand, switch: 3, length: 1.3, t_trigger: 1);
 								});
 
 							});
@@ -676,7 +696,7 @@
 
 				thumpZoneIDs[id] = 0;
 
-				if(  (~section == 2), {
+				if(  (~section == 2) || (~section == 1) || (~section == 3), {
 					Ndef(synths[3][~section][id % (synths[3][~section].size)]).set(\amp, 0.4);
 				});
 

@@ -172,7 +172,7 @@ Ndef(\noiseImpulse, { | amp=0, freq=1900, t_trigger=1 |
 )
 ~resetThump.value();
 
-
+// How to separate the entrance and the boops?
 // SEQUENCE!
 (
 	// Boops in Q1, Q3, Q4. Q2 has only the wowow (boops no longer becoming wowow), no boops in Q2 with wowow.
@@ -188,7 +188,7 @@ Ndef(\noiseImpulse, { | amp=0, freq=1900, t_trigger=1 |
 )
 
 (
-	// Bogi enters, now we have proximity, eventually wowow comes in (1.5 minutes). Q1 callback is on.
+	// Bogi enters, now we have proximity
 	~section = 1;
 	"run/SceneController3.scd".loadRelative;
 	~sceneController = ~cSceneController.value();
@@ -207,7 +207,7 @@ Ndef(\pulseTrain0).play;
 )
 
 // {
-// 	// wowow comes in only after entrance and exit
+// 	// REFINED wowow comes in only after second entrance and exit
 // 	// 90.wait;
 // 	Ndef(\graySine2).fadeTime = 1;
 // 	Ndef(\graySine2).set(\vol, 1);
@@ -217,10 +217,12 @@ Ndef(\pulseTrain0).play;
 // }.fork;
 		Ndef(\graySine).fadeTime = 1;
 		Ndef(\graySine).set(\vol, 1);
+// When wowow comes in proximity goes lower in volume
+Ndef(\pulseTrain0).set(\amp, 0.5);
 
 
 (
-	// CUE music at third exit and entrance
+// CUE music at third exit and entrance (MUSIC FADES IN SLOWLY)
 	~section = 2;
 	"run/SceneController3.scd".loadRelative;
 	~sceneController = ~cSceneController.value();
@@ -241,7 +243,7 @@ Ndef(\graySine).xset(\vol, 0);
 
 )
 
-(// HANDSEAT
+(// HANDSEAT: WOWOW stick around
 	~section = 3;
 	"run/SceneController3.scd".loadRelative;
 	~sceneController = ~cSceneController.value();
@@ -259,7 +261,7 @@ Ndef(\graySine).xset(\vol, 0);
 // Tdef(\randomCallback).play;
 
 
-// Make the wall a randomly triggered sound, increasing the rhythm of the wall hits
+// Make the wall a randomly triggered sound, increasing the rhythm of the wall hits SCRATCHED
 {
 	9.0.wait;
 	~wallOn = true;
@@ -318,3 +320,10 @@ Tdef(\randomCallback).stop;
 // Bogi enters, now we have proximity, eventually wowow comes in (1.5 minutes). Q1 callback is on.
 // CUE music at hand touches
 // CUE section 4 at with walls when handseat
+
+
+
+
+// Breaths goes into tones
+// Then the
+

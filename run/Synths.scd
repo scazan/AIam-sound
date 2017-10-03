@@ -391,13 +391,21 @@ Ndef(\reverb2, {
 				damp: 0.1
 			);
 
-
 			verb = verb * 0.995 * SelectX.kr(switch, [0.5, 0.5, 0.5, 4]);
 
-			verb = EnvGen.ar(Env.perc(0.01, length/2), gate: t_trigger, doneAction: 2) * verb;
+			// verb = EnvGen.ar(Env.perc(0.01, length/2), gate: t_trigger, doneAction: 2) * verb;
+			freq = freq/2;
+
+			verb = WhiteNoise.ar();
+			verb = Resonz.ar(verb, [freq, freq * 1.01], 0.001) * SinOsc.kr(3, mul: 0.5, add: 0.5).unipolar;
+			// verb = verb + (LFTri.ar([freq, freq * 1.01] * 7.1) * 0.001);
+			verb = verb * EnvGen.ar(Env.perc(0.85, 3.5), doneAction: 2);
+			// verb = verb + SinOsc.ar([freq, freq * 1.01]/2) * EnvGen.ar(Env.perc(1, 1));
+			verb = verb + Resonz.ar(verb, [freq, freq * 1.01]/3, 0.001) * 2 * EnvGen.ar(Env.perc(1, 1));
+			verb = verb * amp * 1;
 			Out.ar(~reverbBus, verb * 0.6);
 
-			verb * 6;
+			verb * 1;
 
 		}.play;
 	};

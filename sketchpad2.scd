@@ -172,12 +172,12 @@ NdefMixer.new(s);
 ~line = 1;
 ~grainPointer = 136666;
 (
-Ndef(\graySine2, {arg vol=0.6, amp=0, pointer=0, freq=1000, rateRand=0.2, overlaps=3, grainSize=0.15;
+Ndef(\graySine, {arg vol=0.6, amp=0, pointer=0, freq=1000, rateRand=0.2, overlaps=3, grainSize=0.15;
 	var out;
 	var rate, rate2, verb;
 	var sine = LFTri.ar( freq.lag(0.1) + SinOsc.kr(190, mul: 150).unipolar ) * 0.3 * AmpCompA.kr(freq, amp);
 
-	rate = (freq.lag(0.2) - 90 / 8000);
+	rate = (freq.lag(19.2) - 90 / 8000);
 	rate = rate * 5;
 	rate2 = rate * 1.01;
 
